@@ -1,0 +1,53 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Newt</title>
+    <script type="text/javascript" src="node_modules/chrome-promise/chrome-promise.js"></script>
+    <!--build:js js/app.min.js-->
+    <script type="text/javascript" src="js/chrome_service.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/components/menu_item.comp.js"></script>
+    <script type="text/javascript" src="js/components/popup_item.comp.js"></script>
+    <script type="text/javascript" src="js/components/small_card.comp.js"></script>
+    <script type="text/javascript" src="js/components/list_card.comp.js"></script>
+    <script type="text/javascript" src="js/components/card_row.comp.js"></script>
+    <script type="text/javascript" src="js/components/list_card_row.comp.js"></script>
+    <script type="text/javascript" src="js/components/app_card.comp.js"></script>
+    <script type="text/javascript" src="js/components/settings_card.comp.js"></script>
+    <!--endbuild-->
+    <!-- build:css css/app.min.css -->
+    <link rel="stylesheet" type="text/css" href="css/app.css">
+    <!-- endbuild -->
+</head>
+<body>
+    <div class="menu-bar">
+        <menu-item action="bookmarks"></menu-item>
+        <menu-item action="apps"></menu-item>
+        <menu-item action="frequents"></menu-item>
+        <menu-item action="new"></menu-item>
+        <menu-item action="recents"></menu-item>
+        <menu-item action="devices"></menu-item>
+        <div style="flex: 1"></div>
+        <menu-item action="settings"></menu-item>
+    </div>
+    <div class="main-container">
+        <div class="main-content">
+            <small-card class="card-container"></small-card>
+            <small-card class="card-container"></small-card>
+            <small-card class="card-container"></small-card>
+            <small-card class="card-container"></small-card>
+            <small-card class="card-container"></small-card>
+            <small-card class="card-container"></small-card>
+        </div>
+    </div>
+    
+    <!--<div id="overflow_menu" class="overflow-menu">
+        <popup-menu-item>One</popup-menu-item>
+        <popup-menu-item>Two</popup-menu-item>
+        <popup-menu-item>Three</popup-menu-item>
+    </div>
+
+    <div id="scrim" class="scrim" ng-show="popupShowing" ng-click="closePopups()"></div>-->
+
+</body>
+</html>

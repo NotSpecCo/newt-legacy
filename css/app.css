@@ -1,0 +1,181 @@
+body {
+	font-family: 'Segoe UI', Helvetica, sans-serif;
+	background-color: #efefef;
+	color: #212121;
+	margin: 0px;
+}
+
+/*
+    Menu Bar
+*/
+
+.menu-bar {
+	height: 100%;
+	width: 58px;
+	position: fixed;
+	background-color: #03A9F4;
+	border-bottom: 1px solid #ccc;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+}
+
+/*
+    Popup Menu
+*/
+
+.menu {
+	position: fixed;
+	bottom: 10px;
+	left: 68px;
+	/*width: 200px;*/
+	/*height: 200px;*/
+	background-color: #fff;
+	box-shadow: 3px 3px 10px #aaa;
+	z-index: 1000;
+}
+
+.menu > div {
+	font-size: 16px;
+	padding: 15px 10px 15px 39px;
+	/*border: 1px solid #aaa;*/
+	background-size: 24px;
+	background-position: 10px center;
+	background-repeat: no-repeat;
+	background-image: url('../assets/icons/about-dark.png');
+}
+
+.menu > div .icon {
+	width: 24px;
+	height: inherit;
+	background-size: 24px;
+	background-position: left center;
+	background-image: url('../assets/icons/about-dark.png');
+}
+
+/*
+    Main Content
+*/
+
+.welcome-card {
+	max-width: 500px;
+	margin: auto;
+	font-size: 15px;
+	font-weight: 300;
+	/*color: #444;*/
+}
+
+.welcome-card h1 {
+	text-align: center;
+	font-weight: 500;
+}
+
+.welcome-card h4 {
+	font-weight: 500;
+}
+
+.main-content {
+	margin-left: 58px;
+	padding: 7px;
+    height: 100%;
+}
+
+.card-container {
+    float: left;
+}
+
+@media (max-width: 500px) {
+	.card-container {
+		width: calc(100%);
+	}
+
+	.card {
+		height: inherit !important;
+	}
+}
+
+@media (min-width: 500px) and (max-width: 850px) {
+	.card-container {
+		width: calc(100% / 2);
+	}
+}
+
+@media (min-width: 850px) and (max-width: 1200px) {
+	.card-container {
+		width: calc(100% / 3);
+	}
+}
+
+@media (min-width: 1200px) and (max-width: 1550px) {
+	.card-container {
+		width: calc(100% / 4);
+	}
+}
+
+@media (min-width: 1550px) and (max-width: 1900px) {
+	.card-container {
+		width: calc(100% / 5);
+	}
+}
+
+@media (min-width: 1900px) {
+	.card-container {
+		width: calc(100% / 6);
+	}
+}
+
+/* App Cards */
+
+@media (max-width: 450px) {
+	.app-card {
+		width: calc(100% - 40px);
+	}
+}
+
+@media (min-width: 450px) and (max-width: 670px) {
+	.app-card {
+		width: calc(100% / 2 - 40px);
+	}
+}
+
+@media (min-width: 670px) and (max-width: 890px) {
+	.app-card {
+		width: calc(100% / 3 - 40px);
+	}
+}
+
+@media (min-width: 890px) and (max-width: 1110px) {
+	.app-card {
+		width: calc(100% / 4 - 40px);
+	}
+}
+
+@media (min-width: 1110px) and (max-width: 1330px) {
+	.app-card {
+		width: calc(100% / 5 - 40px);
+	}
+}
+
+@media (min-width: 1330px) and (max-width: 1550px) {
+	.app-card {
+		width: calc(100% / 6 - 40px);
+	}
+}
+
+@media (min-width: 1550px) and (max-width: 1770px) {
+	.app-card {
+		width: calc(100% / 7 - 40px);
+	}
+}
+
+@media (min-width: 1770px) and (max-width: 1990px) {
+	.app-card {
+		width: calc(100% / 8 - 40px);
+	}
+}
+
+
+/* TODO: Find a better way to manage these scrollbars */
+::-webkit-scrollbar {
+    width: 0px;
+}

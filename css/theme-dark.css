@@ -1,0 +1,27 @@
+body {
+	background: #222;
+	color: #ccc;
+}
+
+.menu-bar {
+    background: #111;
+	color: #c5c5c5;
+}
+
+.main-content /deep/ .card {
+    background-color: #333;
+	color: #ddd;
+	box-shadow: 0px 2px 3px #111;
+}
+
+.main-content /deep/ .card-title {
+    color: #fff;
+}
+
+.main-content /deep/ .row:hover {
+    background-color: #2a2a2a;
+}
+
+settings-card /deep/ .settings-row {
+    border-bottom: 1px solid #444;
+}
