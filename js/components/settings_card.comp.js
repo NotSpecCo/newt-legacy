@@ -32,17 +32,13 @@
             }
             
             .settings-row {
-                // display: flex;
-                // flex-direction: row;
                 padding: 10px 10px;
                 border-bottom: 1px solid #eaeaea;
             }
             
-            .main {
+            .settings-row .main {
                 display: flex;
                 flex-direction: row;
-                // padding: 10px 10px;
-                // border-bottom: 1px solid #eaeaea;
             }
             
             .settings-row .label {
@@ -99,11 +95,9 @@
         }
         
         prefChanged(ev) {
-            console.log(ev.target);
             let element = ev.target;
             
             if (element.name == 'theme') {
-                console.log(this);
                 let display = element.value == 'custom' ? 'block' : 'none';
                 this.shadowRoot.querySelector('#themeDesc').style.display = display;
             }
