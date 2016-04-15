@@ -57,10 +57,10 @@ class App {
         let theme = 'theme-' + this.prefs.theme;
 		let head = document.getElementsByTagName("head")[0];
         
-        // console.log('Applying theme ' + theme);
+        console.log('Applying theme ' + theme);
 
 		// Remove any other theme stylesheets
-		let themeList = ["theme-light", "theme-dark", "theme-espresso"];
+		let themeList = ["theme-light", "theme-dark", "theme-espresso", "theme-custom"];
 		let appsheets = document.getElementsByTagName("link");
 		let foundTheme;
 

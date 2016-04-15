@@ -46,13 +46,19 @@
         
         <div class='card'>
             <div class='card-title'>Settings</div>
-            <div class='settings-row'>
-                <div class='label'>Theme</div>
-                <select id='prefTheme' name='theme''>
-                    <option value='light'>Light</option>
-                    <option value='dark'>Dark</option>
-                    <option value='espresso'>Espresso</option>
-                </select>
+            <div class='setting-row'>
+                <div class='main'>
+                    <div class='label'>Theme</div>
+                    <select id='prefTheme' name='theme''>
+                        <option value='light'>Light</option>
+                        <option value='dark'>Dark</option>
+                        <option value='espresso'>Espresso</option>
+                        <option value='custom'>Custom*</option>
+                    </select>
+                </div>
+                <div classes='description' id='themeDesc'>
+                    * This is an advanced feature! To use a custom theme, write your CSS in a file named "theme-custom.css" and place it in Newt's /css folder.
+                </div>
             </div>
         </div>
     `;
@@ -72,6 +78,8 @@
                 this.$theme.selectedIndex = 1;
             } else if (Newt.prefs.theme == 'espresso') {
                 this.$theme.selectedIndex = 2;
+            } else if (Newt.prefs.theme == 'custom') {
+                this.$theme.selectedIndex = 3;
             } else {
                 this.$theme.selectedIndex = 0;
             }
