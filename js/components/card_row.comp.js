@@ -15,8 +15,8 @@
             }
             
             .over {
-                border-top: 2px solid #aaa;
-                padding: 5px 10px 7px 10px;
+                border-bottom: 2px solid #aaa;
+                padding: 7px 10px 5px 10px;
             }
             
             .icon {
@@ -92,24 +92,24 @@
                 this.classList.remove('over');
 
                 let fromRow = this.ownerDocument.getElementById(ev.dataTransfer.getData('divid'));
-                let toRow = this.parentNode.host;
+				let toRow = this.parentNode.host;
                 let card = this.parentNode.host.parentNode;
                 
                 let index;
                 for (let i=0; i<card.children.length; i++) {
                     if (toRow.id == card.children[i].id) {
-                        index = i;
+                        index = i + 1;
                     }
                 }
 
-                card.insertBefore(fromRow, toRow);
+                card.insertBefore(fromRow, toRow.nextSibling);
                 
                 ChromeService.moveBookmark(fromRow.data.id, card.data.id, index);
             });
             
             this.addEventListener('click', function() {
                 ChromeService.updateTab(this.data.url);
-            })
+            });
         }
         
         attributeChanged(attrName, oldVal, newVal) {
