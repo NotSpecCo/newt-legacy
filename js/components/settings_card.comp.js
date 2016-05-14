@@ -1,7 +1,6 @@
-/* global ChromeService */
-'use strict';
-
 (function() {
+    'use strict';
+    
     let template = `
         <style>
             .card {
@@ -95,6 +94,7 @@
             this.$prefTheme.addEventListener('change', this.prefChanged.bind(this));
             this.$prefKeyboardShortcuts.addEventListener('change', this.prefChanged.bind(this));
             
+            console.log(Newt);
             this.$prefTheme.value = Newt.prefs.theme;
             this.$prefKeyboardShortcuts.value = Newt.prefs.keyboardShortcuts;
         }

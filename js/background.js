@@ -43,7 +43,7 @@
 			}
 		}
 
-		var text = "Adding a new page to '" + catName + "'. This title alright?";
+		var text = "Adding a new page to '" + catName + "'. Is this title alright?";
 		var title = prompt(text,tab.title);
 		if (title) {
 			var bookmark = {

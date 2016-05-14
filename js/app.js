@@ -1,38 +1,38 @@
-/* global ChromeService */
-"use strict";
+let Prefs = {};
 
-class App {
-    constructor() {
-        // console.log('Newt class created');
+var Newt = (function() {
+    'use strict';
+    
+    // var Prefs = {};
+    let MainContent = document.querySelector('.main-content');
+    let MenuBar = document.querySelector('.menu-bar');
+    let X = 1;
+    
+    function init() {
+        getPrefs();
+        
+        window.addEventListener('storage', prefsChanged.bind(this));
+        window.addEventListener('keydown', handleKeyPress, false);
+        
+        MainContent = document.querySelector('.main-content');
+        MenuBar = document.querySelector('.menu-bar');
+        
+        changeTab('bookmarks');
     }
     
-    init() {
-        // console.log('Initial set up...');
-        
-        // Set up our app preferences
-        this.getPrefs();
-        window.addEventListener('storage', this.prefsChanged.bind(this));
-        window.addEventListener('keydown', this.handleKeyPress, false);
-        
-        this.$mainContent = document.querySelector('.main-content');
-        this.$menuBar = document.querySelector('.menu-bar');
-        
-        this.changeTab('bookmarks');
-    }
-    
-    getPrefs() {
-        this.prefs = {
+    function getPrefs() {
+        Prefs = {
             theme: localStorage.getItem('theme') || 'light',
             keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled'
         };
-        // console.log('Prefs', this.prefs);
+        console.log('Prefs', Prefs);
         
-        this.changeTheme();
+        changeTheme();
     }
     
-    updatePref(key, val) {
-        let oldVal = this.prefs[key];
-        this.prefs[key] = val;
+    function updatePref(key, val) {
+        let oldVal = Prefs[key];
+        Prefs[key] = val;
         
         localStorage.setItem(key, val);
         
@@ -45,18 +45,18 @@ class App {
         }
     }
     
-    prefsChanged(e) {
+    function prefsChanged(e) {
         // console.log('prefsChanged', e);
         
-        this.prefs[e.key] = e.newValue;
+        Prefs[e.key] = e.newValue;
         
         if (e.key == 'theme' && e.oldValue != e.newValue) {
-            this.changeTheme();
+            changeTheme();
         }
     }
     
-    changeTheme() {
-        let theme = 'theme-' + this.prefs.theme;
+    function changeTheme() {
+        let theme = 'theme-' + Prefs.theme;
 		let head = document.getElementsByTagName("head")[0];
         
         console.log('Applying theme ' + theme);
@@ -90,7 +90,7 @@ class App {
 		}
     }
     
-    createBookmarkCards(cards) {
+    function createBookmarkCards(cards) {
         // console.log('Creating bookmark cards...');
         
         let self = this;
@@ -98,11 +98,11 @@ class App {
             // console.log(cards);
 
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
         
             if (cards.length == 0) {
                 // The user doesn't have any cards set up yet, so display a welcome message
-                self.$mainContent.innerHTML = `
+                MainContent.innerHTML = `
                     <div class="welcome-card" ng-show="showWelcomeCard">
                         <h1>Hi</h1>
                         <p>
@@ -139,12 +139,12 @@ class App {
                     ele.appendChild(row);
                 }
                 
-                self.$mainContent.appendChild(ele);
+                MainContent.appendChild(ele);
             }
         });
     }
     
-    createAppCards() {
+    function createAppCards() {
         // console.log('Creating app cards...');
         
         let self = this;
@@ -167,19 +167,19 @@ class App {
             apps = enabled.concat(disabled);
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
             for (var app of apps) {                
                 let ele = document.createElement('app-card');
                 ele.className = 'card-container';
                 ele.data = app;
                 
-                self.$mainContent.appendChild(ele);
+                MainContent.appendChild(ele);
             }
-        })
+        });
     }
     
-    createFrequentsCard() {
+    function createFrequentsCard() {
         // console.log('Creating frequents card...');
         
         let self = this;
@@ -191,13 +191,13 @@ class App {
             ele.sites = sites;
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
-            self.$mainContent.appendChild(ele);
-        })
+            MainContent.appendChild(ele);
+        });
     }
     
-    createRecentlyAddedCard() {
+    function createRecentlyAddedCard() {
         // console.log('Creating recently added card...');
         
         let self = this;
@@ -209,13 +209,13 @@ class App {
             ele.sites = sites;
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
-            self.$mainContent.appendChild(ele);
-        })
+            MainContent.appendChild(ele);
+        });
     }
     
-    createRecentlyClosedCard() {
+    function createRecentlyClosedCard() {
         // console.log('Creating recently closed card...');
         
         let self = this;
@@ -227,13 +227,13 @@ class App {
             ele.sites = sites;
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
-            self.$mainContent.appendChild(ele);
-        })
+            MainContent.appendChild(ele);
+        });
     }
     
-    createDeviceCards() {
+    function createDeviceCards() {
         // console.log('Creating devices cards...');
         
         let self = this;
@@ -242,7 +242,7 @@ class App {
             // console.log(devices);
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
             for (var device of devices) {                
                 let card = document.createElement('small-card');
@@ -256,26 +256,26 @@ class App {
                     card.appendChild(row);
                 }
                 
-                self.$mainContent.appendChild(card);
+                MainContent.appendChild(card);
             }
-        })
+        });
     }
     
-    createSettingsMenu() {
+    function createSettingsMenu() {
         // console.log('Creating settings menu...');
         
         // Clear out the main content div
-        this.removeAllChildNodes(this.$mainContent);
+        removeAllChildNodes(MainContent);
         
         let card = document.createElement('settings-card');
-        this.$mainContent.appendChild(card);
+        MainContent.appendChild(card);
     }
     
-    changeTab(tab) {
+    function changeTab(tab) {
         // console.log('changeTab', tab);
 
         // Set the style for the new active tab
-        let buttons = this.$menuBar.querySelectorAll('menu-item');
+        let buttons = MenuBar.querySelectorAll('menu-item');
         
         for (let i=0; i<buttons.length; i++) {
             if (buttons[i].action != 'settings') {
@@ -290,43 +290,45 @@ class App {
         // Load the tab's content into the main view
         switch (tab) {
             case 'bookmarks':
-                this.createBookmarkCards();
+                createBookmarkCards();
                 break;
             case 'apps':
-                this.createAppCards();
+                createAppCards();
                 break;
             case 'frequents':
-                this.createFrequentsCard();
+                createFrequentsCard();
                 break;
             case 'new':
-                this.createRecentlyAddedCard();
+                createRecentlyAddedCard();
                 break;
             case 'recents':
-                this.createRecentlyClosedCard();
+                createRecentlyClosedCard();
                 break;
             case 'devices':
-                this.createDeviceCards();
+                createDeviceCards();
                 break;
             case 'settings':
-                this.createSettingsMenu();
+                createSettingsMenu();
                 break;
         }
         
     }
     
-    removeAllChildNodes(node) {
+    function removeAllChildNodes(node) {
         while (node.lastChild) {
             node.removeChild(node.lastChild);
         }
     }
     
-    handleKeyPress(ev) {
+    function handleKeyPress(ev) {
         console.log('keypress', ev);
     }
-}
+    
+    return({
+        init: init,
+        changeTab: changeTab,
+        updatePref: updatePref
+    })
+})();
 
-let Newt = new App();
-
-window.addEventListener("load", function() {
-    Newt.init();  
-}, false);
+Newt.init();
