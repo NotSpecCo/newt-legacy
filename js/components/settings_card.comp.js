@@ -61,7 +61,7 @@
                         <option value='light'>Light</option>
                         <option value='dark'>Dark</option>
                         <option value='espresso'>Espresso</option>
-                        <option value='custom'>Custom*</option>
+                        <!-- <option value='custom'>Custom*</option> -->
                     </select>
                 </div>
                 <div class='description' id='themeDesc'>
