@@ -58,14 +58,26 @@
                 <div class='main'>
                     <div class='label'>Theme</div>
                     <select id='prefTheme' name='theme'>
-                        <option value='light'>Light</option>
+                        <option value='light' selected>Light</option>
                         <option value='dark'>Dark</option>
                         <option value='espresso'>Espresso</option>
                         <!-- <option value='custom'>Custom*</option> -->
                     </select>
                 </div>
-                <div class='description' id='themeDesc'>
+                <div class='description' id='descTheme'>
                     * This is an advanced feature! To use a custom theme, write your CSS in a file named "theme-custom.css" and place it in Newt's /css folder.
+                </div>
+            </div>
+            <div class='settings-row'>
+                <div class='main'>
+                    <div class='label'>Keyboard Shortcuts</div>
+                    <select id='prefKeyboardShortcuts' name='keyboardShortcuts'>
+                        <option value='disabled' selected>Disabled</option>
+                        <option value='enabled'>Enabled</option>
+                    </select>
+                </div>
+                <div class='description' id='descKeyboardShortcuts'>
+                    
                 </div>
             </div>
         </div>
@@ -76,22 +88,15 @@
             this.createShadowRoot().innerHTML = template;
             
             this.$card = this.shadowRoot.querySelector('.card');
-            this.$theme = this.shadowRoot.querySelector('#prefTheme');
+            this.$prefTheme = this.shadowRoot.querySelector('#prefTheme');
+            this.$prefKeyboardShortcuts = this.shadowRoot.querySelector('#prefKeyboardShortcuts');
             
             // Add event listeners to save changes to preferences
-            this.$theme.addEventListener('change', this.prefChanged.bind(this));
+            this.$prefTheme.addEventListener('change', this.prefChanged.bind(this));
+            this.$prefKeyboardShortcuts.addEventListener('change', this.prefChanged.bind(this));
             
-            // TODO: This is not a good way to handle this. Improve before adding more settings
-            if (Newt.prefs.theme == 'dark') {
-                this.$theme.selectedIndex = 1;
-            } else if (Newt.prefs.theme == 'espresso') {
-                this.$theme.selectedIndex = 2;
-            } else if (Newt.prefs.theme == 'custom') {
-                this.$theme.selectedIndex = 3;
-                this.shadowRoot.querySelector('#themeDesc').style.display = 'block';
-            } else {
-                this.$theme.selectedIndex = 0;
-            }
+            this.$prefTheme.value = Newt.prefs.theme;
+            this.$prefKeyboardShortcuts.value = Newt.prefs.keyboardShortcuts;
         }
         
         prefChanged(ev) {
@@ -99,7 +104,7 @@
             
             if (element.name == 'theme') {
                 let display = element.value == 'custom' ? 'block' : 'none';
-                this.shadowRoot.querySelector('#themeDesc').style.display = display;
+                this.shadowRoot.querySelector('#descTheme').style.display = display;
             }
             
             Newt.updatePref(element.name, element.value);

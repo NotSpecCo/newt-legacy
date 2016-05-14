@@ -12,6 +12,7 @@ class App {
         // Set up our app preferences
         this.getPrefs();
         window.addEventListener('storage', this.prefsChanged.bind(this));
+        window.addEventListener('keydown', this.handleKeyPress, false);
         
         this.$mainContent = document.querySelector('.main-content');
         this.$menuBar = document.querySelector('.menu-bar');
@@ -21,7 +22,8 @@ class App {
     
     getPrefs() {
         this.prefs = {
-            theme: localStorage.getItem('theme') || 'light'
+            theme: localStorage.getItem('theme') || 'light',
+            keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled'
         };
         // console.log('Prefs', this.prefs);
         
@@ -316,6 +318,10 @@ class App {
         while (node.lastChild) {
             node.removeChild(node.lastChild);
         }
+    }
+    
+    handleKeyPress(ev) {
+        console.log('keypress', ev);
     }
 }
 
