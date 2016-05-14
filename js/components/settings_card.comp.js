@@ -94,9 +94,8 @@
             this.$prefTheme.addEventListener('change', this.prefChanged.bind(this));
             this.$prefKeyboardShortcuts.addEventListener('change', this.prefChanged.bind(this));
             
-            console.log(Newt);
-            this.$prefTheme.value = Newt.prefs.theme;
-            this.$prefKeyboardShortcuts.value = Newt.prefs.keyboardShortcuts;
+            this.$prefTheme.value = AppPrefs.theme;
+            this.$prefKeyboardShortcuts.value = AppPrefs.keyboardShortcuts;
         }
         
         prefChanged(ev) {

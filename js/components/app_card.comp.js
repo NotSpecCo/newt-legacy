@@ -127,7 +127,9 @@
         set data(val) {
             this.setAttribute('data', JSON.stringify(val));
             
-            this.$icon.src = val.icons[val.icons.length-1].url;
+            let icon = val.icons ? val.icons[val.icons.length-1].url : 'assets/icons/apps-dark.png';
+            this.$icon.src = icon;
+            
             this.$title.textContent = val.name;
             this.$description.textContent = val.description;
             

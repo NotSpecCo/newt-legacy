@@ -1,17 +1,17 @@
-let Prefs = {};
+let AppPrefs = {};
 
 var Newt = (function() {
     'use strict';
     
-    // var Prefs = {};
+    // var AppPrefs = {};
     let MainContent = document.querySelector('.main-content');
     let MenuBar = document.querySelector('.menu-bar');
     let X = 1;
     
     function init() {
-        getPrefs();
+        getAppPrefs();
         
-        window.addEventListener('storage', prefsChanged.bind(this));
+        window.addEventListener('storage', AppPrefsChanged);
         window.addEventListener('keydown', handleKeyPress, false);
         
         MainContent = document.querySelector('.main-content');
@@ -20,35 +20,35 @@ var Newt = (function() {
         changeTab('bookmarks');
     }
     
-    function getPrefs() {
-        Prefs = {
+    function getAppPrefs() {
+        AppPrefs = {
             theme: localStorage.getItem('theme') || 'light',
             keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled'
         };
-        console.log('Prefs', Prefs);
+        // console.log('AppPrefs', AppPrefs);
         
         changeTheme();
     }
     
     function updatePref(key, val) {
-        let oldVal = Prefs[key];
-        Prefs[key] = val;
+        let oldVal = AppPrefs[key];
+        AppPrefs[key] = val;
         
         localStorage.setItem(key, val);
         
         if (oldVal != val) {
             switch (key) {
                 case 'theme':
-                    this.changeTheme();
+                    changeTheme();
                     break;
             }
         }
     }
     
-    function prefsChanged(e) {
-        // console.log('prefsChanged', e);
+    function AppPrefsChanged(e) {
+        // console.log('AppPrefsChanged', e);
         
-        Prefs[e.key] = e.newValue;
+        AppPrefs[e.key] = e.newValue;
         
         if (e.key == 'theme' && e.oldValue != e.newValue) {
             changeTheme();
@@ -56,10 +56,10 @@ var Newt = (function() {
     }
     
     function changeTheme() {
-        let theme = 'theme-' + Prefs.theme;
+        let theme = 'theme-' + AppPrefs.theme;
 		let head = document.getElementsByTagName("head")[0];
         
-        console.log('Applying theme ' + theme);
+        //console.log('Applying theme ' + theme);
 
 		// Remove any other theme stylesheets
 		let themeList = ["theme-light", "theme-dark", "theme-espresso", "theme-custom"];
