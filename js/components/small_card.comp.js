@@ -3,6 +3,9 @@
     
     let template = `
         <style>
+            :host {
+                display: inline-block;
+            }
             .card {
                 display: flex;
                 flex-direction: column;

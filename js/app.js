@@ -3,10 +3,10 @@ let AppPrefs = {};
 var Newt = (function() {
     'use strict';
     
-    // var AppPrefs = {};
+    let CardMap = null;
+    
     let MainContent = document.querySelector('.main-content');
     let MenuBar = document.querySelector('.menu-bar');
-    let X = 1;
     
     function init() {
         getAppPrefs();
@@ -321,7 +321,107 @@ var Newt = (function() {
     }
     
     function handleKeyPress(ev) {
-        console.log('keypress', ev);
+        // console.log('keypress', ev);
+        
+        switch (ev.code) {
+            case 'ArrowUp':
+            case 'ArrowDown':
+            case 'ArrowLeft':
+            case 'ArrowRight':
+                ev.preventDefault();
+                navigateCardMap(ev.code);
+                break;
+            case 'Enter':
+                if (CardMap.currentActive) {
+                    ChromeService.updateTab(CardMap.currentActive.row.data.url);
+                }
+                break;
+            case 'Escape':
+                if (CardMap.currentActive) {
+                    CardMap.currentActive.row.highlight = false;
+                    CardMap.currentActive = null;
+                }
+        }
+    }
+    
+    function navigateCardMap(key) {
+        if (!CardMap) {
+            CardMap = generateCardMap();
+            // console.log('CardMap', CardMap);
+        }
+        
+        if (CardMap.currentActive === null) {
+            CardMap.currentActive = {
+                row: CardMap.data[0][0],
+                indexX: 0,
+                indexY: 0
+            }
+            CardMap.currentActive.row.highlight = true;
+        } else {
+            CardMap.currentActive.row.highlight = false;
+            
+            let a = CardMap.currentActive;
+            let data = CardMap.data;
+            
+            switch (key) {
+                case 'ArrowUp':
+                    a.indexY = a.indexY === 0 ? data[a.indexX].length - 1 : (a.indexY - 1);
+                    break;
+                case 'ArrowDown':
+                    a.indexY = a.indexY === data[a.indexX].length - 1 ? 0 : (a.indexY + 1);
+                    break;
+                case 'ArrowLeft':
+                    if (a.indexX > 0) {
+                        a.indexX--;
+                        
+                        let highestIndex = data[a.indexX].length - 1;
+                        a.indexY = a.indexY <= highestIndex ? a.indexY : highestIndex;
+                    }
+                    break;
+                case 'ArrowRight':
+                    let lastX = data.length - 1;
+                    if (a.indexX < lastX) {
+                        a.indexX++;
+                        
+                        let highestIndex = data[a.indexX].length - 1;
+                        a.indexY = a.indexY <= highestIndex ? a.indexY : highestIndex;
+                    }
+                    break;
+            }
+            
+            a.row = data[a.indexX][a.indexY];
+            a.row.highlight = true;
+        }
+        
+        // We need to make sure the card and row are both in full view
+        let main = CardMap.currentActive.row.parentNode.parentNode;
+        let card = CardMap.currentActive.row.parentNode;
+        let container = CardMap.currentActive.row.parentNode.$container;
+        let row = CardMap.currentActive.row;
+        
+        main.scrollTop = card.offsetTop + card.clientHeight - main.clientHeight;
+        
+        if (row.offsetTop > container.clientHeight) {
+            container.scrollTop = row.offsetTop - card.offsetTop - container.clientHeight;
+        } else {
+            container.scrollTop = 0;
+        }
+    }
+    
+    function generateCardMap() {
+        // console.log('Generating CardMap');
+        let map = {
+            data: [],
+            currentActive: null,
+            lastActive: null
+        };
+        
+        let cards = document.querySelectorAll('small-card');
+        for (let i=0; i<cards.length; i++) {
+            map.data.push(cards[i].children);
+        }
+        
+        return map;
     }
     
     return({

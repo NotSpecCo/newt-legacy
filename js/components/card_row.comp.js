@@ -3,11 +3,14 @@
     
     let template = `
         <style>
+            :host {
+                display: block;
+            }
             .row {
                 padding: 7px 10px;
             }
             .row:hover {
-                background-color: #eaeaea;
+                background-color: #E3F2FD;
             }
             
             .drag {
@@ -17,6 +20,10 @@
             .over {
                 border-bottom: 2px solid #aaa;
                 padding: 7px 10px 5px 10px;
+            }
+            
+            .highlight {
+                background-color: #E3F2FD;
             }
             
             .icon {
@@ -118,6 +125,9 @@
                 case 'data':
                     this.updateInfo();
                     break;
+                case 'highlight':
+                    this.updateHighlight();
+                    break;
             }
         }
         
@@ -150,9 +160,26 @@
             this.updateInfo();
         }
         
+        get highlight() {
+            return JSON.parse(this.getAttribute('highlight'));
+        }
+        
+        set highlight(val) {
+            this.setAttribute('highlight', JSON.stringify(val));
+            this.updateHighlight();
+        }
+        
         updateInfo() {
             this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.data.url + '")';
             this.$title.textContent = this.data.title;
+        }
+        
+        updateHighlight() {
+            if (this.highlight === true) {
+                this.$row.classList.add('highlight');
+            } else {
+                this.$row.classList.remove('highlight');
+            }
         }
     }
     
