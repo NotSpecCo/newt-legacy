@@ -220,11 +220,13 @@ var Newt = (function() {
             ele.title = 'Recently Closed';
             
             for (var i=0; i<sites.length; i++) {
-                let row = document.createElement('list-card-row');
-                row.title = sites[i].tab.title;
-                row.url = sites[i].tab.url;
+                if (sites[i].tab) {
+                    let row = document.createElement('list-card-row');
+                    row.title = sites[i].tab.title;
+                    row.url = sites[i].tab.url;
 
-                ele.appendChild(row);
+                    ele.appendChild(row);
+                }
             }
             
             // Clear out the main content div
