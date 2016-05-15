@@ -339,7 +339,7 @@ var Newt = (function() {
     function handleKeyPress(ev) {
         // console.log('keypress', ev);
         
-        if (!AppPrefs.keyboardShortcuts) {
+        if (AppPrefs.keyboardShortcuts === 'disabled') {
             return;
         }
         
