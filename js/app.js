@@ -3,7 +3,7 @@ let AppPrefs = {};
 var Newt = (function() {
     'use strict';
     
-    let CardMap = null;
+    let CardMap = {};
     
     let MainContent = document.querySelector('.main-content');
     let MenuBar = document.querySelector('.menu-bar');
@@ -145,12 +145,7 @@ var Newt = (function() {
     }
     
     function createAppCards() {
-        // console.log('Creating app cards...');
-        
-        let self = this;
-        
         ChromeService.getApps().then(function(apps) {
-            // console.log(apps);
             
             // TODO: More efficient way of sorting this
             let enabled = [];
@@ -180,15 +175,17 @@ var Newt = (function() {
     }
     
     function createFrequentsCard() {
-        // console.log('Creating frequents card...');
-        
-        let self = this;
-        
         ChromeService.getFrequents().then(function(sites) {
-            // console.log(sites);
             let ele = document.createElement('list-card');
             ele.title = 'Frequents';
-            ele.sites = sites;
+            
+            for (var i=0; i<sites.length; i++) {
+                let row = document.createElement('list-card-row');
+                row.title = sites[i].title;
+                row.url = sites[i].url;
+
+                ele.appendChild(row);
+            }
             
             // Clear out the main content div
             removeAllChildNodes(MainContent);
@@ -198,15 +195,17 @@ var Newt = (function() {
     }
     
     function createRecentlyAddedCard() {
-        // console.log('Creating recently added card...');
-        
-        let self = this;
-        
         ChromeService.getRecentlyAdded().then(function(sites) {
-            // console.log(sites);
             let ele = document.createElement('list-card');
             ele.title = 'Recently Added';
-            ele.sites = sites;
+            
+            for (var i=0; i<sites.length; i++) {
+                let row = document.createElement('list-card-row');
+                row.title = sites[i].title;
+                row.url = sites[i].url;
+
+                ele.appendChild(row);
+            }
             
             // Clear out the main content div
             removeAllChildNodes(MainContent);
@@ -216,15 +215,17 @@ var Newt = (function() {
     }
     
     function createRecentlyClosedCard() {
-        // console.log('Creating recently closed card...');
-        
-        let self = this;
-        
         ChromeService.getRecentlyClosed().then(function(sites) {
-            // console.log(sites);
             let ele = document.createElement('list-card');
             ele.title = 'Recently Closed';
-            ele.sites = sites;
+            
+            for (var i=0; i<sites.length; i++) {
+                let row = document.createElement('list-card-row');
+                row.title = sites[i].tab.title;
+                row.url = sites[i].tab.url;
+
+                ele.appendChild(row);
+            }
             
             // Clear out the main content div
             removeAllChildNodes(MainContent);
@@ -234,12 +235,7 @@ var Newt = (function() {
     }
     
     function createDeviceCards() {
-        // console.log('Creating devices cards...');
-        
-        let self = this;
-        
         ChromeService.getDevices().then(function(devices) {
-            // console.log(devices);
             
             // Clear out the main content div
             removeAllChildNodes(MainContent);
@@ -271,11 +267,27 @@ var Newt = (function() {
         MainContent.appendChild(card);
     }
     
-    function changeTab(tab) {
+    function changeTab(tab, direction) {
         // console.log('changeTab', tab);
 
         // Set the style for the new active tab
         let buttons = MenuBar.querySelectorAll('menu-item');
+        
+        if (direction) {
+            let currentIndex;
+            for (let i=0; i<buttons.length; i++) {
+                if (buttons[i].selected) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            if (direction === 'next') {
+                tab = currentIndex + 1 > buttons.length - 2 ? buttons[0].action : buttons[currentIndex + 1].action;
+            } else {
+                tab = currentIndex - 1 < 0 ? buttons[buttons.length - 2].action : buttons[currentIndex - 1].action;
+            }
+        }
         
         for (let i=0; i<buttons.length; i++) {
             if (buttons[i].action != 'settings') {
@@ -312,6 +324,8 @@ var Newt = (function() {
                 break;
         }
         
+        CardMap.currentTab = tab;
+        CardMap.tabChanged = true;
     }
     
     function removeAllChildNodes(node) {
@@ -323,6 +337,10 @@ var Newt = (function() {
     function handleKeyPress(ev) {
         // console.log('keypress', ev);
         
+        if (!AppPrefs.keyboardShortcuts) {
+            return;
+        }
+        
         switch (ev.code) {
             case 'ArrowUp':
             case 'ArrowDown':
@@ -333,7 +351,18 @@ var Newt = (function() {
                 break;
             case 'Enter':
                 if (CardMap.currentActive) {
-                    ChromeService.updateTab(CardMap.currentActive.row.data.url);
+                    let item = CardMap.currentActive;
+                    
+                    if (CardMap.currentTab === 'apps') {
+                        if (item.row.data.appLaunchUrl) {
+                            ChromeService.updateTab(item.row.data.appLaunchUrl);
+                        } else {
+                            ChromeService.openApp(item.row.data.id);
+                        }
+                    } else {
+                        let url = item.row.url || item.row.data.url;
+                        ChromeService.updateTab(url);
+                    }
                 }
                 break;
             case 'Escape':
@@ -345,18 +374,46 @@ var Newt = (function() {
     }
     
     function navigateCardMap(key) {
-        if (!CardMap) {
-            CardMap = generateCardMap();
-            // console.log('CardMap', CardMap);
+        if (CardMap.tabChanged) {
+            let cardType;
+            let tab = CardMap.currentTab;
+            switch (tab) {
+                case 'bookmarks':
+                case 'devices':
+                    cardType = 'small-card';
+                    break;
+                case 'frequents':
+                case 'new':
+                case 'recents':
+                    cardType = 'list-card';
+                    break;
+                case 'apps':
+                    cardType = 'app-card';
+                    break;
+            }
+            CardMap = generateCardMap(cardType);
+            CardMap.currentTab = tab;
+            // console.log('Generated CardMap:', CardMap);
         }
         
         if (CardMap.currentActive === null) {
-            CardMap.currentActive = {
-                row: CardMap.data[0][0],
-                indexX: 0,
-                indexY: 0
+            switch (key) {
+                case 'ArrowUp':
+                    changeTab(null, 'previous');
+                    break;
+                case 'ArrowDown':
+                    changeTab(null, 'next');
+                    break;
+                case 'ArrowRight':
+                    CardMap.currentActive = {
+                        row: CardMap.data[0][0],
+                        indexX: 0,
+                        indexY: 0
+                    }
+                    CardMap.currentActive.row.highlight = true;
             }
-            CardMap.currentActive.row.highlight = true;
+            
+           
         } else {
             CardMap.currentActive.row.highlight = false;
             
@@ -371,7 +428,11 @@ var Newt = (function() {
                     a.indexY = a.indexY === data[a.indexX].length - 1 ? 0 : (a.indexY + 1);
                     break;
                 case 'ArrowLeft':
-                    if (a.indexX > 0) {
+                    if (a.indexX === 0) {
+                        a = null;
+                        CardMap.currentActive = null;
+                        
+                    } else {
                         a.indexX--;
                         
                         let highestIndex = data[a.indexX].length - 1;
@@ -388,37 +449,59 @@ var Newt = (function() {
                     }
                     break;
             }
-            
-            a.row = data[a.indexX][a.indexY];
-            a.row.highlight = true;
+
+            if (a) {
+                a.row = data[a.indexX][a.indexY];
+                a.row.highlight = true;
+            }
         }
-        
-        // We need to make sure the card and row are both in full view
-        let main = CardMap.currentActive.row.parentNode.parentNode;
-        let card = CardMap.currentActive.row.parentNode;
-        let container = CardMap.currentActive.row.parentNode.$container;
-        let row = CardMap.currentActive.row;
-        
-        main.scrollTop = card.offsetTop + card.clientHeight - main.clientHeight;
-        
-        if (row.offsetTop > container.clientHeight) {
-            container.scrollTop = row.offsetTop - card.offsetTop - container.clientHeight;
-        } else {
-            container.scrollTop = 0;
+
+        if (CardMap.currentActive) {
+            // We need to make sure the card and row are both in full view
+            if (CardMap.currentTab === 'apps') {
+                let main = CardMap.currentActive.row.parentNode;
+                let card = CardMap.currentActive.row;
+                
+                main.scrollTop = card.offsetTop + card.clientHeight - main.clientHeight;
+            } else if (CardMap.currentTab === 'bookmarks' || CardMap.currentTab === 'devices') {
+                let main = CardMap.currentActive.row.parentNode.parentNode;
+                let card = CardMap.currentActive.row.parentNode;
+                let container = CardMap.currentActive.row.parentNode.$container;
+                let row = CardMap.currentActive.row;
+                
+                main.scrollTop = card.offsetTop + card.clientHeight - main.clientHeight;
+                
+                if (row.offsetTop > container.clientHeight) {
+                    container.scrollTop = row.offsetTop - card.offsetTop - container.clientHeight;
+                } else {
+                    container.scrollTop = 0;
+                }
+            } else {
+                let container = CardMap.currentActive.row.parentNode.$container;
+                let row = CardMap.currentActive.row;
+                
+                if (row.offsetTop > container.clientHeight) {
+                    container.scrollTop = row.offsetTop - container.clientHeight;
+                } else {
+                    container.scrollTop = 0;
+                }
+            }
         }
     }
     
-    function generateCardMap() {
-        // console.log('Generating CardMap');
+    function generateCardMap(cardType) {
         let map = {
             data: [],
             currentActive: null,
-            lastActive: null
+            currentTab: null,
+            tabChanged: false
         };
         
-        let cards = document.querySelectorAll('small-card');
+        let cards = document.querySelectorAll(cardType);
+         
         for (let i=0; i<cards.length; i++) {
-            map.data.push(cards[i].children);
+            let data = cardType === 'app-card' ? [cards[i]] : cards[i].children;
+            map.data.push(data);
         }
         
         return map;
