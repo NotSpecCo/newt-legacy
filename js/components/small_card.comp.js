@@ -1,8 +1,11 @@
-'use strict';
-
 (function() {
+    'use strict';
+    
     let template = `
         <style>
+            :host {
+                display: inline-block;
+            }
             .card {
                 display: flex;
                 flex-direction: column;
@@ -27,6 +30,12 @@
                 /*background-color: #29B6F6;*/
             }
             
+            .over {
+                border-bottom: 2px solid #aaa;
+                padding: 10px 10px 3px 10px;
+                
+            }
+            
             .items-container {
                 overflow-y: auto;
             }
@@ -47,9 +56,37 @@
     class Card extends HTMLElement {
         createdCallback() {
             this.createShadowRoot().innerHTML = template;
-            
+
             this.$title = this.shadowRoot.querySelector('.card-title');
             this.$container = this.shadowRoot.querySelector('.items-container');
+            
+            this.$title.addEventListener('dragover', function(ev) {
+                if (ev.preventDefault) {
+                    ev.preventDefault();
+                }
+                
+                this.classList.add('over');
+            });
+            
+            this.$title.addEventListener('dragleave', function(ev) {
+                this.classList.remove('over');
+            });
+            
+            let self = this;
+            this.$title.addEventListener('drop', function(ev) {
+                if (ev.stopPropagation) {
+                    ev.stopPropagation();
+                }
+                
+                this.classList.remove('over');
+                
+                let fromRow = this.ownerDocument.getElementById(ev.dataTransfer.getData('divid'));
+                let card = self;
+
+                card.insertBefore(fromRow, self.children[0]);
+                
+                ChromeService.moveBookmark(fromRow.data.id, card.data.id, 0);
+            });
         }
         
         set title(val) {

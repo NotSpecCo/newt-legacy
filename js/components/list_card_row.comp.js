@@ -1,13 +1,21 @@
-'use strict';
-
 (function() {
+    'use strict';
+    
     let template = `
         <style>
+            :host {
+                display: block;
+            }
+            
             .row {
                 padding: 7px 10px;
             }
             .row:hover {
                 background-color: #eaeaea;
+            }
+            
+            .highlight {
+                background-color: #E3F2FD;
             }
             
             .icon {
@@ -18,12 +26,10 @@
                 width: 18px;
                 float: left;
                 margin-right: 10px;
-                // background-color: #ccc;
             }
             
             .title {
                 font-size: 16px;
-                
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -40,11 +46,9 @@
         createdCallback() {
             this.createShadowRoot().innerHTML = template;
             
+            this.$row = this.shadowRoot.querySelector('.row');
             this.$icon = this.shadowRoot.querySelector('.icon');
-            
-            
             this.$title = this.shadowRoot.querySelector('.title');
-            
             
             this.addEventListener('click', function() {
                 chrome.tabs.update({url: this.url});
@@ -65,6 +69,9 @@
                 case 'url':
                     this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.url + '")';
                     break;
+                case 'highlight':
+                    this.updateHighlight();
+                    break;
             }
         }
         
@@ -83,6 +90,23 @@
         
         set url(val) {
             this.setAttribute('url', val);
+        }
+        
+        get highlight() {
+            return JSON.parse(this.getAttribute('highlight'));
+        }
+        
+        set highlight(val) {
+            this.setAttribute('highlight', JSON.stringify(val));
+            this.updateHighlight();
+        }
+        
+        updateHighlight() {
+            if (this.highlight === true) {
+                this.$row.classList.add('highlight');
+            } else {
+                this.$row.classList.remove('highlight');
+            }
         }
         
     }

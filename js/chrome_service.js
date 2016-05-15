@@ -1,10 +1,7 @@
-'use strict';
-
-class ChromeService {
-    constructor() {
-        // console.log("ChromeService created");
-    }
-    static getBookmarks() {
+let ChromeService = (function() {
+    'use strict';
+    
+    function getBookmarks() {
         // console.log("Getting bookmarks");
         
         chrome.promise = new ChromePromise();
@@ -34,7 +31,7 @@ class ChromeService {
         return deferred.promise;
     }
     
-    static getApps() {
+    function getApps() {
         // console.log('Getting apps');
         
         chrome.promise = new ChromePromise();
@@ -64,7 +61,7 @@ class ChromeService {
         return deferred.promise;
     }
     
-    static getFrequents() {
+    function getFrequents() {
         chrome.promise = new ChromePromise();
         var deferred = Promise.defer();
 
@@ -77,7 +74,7 @@ class ChromeService {
         return deferred.promise;
     }
     
-    static getRecentlyAdded() {
+    function getRecentlyAdded() {
         chrome.promise = new ChromePromise();
         var deferred = Promise.defer();
 
@@ -90,7 +87,7 @@ class ChromeService {
         return deferred.promise;
     };
 
-    static getRecentlyClosed() {
+    function getRecentlyClosed() {
         chrome.promise = new ChromePromise();
         var deferred = Promise.defer();
 
@@ -103,7 +100,7 @@ class ChromeService {
         return deferred.promise;
     }
 
-    static getDevices() {
+    function getDevices() {
         chrome.promise = new ChromePromise();
         var deferred = Promise.defer();
 
@@ -130,21 +127,34 @@ class ChromeService {
         return deferred.promise;
     }
     
-    static moveBookmark(bookmark, folder, index) {
+    function moveBookmark(bookmark, folder, index) {
         // console.log("Moving bookmark\nid: " + bookmark + "\nparentId: " + folder + "\nindex: " + index);
         chrome.bookmarks.move(bookmark, {parentId: folder, index: index});
     }
     
-    static updateTab(url) {
+    function updateTab(url) {
         chrome.tabs.update({url: url});
     }
     
-    static openNewTab(url) {
+    function openNewTab(url) {
         chrome.tabs.create({url: url});
     }
     
-    static openApp(id) {
+    function openApp(id) {
         chrome.management.launchApp(id);
     }
 
-}
+    return ({
+        getBookmarks: getBookmarks,
+        getApps: getApps,
+        getFrequents: getFrequents,
+        getRecentlyAdded: getRecentlyAdded,
+        getRecentlyClosed: getRecentlyClosed,
+        getDevices: getDevices,
+        moveBookmark: moveBookmark,
+        updateTab: updateTab,
+        openNewTab: openNewTab,
+        openApp: openApp
+    });
+
+})();

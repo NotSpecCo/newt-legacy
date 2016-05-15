@@ -1,8 +1,11 @@
-'use strict';
-
 (function() {
+    'use strict';
+    
     let template = `
         <style>
+            :host {
+                display: block;
+            }
             .card {
                 display: flex;
                 flex-direction: column;
@@ -13,6 +16,7 @@
                 border-radius: 5px;
                 overflow: hidden;
                 min-height: 375px;
+                max-height: 90vh;
                 max-width: 800px;
             }
 
@@ -40,7 +44,7 @@
         <div class="card">
             <div class="card-title"></div>
             <div class="items-container">
-                
+                <content></content>
             </div>
         </div>
     `;

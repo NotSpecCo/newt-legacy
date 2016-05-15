@@ -1,13 +1,16 @@
-'use strict';
-
 (function() {
+    'use strict';
+    
     let template = `
         <style>
+            :host {
+                display: block;
+            }
             .row {
                 padding: 7px 10px;
             }
             .row:hover {
-                background-color: #eaeaea;
+                background-color: #E3F2FD;
             }
             
             .drag {
@@ -15,8 +18,12 @@
             }
             
             .over {
-                border-top: 2px solid #aaa;
-                padding: 5px 10px 7px 10px;
+                border-bottom: 2px solid #aaa;
+                padding: 7px 10px 5px 10px;
+            }
+            
+            .highlight {
+                background-color: #E3F2FD;
             }
             
             .icon {
@@ -92,24 +99,24 @@
                 this.classList.remove('over');
 
                 let fromRow = this.ownerDocument.getElementById(ev.dataTransfer.getData('divid'));
-                let toRow = this.parentNode.host;
+				let toRow = this.parentNode.host;
                 let card = this.parentNode.host.parentNode;
                 
                 let index;
                 for (let i=0; i<card.children.length; i++) {
                     if (toRow.id == card.children[i].id) {
-                        index = i;
+                        index = i + 1;
                     }
                 }
 
-                card.insertBefore(fromRow, toRow);
+                card.insertBefore(fromRow, toRow.nextSibling);
                 
                 ChromeService.moveBookmark(fromRow.data.id, card.data.id, index);
             });
             
             this.addEventListener('click', function() {
                 ChromeService.updateTab(this.data.url);
-            })
+            });
         }
         
         attributeChanged(attrName, oldVal, newVal) {
@@ -117,6 +124,9 @@
             switch (attrName) {
                 case 'data':
                     this.updateInfo();
+                    break;
+                case 'highlight':
+                    this.updateHighlight();
                     break;
             }
         }
@@ -150,9 +160,26 @@
             this.updateInfo();
         }
         
+        get highlight() {
+            return JSON.parse(this.getAttribute('highlight'));
+        }
+        
+        set highlight(val) {
+            this.setAttribute('highlight', JSON.stringify(val));
+            this.updateHighlight();
+        }
+        
         updateInfo() {
             this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.data.url + '")';
             this.$title.textContent = this.data.title;
+        }
+        
+        updateHighlight() {
+            if (this.highlight === true) {
+                this.$row.classList.add('highlight');
+            } else {
+                this.$row.classList.remove('highlight');
+            }
         }
     }
     

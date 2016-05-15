@@ -18,7 +18,9 @@ body {
     color: #e36026;
 }
 
-.main-content /deep/ .row:hover {
+.main-content /deep/ .row:hover,
+.main-content /deep/ .row.highlight,
+.main-content /deep/ #btnLaunch.highlight {
     background-color: #2d241f;
 }
 

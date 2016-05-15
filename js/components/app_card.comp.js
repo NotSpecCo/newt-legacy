@@ -1,8 +1,11 @@
-'use strict';
-
 (function() {
+    'use strict';
+    
     let template = `
         <style>
+            :host {
+                display: inline-block;
+            }
             .card {
                 // width: calc(100% / 3 - 40px);
                 display: flex;
@@ -73,6 +76,10 @@
                 cursor: pointer;
                 text-align: center;
             }
+            
+            .highlight {
+                background-color: #E3F2FD;
+            }
 
             .actions > *:active {
                 background-color: #B3E5FC;
@@ -127,13 +134,32 @@
         set data(val) {
             this.setAttribute('data', JSON.stringify(val));
             
-            this.$icon.src = val.icons[val.icons.length-1].url;
+            let icon = val.icons ? val.icons[val.icons.length-1].url : 'assets/icons/apps-dark.png';
+            this.$icon.src = icon;
+            
             this.$title.textContent = val.name;
             this.$description.textContent = val.description;
             
             if (!val.enabled) {
                 this.$card.style.opacity = .4;
                 this.$disabled.style.display = 'block';
+            }
+        }
+        
+        get highlight() {
+            return JSON.parse(this.getAttribute('highlight'));
+        }
+        
+        set highlight(val) {
+            this.setAttribute('highlight', JSON.stringify(val));
+            this.updateHighlight();
+        }
+        
+        updateHighlight() {
+            if (this.highlight === true) {
+                this.$btnLaunch.classList.add('highlight');
+            } else {
+                this.$btnLaunch.classList.remove('highlight');
             }
         }
 

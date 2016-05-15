@@ -1,6 +1,6 @@
-'use strict';
-
 (function() {
+    'use strict';
+    
     let template = `
         <style>
             font-size: 16px;

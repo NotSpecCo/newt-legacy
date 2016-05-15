@@ -1,63 +1,65 @@
-/* global ChromeService */
-"use strict";
+let AppPrefs = {};
 
-class App {
-    constructor() {
-        // console.log('Newt class created');
+var Newt = (function() {
+    'use strict';
+    
+    let CardMap = {};
+    
+    let MainContent = document.querySelector('.main-content');
+    let MenuBar = document.querySelector('.menu-bar');
+    
+    function init() {
+        getAppPrefs();
+        
+        window.addEventListener('storage', AppPrefsChanged);
+        window.addEventListener('keydown', handleKeyPress, false);
+        
+        MainContent = document.querySelector('.main-content');
+        MenuBar = document.querySelector('.menu-bar');
+        
+        changeTab('bookmarks');
     }
     
-    init() {
-        // console.log('Initial set up...');
-        
-        // Set up our app preferences
-        this.getPrefs();
-        window.addEventListener('storage', this.prefsChanged.bind(this));
-        
-        this.$mainContent = document.querySelector('.main-content');
-        this.$menuBar = document.querySelector('.menu-bar');
-        
-        this.changeTab('bookmarks');
-    }
-    
-    getPrefs() {
-        this.prefs = {
-            theme: localStorage.getItem('theme') || 'light'
+    function getAppPrefs() {
+        AppPrefs = {
+            theme: localStorage.getItem('theme') || 'light',
+            keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled'
         };
-        // console.log('Prefs', this.prefs);
+        // console.log('AppPrefs', AppPrefs);
         
-        this.changeTheme();
+        changeTheme();
     }
     
-    updatePref(key, val) {
-        let oldVal = this.prefs[key];
-        this.prefs[key] = val;
+    function updatePref(key, val) {
+        let oldVal = AppPrefs[key];
+        AppPrefs[key] = val;
         
         localStorage.setItem(key, val);
         
         if (oldVal != val) {
             switch (key) {
                 case 'theme':
-                    this.changeTheme();
+                    changeTheme();
                     break;
             }
         }
     }
     
-    prefsChanged(e) {
-        // console.log('prefsChanged', e);
+    function AppPrefsChanged(e) {
+        // console.log('AppPrefsChanged', e);
         
-        this.prefs[e.key] = e.newValue;
+        AppPrefs[e.key] = e.newValue;
         
         if (e.key == 'theme' && e.oldValue != e.newValue) {
-            this.changeTheme();
+            changeTheme();
         }
     }
     
-    changeTheme() {
-        let theme = 'theme-' + this.prefs.theme;
+    function changeTheme() {
+        let theme = 'theme-' + AppPrefs.theme;
 		let head = document.getElementsByTagName("head")[0];
         
-        console.log('Applying theme ' + theme);
+        //console.log('Applying theme ' + theme);
 
 		// Remove any other theme stylesheets
 		let themeList = ["theme-light", "theme-dark", "theme-espresso", "theme-custom"];
@@ -88,7 +90,7 @@ class App {
 		}
     }
     
-    createBookmarkCards(cards) {
+    function createBookmarkCards(cards) {
         // console.log('Creating bookmark cards...');
         
         let self = this;
@@ -96,11 +98,11 @@ class App {
             // console.log(cards);
 
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
         
             if (cards.length == 0) {
                 // The user doesn't have any cards set up yet, so display a welcome message
-                self.$mainContent.innerHTML = `
+                MainContent.innerHTML = `
                     <div class="welcome-card" ng-show="showWelcomeCard">
                         <h1>Hi</h1>
                         <p>
@@ -137,18 +139,13 @@ class App {
                     ele.appendChild(row);
                 }
                 
-                self.$mainContent.appendChild(ele);
+                MainContent.appendChild(ele);
             }
         });
     }
     
-    createAppCards() {
-        // console.log('Creating app cards...');
-        
-        let self = this;
-        
+    function createAppCards() {
         ChromeService.getApps().then(function(apps) {
-            // console.log(apps);
             
             // TODO: More efficient way of sorting this
             let enabled = [];
@@ -165,82 +162,85 @@ class App {
             apps = enabled.concat(disabled);
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
             for (var app of apps) {                
                 let ele = document.createElement('app-card');
                 ele.className = 'card-container';
                 ele.data = app;
                 
-                self.$mainContent.appendChild(ele);
+                MainContent.appendChild(ele);
             }
-        })
+        });
     }
     
-    createFrequentsCard() {
-        // console.log('Creating frequents card...');
-        
-        let self = this;
-        
+    function createFrequentsCard() {
         ChromeService.getFrequents().then(function(sites) {
-            // console.log(sites);
             let ele = document.createElement('list-card');
             ele.title = 'Frequents';
-            ele.sites = sites;
+            
+            for (var i=0; i<sites.length; i++) {
+                let row = document.createElement('list-card-row');
+                row.title = sites[i].title;
+                row.url = sites[i].url;
+
+                ele.appendChild(row);
+            }
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
-            self.$mainContent.appendChild(ele);
-        })
+            MainContent.appendChild(ele);
+        });
     }
     
-    createRecentlyAddedCard() {
-        // console.log('Creating recently added card...');
-        
-        let self = this;
-        
+    function createRecentlyAddedCard() {
         ChromeService.getRecentlyAdded().then(function(sites) {
-            // console.log(sites);
             let ele = document.createElement('list-card');
             ele.title = 'Recently Added';
-            ele.sites = sites;
+            
+            for (var i=0; i<sites.length; i++) {
+                let row = document.createElement('list-card-row');
+                row.title = sites[i].title;
+                row.url = sites[i].url;
+
+                ele.appendChild(row);
+            }
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
-            self.$mainContent.appendChild(ele);
-        })
+            MainContent.appendChild(ele);
+        });
     }
     
-    createRecentlyClosedCard() {
-        // console.log('Creating recently closed card...');
-        
-        let self = this;
-        
+    function createRecentlyClosedCard() {
         ChromeService.getRecentlyClosed().then(function(sites) {
-            // console.log(sites);
             let ele = document.createElement('list-card');
             ele.title = 'Recently Closed';
-            ele.sites = sites;
+            
+            for (var i=0; i<sites.length; i++) {
+                if (sites[i].tab) {
+                    let row = document.createElement('list-card-row');
+                    row.title = sites[i].tab.title;
+                    row.url = sites[i].tab.url;
+
+                    ele.appendChild(row);
+                }
+            }
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
-            self.$mainContent.appendChild(ele);
-        })
+            MainContent.appendChild(ele);
+        });
     }
     
-    createDeviceCards() {
-        // console.log('Creating devices cards...');
-        
-        let self = this;
-        
+    function createDeviceCards() {
         ChromeService.getDevices().then(function(devices) {
-            // console.log(devices);
             
             // Clear out the main content div
-            self.removeAllChildNodes(self.$mainContent);
+            removeAllChildNodes(MainContent);
             
             for (var device of devices) {                
                 let card = document.createElement('small-card');
@@ -254,26 +254,42 @@ class App {
                     card.appendChild(row);
                 }
                 
-                self.$mainContent.appendChild(card);
+                MainContent.appendChild(card);
             }
-        })
+        });
     }
     
-    createSettingsMenu() {
+    function createSettingsMenu() {
         // console.log('Creating settings menu...');
         
         // Clear out the main content div
-        this.removeAllChildNodes(this.$mainContent);
+        removeAllChildNodes(MainContent);
         
         let card = document.createElement('settings-card');
-        this.$mainContent.appendChild(card);
+        MainContent.appendChild(card);
     }
     
-    changeTab(tab) {
+    function changeTab(tab, direction) {
         // console.log('changeTab', tab);
 
         // Set the style for the new active tab
-        let buttons = this.$menuBar.querySelectorAll('menu-item');
+        let buttons = MenuBar.querySelectorAll('menu-item');
+        
+        if (direction) {
+            let currentIndex;
+            for (let i=0; i<buttons.length; i++) {
+                if (buttons[i].selected) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            if (direction === 'next') {
+                tab = currentIndex + 1 > buttons.length - 2 ? buttons[0].action : buttons[currentIndex + 1].action;
+            } else {
+                tab = currentIndex - 1 < 0 ? buttons[buttons.length - 2].action : buttons[currentIndex - 1].action;
+            }
+        }
         
         for (let i=0; i<buttons.length; i++) {
             if (buttons[i].action != 'settings') {
@@ -288,39 +304,216 @@ class App {
         // Load the tab's content into the main view
         switch (tab) {
             case 'bookmarks':
-                this.createBookmarkCards();
+                createBookmarkCards();
                 break;
             case 'apps':
-                this.createAppCards();
+                createAppCards();
                 break;
             case 'frequents':
-                this.createFrequentsCard();
+                createFrequentsCard();
                 break;
             case 'new':
-                this.createRecentlyAddedCard();
+                createRecentlyAddedCard();
                 break;
             case 'recents':
-                this.createRecentlyClosedCard();
+                createRecentlyClosedCard();
                 break;
             case 'devices':
-                this.createDeviceCards();
+                createDeviceCards();
                 break;
             case 'settings':
-                this.createSettingsMenu();
+                createSettingsMenu();
                 break;
         }
         
+        CardMap.currentTab = tab;
+        CardMap.tabChanged = true;
     }
     
-    removeAllChildNodes(node) {
+    function removeAllChildNodes(node) {
         while (node.lastChild) {
             node.removeChild(node.lastChild);
         }
     }
-}
+    
+    function handleKeyPress(ev) {
+        // console.log('keypress', ev);
+        
+        if (AppPrefs.keyboardShortcuts === 'disabled') {
+            return;
+        }
+        
+        switch (ev.code) {
+            case 'ArrowUp':
+            case 'ArrowDown':
+            case 'ArrowLeft':
+            case 'ArrowRight':
+                ev.preventDefault();
+                navigateCardMap(ev.code);
+                break;
+            case 'Enter':
+                if (CardMap.currentActive) {
+                    let item = CardMap.currentActive;
+                    
+                    if (CardMap.currentTab === 'apps') {
+                        if (item.row.data.appLaunchUrl) {
+                            ChromeService.updateTab(item.row.data.appLaunchUrl);
+                        } else {
+                            ChromeService.openApp(item.row.data.id);
+                        }
+                    } else {
+                        let url = item.row.url || item.row.data.url;
+                        ChromeService.updateTab(url);
+                    }
+                }
+                break;
+            case 'Escape':
+                if (CardMap.currentActive) {
+                    CardMap.currentActive.row.highlight = false;
+                    CardMap.currentActive = null;
+                }
+        }
+    }
+    
+    function navigateCardMap(key) {
+        if (CardMap.tabChanged) {
+            let cardType;
+            let tab = CardMap.currentTab;
+            switch (tab) {
+                case 'bookmarks':
+                case 'devices':
+                    cardType = 'small-card';
+                    break;
+                case 'frequents':
+                case 'new':
+                case 'recents':
+                    cardType = 'list-card';
+                    break;
+                case 'apps':
+                    cardType = 'app-card';
+                    break;
+            }
+            CardMap = generateCardMap(cardType);
+            CardMap.currentTab = tab;
+            // console.log('Generated CardMap:', CardMap);
+        }
+        
+        if (CardMap.currentActive === null) {
+            switch (key) {
+                case 'ArrowUp':
+                    changeTab(null, 'previous');
+                    break;
+                case 'ArrowDown':
+                    changeTab(null, 'next');
+                    break;
+                case 'ArrowRight':
+                    CardMap.currentActive = {
+                        row: CardMap.data[0][0],
+                        indexX: 0,
+                        indexY: 0
+                    }
+                    CardMap.currentActive.row.highlight = true;
+            }
+            
+           
+        } else {
+            CardMap.currentActive.row.highlight = false;
+            
+            let a = CardMap.currentActive;
+            let data = CardMap.data;
+            
+            switch (key) {
+                case 'ArrowUp':
+                    a.indexY = a.indexY === 0 ? data[a.indexX].length - 1 : (a.indexY - 1);
+                    break;
+                case 'ArrowDown':
+                    a.indexY = a.indexY === data[a.indexX].length - 1 ? 0 : (a.indexY + 1);
+                    break;
+                case 'ArrowLeft':
+                    if (a.indexX === 0) {
+                        a = null;
+                        CardMap.currentActive = null;
+                        
+                    } else {
+                        a.indexX--;
+                        
+                        let highestIndex = data[a.indexX].length - 1;
+                        a.indexY = a.indexY <= highestIndex ? a.indexY : highestIndex;
+                    }
+                    break;
+                case 'ArrowRight':
+                    let lastX = data.length - 1;
+                    if (a.indexX < lastX) {
+                        a.indexX++;
+                        
+                        let highestIndex = data[a.indexX].length - 1;
+                        a.indexY = a.indexY <= highestIndex ? a.indexY : highestIndex;
+                    }
+                    break;
+            }
 
-let Newt = new App();
+            if (a) {
+                a.row = data[a.indexX][a.indexY];
+                a.row.highlight = true;
+            }
+        }
 
-window.addEventListener("load", function() {
-    Newt.init();  
-}, false);
+        if (CardMap.currentActive) {
+            // We need to make sure the card and row are both in full view
+            if (CardMap.currentTab === 'apps') {
+                let main = CardMap.currentActive.row.parentNode;
+                let card = CardMap.currentActive.row;
+                
+                main.scrollTop = card.offsetTop + card.clientHeight - main.clientHeight;
+            } else if (CardMap.currentTab === 'bookmarks' || CardMap.currentTab === 'devices') {
+                let main = CardMap.currentActive.row.parentNode.parentNode;
+                let card = CardMap.currentActive.row.parentNode;
+                let container = CardMap.currentActive.row.parentNode.$container;
+                let row = CardMap.currentActive.row;
+                
+                main.scrollTop = card.offsetTop + card.clientHeight - main.clientHeight;
+                
+                if (row.offsetTop > container.clientHeight) {
+                    container.scrollTop = row.offsetTop - card.offsetTop - container.clientHeight;
+                } else {
+                    container.scrollTop = 0;
+                }
+            } else {
+                let container = CardMap.currentActive.row.parentNode.$container;
+                let row = CardMap.currentActive.row;
+                
+                if (row.offsetTop > container.clientHeight) {
+                    container.scrollTop = row.offsetTop - container.clientHeight;
+                } else {
+                    container.scrollTop = 0;
+                }
+            }
+        }
+    }
+    
+    function generateCardMap(cardType) {
+        let map = {
+            data: [],
+            currentActive: null,
+            currentTab: null,
+            tabChanged: false
+        };
+        
+        let cards = document.querySelectorAll(cardType);
+         
+        for (let i=0; i<cards.length; i++) {
+            let data = cardType === 'app-card' ? [cards[i]] : cards[i].children;
+            map.data.push(data);
+        }
+        
+        return map;
+    }
+    
+    return({
+        init: init,
+        changeTab: changeTab,
+        updatePref: updatePref
+    })
+})();
+
+Newt.init();

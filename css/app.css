@@ -77,11 +77,8 @@ body {
 .main-content {
 	margin-left: 58px;
 	padding: 7px;
-    height: 100%;
-}
-
-.card-container {
-    float: left;
+    height: 100vh;
+	overflow: scroll;
 }
 
 @media (max-width: 500px) {
