@@ -31,8 +31,8 @@
             .devices {
                 background-image: urL("../assets/icons/devices-light.png");
             }
-            .settings {
-                background-image: urL("../assets/icons/settings-light.png");
+            .menu {
+                background-image: urL("../assets/icons/overflow-light.png");
                 margin-bottom: 0px;
                 opacity: 1;
             }

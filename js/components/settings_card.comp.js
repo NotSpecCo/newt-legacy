@@ -6,11 +6,11 @@
             .card {
                 display: flex;
                 flex-direction: column;
-                background-color: #fff;
+                background-color: var(--background-color);
                 margin: 10px auto;
                 padding: 10px;
                 vertical-align: top;
-                box-shadow: 0px 2px 3px #aaa;
+                box-shadow: 0px 2px 3px var(--shadow-color);
                 border-radius: 5px;
                 overflow: hidden;
                 min-height: 375px;
@@ -20,19 +20,16 @@
             .card-title {
                 font-size: 22px;
                 font-weight: 400;
-                color: #03A9F4;
-                // padding: 10px 10px 5px 10px;
+                color: var(--accent-color);
                 margin-bottom: 5px;
                 overflow: ellipses;
                 text-overflow: ellipses;
-                /*text-align: center;*/
                 white-space: nowrap;
-                /*background-color: #29B6F6;*/
             }
             
             .settings-row {
                 padding: 10px 10px;
-                border-bottom: 1px solid #eaeaea;
+                border-bottom: 1px solid var(--divider-color);
             }
             
             .settings-row .main {

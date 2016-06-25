@@ -12,7 +12,7 @@
                 flex-direction: column;
                 background-color: var(--background-color);
                 padding: 10px;
-                box-shadow: 0px 2px 3px #aaa;
+                box-shadow: 0px 2px 3px var(--shadow-color);
                 border-radius: 5px;
                 height: 200px;
                 width: 300px;
@@ -36,6 +36,8 @@
             #inpName {
                 border: none;
                 border-bottom: 1px solid var(--divider-color);
+                background-color: rgba(0,0,0,0);
+                color: inherit;
                 margin: 15px 0;
                 padding: 7px 0;
                 flex: 1;

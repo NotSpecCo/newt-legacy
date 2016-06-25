@@ -15,7 +15,7 @@ var Newt = (function() {
         window.addEventListener('keydown', handleKeyPress, false);
         document.querySelector('#scrim').addEventListener('click', () => closeAllPopups() );
         document.querySelector('#btnAddCard').addEventListener('click',() => { hideMenu(); showAddCardPrompt(); });
-        document.querySelector('#btnAbout').addEventListener('click', () => { hideMenu(); changeTab('about')(); });
+        // document.querySelector('#btnAbout').addEventListener('click', () => { hideMenu(); changeTab('about')(); });
         document.querySelector('#btnSettings').addEventListener('click', () => { hideMenu(); changeTab('settings'); });
         console.log('this', this);
 

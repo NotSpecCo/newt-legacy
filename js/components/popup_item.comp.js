@@ -2,33 +2,43 @@
     'use strict';
     
     let template = `
-        <style>
-            font-size: 16px;
-            padding: 15px 10px 15px 39px;
-            border: 1px solid #aaa;
-            background-size: 24px;
-            background-position: 10px center;
-            background-repeat: no-repeat;
-            background-image: url('../assets/icons/about-dark.png');
-        </style>
-        
-        <div class="popup-menu-item">
-            <content></content>
-        </div>
+        <i class="material-icons md-24 md-dark">info_outline</i>
+        <slot></slot>
     `;
     
     class PopupMenuItem extends HTMLElement {
         createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+            // this.createShadowRoot().innerHTML = template;
             
-            this.$item = this.shadowRoot.querySelector('.popup-menu-item');
+            // this.$icon = this.shadowRoot.querySelector('#icon');
+
+            this.innerHTML = template;
+            
+            this.$icon = this.querySelector('.material-icons');
+            this.$icon.innerHTML = this.icon;
             this.addEventListener('click', this.clicked);
         }
         
         clicked(ev) {
             Newt.changeTab(this.action);
         }
+
+        get action() {
+            return this.getAttribute('action');
+        }
+        
+        set action(val) {
+            this.setAttribute('action', val);
+        }
+
+        get icon() {
+            return this.getAttribute('icon');
+        }
+        
+        set icon(val) {
+            this.setAttribute('icon', val);
+        }
     }
-    
+
     document.registerElement('popup-menu-item', PopupMenuItem);
 })();

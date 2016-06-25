@@ -1,29 +1,12 @@
-body {
-	background: #222;
-	color: #ccc;
-}
-
-.menu-bar {
-    background: #111;
-	color: #c5c5c5;
-}
-
-.main-content /deep/ .card {
-    background-color: #333;
-	color: #ddd;
-	box-shadow: 0px 2px 3px #111;
-}
-
-.main-content /deep/ .card-title {
-    color: #fff;
-}
-
-.main-content /deep/ .row:hover,
-.main-content /deep/ .row.highlight,
-.main-content /deep/ #btnLaunch.highlight {
-    background-color: #2a2a2a;
-}
-
-settings-card /deep/ .settings-row {
-    border-bottom: 1px solid #444;
+:root {
+	--main-background-color: #222;
+	--background-color: #333;
+	--main-color: #111;
+	--accent-color: #fff;
+	--highlight-color: #2a2a2a;
+	--text-color: #ccc;
+	--shadow-color: #111;
+	--divider-color: rgba(255,255,255,.1);
+	--sidebar-icon-color: rgba(255, 255, 255, 1);
+	--popup-icon-color: rgba(255, 255, 255, .8);
 }
