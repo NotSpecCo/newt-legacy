@@ -13,7 +13,12 @@ var Newt = (function() {
         
         window.addEventListener('storage', AppPrefsChanged);
         window.addEventListener('keydown', handleKeyPress, false);
-        
+        document.querySelector('#scrim').addEventListener('click', () => closeAllPopups() );
+        document.querySelector('#btnAddCard').addEventListener('click',() => { hideMenu(); showAddCardPrompt(); });
+        document.querySelector('#btnAbout').addEventListener('click', () => { hideMenu(); changeTab('about')(); });
+        document.querySelector('#btnSettings').addEventListener('click', () => { hideMenu(); changeTab('settings'); });
+        console.log('this', this);
+
         MainContent = document.querySelector('.main-content');
         MenuBar = document.querySelector('.menu-bar');
         
@@ -259,7 +264,7 @@ var Newt = (function() {
         });
     }
     
-    function createSettingsMenu() {
+    function createSettingsCard() {
         // console.log('Creating settings menu...');
         
         // Clear out the main content div
@@ -268,9 +273,18 @@ var Newt = (function() {
         let card = document.createElement('settings-card');
         MainContent.appendChild(card);
     }
+
+    function createAboutCard() {
+
+    }
     
     function changeTab(tab, direction) {
-        // console.log('changeTab', tab);
+        if (tab == 'menu') {
+            toggleMenu();
+            return;
+        }
+
+        console.log('changeTab', tab);
 
         // Set the style for the new active tab
         let buttons = MenuBar.querySelectorAll('menu-item');
@@ -292,7 +306,7 @@ var Newt = (function() {
         }
         
         for (let i=0; i<buttons.length; i++) {
-            if (buttons[i].action != 'settings') {
+            if (buttons[i].action != 'menu') {
                 if (buttons[i].action == tab) {
                     buttons[i].selected = true;
                 } else {
@@ -321,9 +335,14 @@ var Newt = (function() {
             case 'devices':
                 createDeviceCards();
                 break;
-            case 'settings':
-                createSettingsMenu();
+            case 'menu':
+                toggleMenu();
                 break;
+            case 'settings':
+                createSettingsCard();
+                break;
+            case 'about':
+                createAboutCard();
         }
         
         CardMap.currentTab = tab;
@@ -334,6 +353,27 @@ var Newt = (function() {
         while (node.lastChild) {
             node.removeChild(node.lastChild);
         }
+    }
+
+    function closeAllPopups() {
+        hideMenu();
+        hideAddCardPrompt();
+    }
+
+    function toggleMenu() {
+        if (document.querySelector('#menu').style.display == 'block') {
+            document.querySelector('#menu').style.display = 'none';
+            document.querySelector('#scrim').style.display = 'none';
+        } else {
+            
+            document.querySelector('#menu').style.display = 'block';
+            document.querySelector('#scrim').style.display = 'block';
+        }
+    }
+
+    function hideMenu() {
+        document.querySelector('#menu').style.display = 'none';
+        document.querySelector('#scrim').style.display = 'none';
     }
     
     function handleKeyPress(ev) {
@@ -508,11 +548,55 @@ var Newt = (function() {
         
         return map;
     }
+
+    function showAddCardPrompt() {
+        var prompt = document.createElement('prompt-box');
+        prompt.id = 'newCardPrompt';
+
+        document.body.appendChild(prompt);
+        document.querySelector('#scrim').style.display = 'block';
+    }
+
+    function hideAddCardPrompt() {
+        if (document.querySelector('#newCardPrompt')) {
+            document.querySelector('#newCardPrompt').remove();
+        }
+        document.querySelector('#scrim').style.display = 'none';
+    }
+
+    function createNewCard(name) {
+        hideAddCardPrompt();
+        ChromeService.createFolder(name).then(function(card) {
+
+            let ele = document.createElement('small-card');
+            ele.className = 'card-container';
+            ele.data = {
+                title: card.title,
+                id: card.id,
+                parentId: card.parentId,
+                index: card.index
+            };
+            
+            MainContent.appendChild(ele);
+        });
+    }
+
+    function openAbout() {
+
+    }
+
+    function openSettings() {
+        this.createSettingsCard();
+    }
     
     return({
         init: init,
         changeTab: changeTab,
-        updatePref: updatePref
+        updatePref: updatePref,
+        toggleMenu: toggleMenu,
+        hideMenu: hideMenu,
+        hideAddCardPrompt: hideAddCardPrompt,
+        createNewCard: createNewCard
     })
 })();
 

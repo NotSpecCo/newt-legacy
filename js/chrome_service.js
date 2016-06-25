@@ -1,6 +1,8 @@
 let ChromeService = (function() {
     'use strict';
     
+    let NewtFolderID = null;
+
     function getBookmarks() {
         // console.log("Getting bookmarks");
         
@@ -9,6 +11,7 @@ let ChromeService = (function() {
 
         chrome.promise.bookmarks.search("NewtData").then(function(res) {
             if (res.length > 0) {
+                NewtFolderID = res[0].id;
                 return chrome.promise.bookmarks.getSubTree(res[0].id);
             } else {
                 var folder = {
@@ -131,6 +134,19 @@ let ChromeService = (function() {
         // console.log("Moving bookmark\nid: " + bookmark + "\nparentId: " + folder + "\nindex: " + index);
         chrome.bookmarks.move(bookmark, {parentId: folder, index: index});
     }
+
+    function createFolder(name) {
+        console.log('Newt', NewtFolderID);
+
+        chrome.promise = new ChromePromise();
+        var deferred = Promise.defer();
+
+        chrome.promise.bookmarks.create({parentId: NewtFolderID, title: name}).then(function(res) {
+            deferred.resolve(res);
+        });
+
+        return deferred.promise;
+    }
     
     function updateTab(url) {
         chrome.tabs.update({url: url});
@@ -152,6 +168,7 @@ let ChromeService = (function() {
         getRecentlyClosed: getRecentlyClosed,
         getDevices: getDevices,
         moveBookmark: moveBookmark,
+        createFolder: createFolder,
         updateTab: updateTab,
         openNewTab: openNewTab,
         openApp: openApp
