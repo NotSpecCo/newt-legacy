@@ -5,8 +5,8 @@
 	"short_name": "Newt",
 	"author": "Garrett Downs",
 	"description": "A replacement for Google Chrome's 'new tab' page that lets you easily access your favorite bookmarks, apps, and more.",
-	"version": "5.2.5",
-	"version_name": "5.2.5",
+	"version": "5.3.0",
+	"version_name": "5.3.0",
 	"icons": {
 		"256": "assets/icon-256.png",
 		"128": "assets/icon-128.png",
@@ -19,6 +19,7 @@
 	"chrome_url_overrides" : {
 		"newtab": "index.html"
 	},
+	"options_page": "options_page/options.html",
 	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
 	"background": {
 		"scripts": ["node_modules/chrome-promise/chrome-promise.js", "js/background.js"]
