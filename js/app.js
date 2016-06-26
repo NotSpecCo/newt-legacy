@@ -5,6 +5,8 @@ var Newt = (function() {
     
     let CardMap = {};
     let CurrentlyActiveTab = null;
+    let EditingTheme = false;
+    let EditingThemeID = null;
     
     let MainContent = document.querySelector('.main-content');
     let MenuBar = document.querySelector('.menu-bar');
@@ -24,8 +26,6 @@ var Newt = (function() {
         // Theme Builder
         document.querySelector('#btnSaveTheme').addEventListener('click', saveCustomTheme);
         document.querySelector('#btnCancelTheme').addEventListener('click', cancelCustomTheme);
-
-        console.log('this', this);
 
         MainContent = document.querySelector('.main-content');
         MenuBar = document.querySelector('.menu-bar');
@@ -103,7 +103,7 @@ var Newt = (function() {
     function updatePref(key, val) {
         let oldVal = AppPrefs[key];
         AppPrefs[key] = val;
-        console.log('updatePref', key, val);
+        // console.log('updatePref', key, val);
         localStorage.setItem(key, val);
         
         if (oldVal != val) {
@@ -402,13 +402,30 @@ var Newt = (function() {
         CardMap.tabChanged = true;
     }
     
-    function openThemeBuilder() {
+    function openThemeBuilder(editing, themeID) {
         document.querySelector('.theme-builder').style.display = 'flex';
-        changeTheme('light');
+
+        let styles = [];
+
+        if (editing && typeof editing == 'boolean') {
+            EditingTheme = true;
+            EditingThemeID = themeID;
+
+            let theme = AppPrefs.customThemes.find(function(x) { return x.id == themeID});
+
+            styles = theme.styles;
+            document.querySelector('#inpThemeName').value = theme.name;
+            changeTheme(themeID);
+        } else {
+            styles = AppPrefs.baseThemes[0].styles;
+            changeTheme('light');
+        }
+        
 
         let ThemeSettings = document.querySelector('.theme-settings');
-        removeAllChildNodes(ThemeSettings)
-        AppPrefs.baseThemes[0].styles.forEach(function(style) {
+        removeAllChildNodes(ThemeSettings);
+
+        styles.forEach(function(style) {
             let row = document.createElement('color-row');
             row.colorID = style.name;
             row.color = style.val;
@@ -422,7 +439,7 @@ var Newt = (function() {
     }
 
     function saveCustomTheme() {
-        console.log('AppPrefs', AppPrefs);
+        // console.log('AppPrefs', AppPrefs);
 
         let abortSave = false;
 
@@ -455,19 +472,29 @@ var Newt = (function() {
         }
         
         if (!abortSave) {
-            AppPrefs.customThemes.push({
-                name: themeName,
-                id: themeID,
-                styles: styles
-            });
+            if (EditingTheme) {
+                let index = AppPrefs.customThemes.findIndex(function(x){return x.id == EditingThemeID});
+
+                AppPrefs.customThemes[index].name = themeName;
+                AppPrefs.customThemes[index].styles = styles;
+            } else {
+                AppPrefs.customThemes.push({
+                    name: themeName,
+                    id: themeID,
+                    styles: styles
+                });
+                AppPrefs.theme = themeID;
+            }
+            
 
             localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
-            console.log('AppPrefs.customThemes', AppPrefs.customThemes);
+            // console.log('AppPrefs.customThemes', AppPrefs.customThemes);
 
-            AppPrefs.theme = themeID;
             changeTheme();
 
             document.querySelector('#inpThemeName').value = '';
+            EditingTheme = false;
+            EditingThemeID = null;
 
             if (document.querySelector('settings-card') != null) {
                 document.querySelector('settings-card').refreshThemes();
@@ -481,6 +508,9 @@ var Newt = (function() {
 
     function cancelCustomTheme() {
         document.querySelector('#inpThemeName').value = '';
+        EditingTheme = false;
+        EditingThemeID = null;
+
         changeTheme();
         closeThemeBuilder();
     }
@@ -528,7 +558,7 @@ var Newt = (function() {
     }
     
     function handleKeyPress(ev) {
-        console.log('keypress', ev);
+        // console.log('keypress', ev);
         
         if (AppPrefs.keyboardShortcuts === 'disabled') {
             return;
