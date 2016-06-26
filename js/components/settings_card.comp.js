@@ -159,6 +159,8 @@
             });
 
             this.$prefTheme.value = AppPrefs.theme;
+
+            Newt.updatePref('theme', AppPrefs.theme);
         }
 
     }
