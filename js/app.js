@@ -4,6 +4,7 @@ var Newt = (function() {
     'use strict';
     
     let CardMap = {};
+    let CurrentlyActiveTab = null;
     
     let MainContent = document.querySelector('.main-content');
     let MenuBar = document.querySelector('.menu-bar');
@@ -324,6 +325,7 @@ var Newt = (function() {
         }
 
         // console.log('changeTab', tab);
+        CurrentlyActiveTab = tab;
 
         // Set the style for the new active tab
         let buttons = MenuBar.querySelectorAll('menu-item');
@@ -453,6 +455,8 @@ var Newt = (function() {
             AppPrefs.theme = themeID;
             changeTheme();
 
+            document.querySelector('#inpThemeName').value = '';
+
             if (document.querySelector('settings-card') != null) {
                 document.querySelector('settings-card').refreshThemes();
             }
@@ -464,13 +468,12 @@ var Newt = (function() {
     }
 
     function cancelCustomTheme() {
+        document.querySelector('#inpThemeName').value = '';
         changeTheme();
         closeThemeBuilder();
     }
 
     function deleteTheme(theme) {
-        console.log('deleteTheme', theme);
-
         var index = AppPrefs.customThemes.map(function(x){return x.id}).indexOf(theme);
         AppPrefs.customThemes.splice(index, 1);
 
@@ -713,7 +716,9 @@ var Newt = (function() {
                 index: card.index
             };
             
-            MainContent.appendChild(ele);
+            if (CurrentlyActiveTab == 'bookmarks') {
+                MainContent.appendChild(ele);
+            }
         });
     }
 
