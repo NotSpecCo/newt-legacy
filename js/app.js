@@ -95,7 +95,6 @@ var Newt = (function() {
             baseThemes: baseThemes,
             customThemes: customThemes
         };
-        // console.log('AppPrefs', AppPrefs);
         
         changeTheme(AppPrefs.theme);
     }
@@ -129,7 +128,6 @@ var Newt = (function() {
         let themeID = theme || AppPrefs.theme;
         let allThemes = AppPrefs.baseThemes.concat(AppPrefs.customThemes);
         let selectedTheme = allThemes.find(theme => {return theme.id == themeID});
-        console.log(themeID, allThemes, selectedTheme);
 
         selectedTheme.styles.forEach(function(style) {
             document.documentElement.style.setProperty('--' + style.name, style.val);
