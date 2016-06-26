@@ -100,8 +100,8 @@ var Newt = (function() {
                 ]
             },
             {
-                name: 'Earth',
-                id: 'earth',
+                name: 'Mocha',
+                id: 'mocha',
                 styles: [
                     {name: 'main-background-color', val: '#D7CCC8'},
                     {name: 'background-color', val: '#EFEBE9'},
@@ -161,6 +161,11 @@ var Newt = (function() {
         let themeID = theme || AppPrefs.theme;
         let allThemes = AppPrefs.baseThemes.concat(AppPrefs.customThemes);
         let selectedTheme = allThemes.find(theme => {return theme.id == themeID});
+
+        if (!selectedTheme) {
+            AppPrefs.theme = 'light';
+            selectedTheme = allThemes[0];
+        }
 
         selectedTheme.styles.forEach(function(style) {
             document.documentElement.style.setProperty('--' + style.name, style.val);
