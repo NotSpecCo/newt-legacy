@@ -154,10 +154,11 @@ var Newt = (function() {
                             It looks like your don't have any sites saved to Newt yet. That's alright, adding some is easy. There are two main ways of doing so.
                         </p>
                         <p>
+                        First, you're going to have to create some cards to add sites to. To do so, just click the overflow menu in the bottom left of your screen and then 'Add New Card'. Give it a name and it'll show up below. Now, to add a site, you have a couple options.
                         <h4>Method 1:</h4>
-                            Visit whichever site you want to add and right click anywhere on the page. You'll see an option to 'Add to Newt'. There's just one little problem... You need to create some cards first or you'll have nothing to add sites to! That conveniently brings us to...
+                            Visit whichever site you want to add and right click anywhere on the page. You'll see an option to 'Add to Newt'. Choose a card, confirm the title you want, and submit.
                         <h4>Method 2:</h4>
-                            Open up Chrome's Bookmarks Manager and look for the folder named 'NewtData'. That's where everything is stored. Each top level folder you make in here will display on this page as a card. Any bookmarks in these folders will display in their respective cards.
+                            Open up Chrome's Bookmarks Manager and look for the folder named 'NewtData' in Other Bookmarks. That's where everything is stored. Each top level folder you make in here will display on this page as a card. Any bookmarks in these folders will display in their respective cards.
                         </p>
                         <p>
                             After you've added some things, give this page a quick refresh.
@@ -166,7 +167,14 @@ var Newt = (function() {
                 `;
             }
             
-            for (var card of cards) {                
+            for (var card of cards) { 
+                // console.log('Card', card);
+
+                if (!card.children) {
+                    console.warn('Found malformed card: ', card);
+                    continue;
+                }
+
                 let ele = document.createElement('small-card');
                 ele.className = 'card-container';
                 ele.data = {
@@ -177,11 +185,15 @@ var Newt = (function() {
                 };
                 
                 for (var site of card.children) {
-                    let row = document.createElement('card-row');
-                    row.id = site.parentId + "_" + site.id;
-                    row.data = site;
+                    // Check to make this isn't a folder. They don't have the url property.
+                    if (site.url) {
+                        let row = document.createElement('card-row');
+                        row.id = site.parentId + "_" + site.id;
+                        row.data = site;
+                        
+                        ele.appendChild(row);
+                    }
                     
-                    ele.appendChild(row);
                 }
                 
                 MainContent.appendChild(ele);
