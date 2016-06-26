@@ -80,8 +80,8 @@
                     <select id='prefTheme' name='theme'>
                         
                     </select>
-                    <i id="iconAddTheme" class="material-icons md-24">add</i>
-                    <i id="deleteTheme" class="material-icons md-24">delete</i>
+                    <i id="iconAddTheme" class="material-icons md-24" title="Build a new theme">add</i>
+                    <i id="deleteTheme" class="material-icons md-24" title="Delete currently selected theme">delete</i>
                 </div>
                 <div class='description' id='descTheme'>
                     
