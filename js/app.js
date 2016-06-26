@@ -55,16 +55,16 @@ var Newt = (function() {
                 name: 'Dark',
                 id: 'dark',
                 styles: [
-                    {name: 'main-background-color', val: '#222'},
-                    {name: 'background-color', val: '#333'},
-                    {name: 'main-color', val: '#111'},
+                    {name: 'main-background-color', val: '#303030'},
+                    {name: 'background-color', val: '#424242'},
+                    {name: 'main-color', val: '#212121'},
                     {name: 'accent-color', val: '#fff'},
-                    {name: 'highlight-color', val: '#2a2a2a'},
-                    {name: 'text-color', val: '#ccc'},
-                    {name: 'shadow-color', val: '#111'},
-                    {name: 'divider-color', val: 'rgba(255,255,255,.1)'},
+                    {name: 'highlight-color', val: 'rgba(255,255,255,.1)'},
+                    {name: 'text-color', val: 'rgba(255,255,255,.7)'},
+                    {name: 'shadow-color', val: 'rgba(0,0,0,.5)'},
+                    {name: 'divider-color', val: 'rgba(255,255,255,.12)'},
                     {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
-                    {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .8)'},
+                    {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .87)'},
                 ]
             },
             {
@@ -81,6 +81,38 @@ var Newt = (function() {
                     {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
                     {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
                     {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .8)'},
+                ]
+            },
+            {
+                name: 'Slate',
+                id: 'slate',
+                styles: [
+                    {name: 'main-background-color', val: '#CFD8DC'},
+                    {name: 'background-color', val: '#ECEFF1'},
+                    {name: 'main-color', val: '#607D8B'},
+                    {name: 'accent-color', val: '#546E7A'},
+                    {name: 'highlight-color', val: '#CFD8DC'},
+                    {name: 'text-color', val: 'rgba(0,0,0,.87)'},
+                    {name: 'shadow-color', val: 'rgba(0,0,0,.2)'},
+                    {name: 'divider-color', val: 'rgba(0,0,0,.12)'},
+                    {name: 'sidebar-icon-color', val: '#ECEFF1'},
+                    {name: 'popup-icon-color', val: '#607D8B'},
+                ]
+            },
+            {
+                name: 'Earth',
+                id: 'earth',
+                styles: [
+                    {name: 'main-background-color', val: '#D7CCC8'},
+                    {name: 'background-color', val: '#EFEBE9'},
+                    {name: 'main-color', val: '#795548'},
+                    {name: 'accent-color', val: '#795548'},
+                    {name: 'highlight-color', val: '#D7CCC8'},
+                    {name: 'text-color', val: 'rgba(0,0,0,.87)'},
+                    {name: 'shadow-color', val: 'rgba(0,0,0,.2)'},
+                    {name: 'divider-color', val: 'rgba(0,0,0,.12)'},
+                    {name: 'sidebar-icon-color', val: '#EFEBE9'},
+                    {name: 'popup-icon-color', val: '#795548'},
                 ]
             }
         ];
@@ -567,6 +599,7 @@ var Newt = (function() {
         let targetNode = ev.target.nodeName.toLowerCase();
         if (targetNode == "prompt-add-card" ||
             targetNode == 'input' ||
+            targetNode == 'settings-card' ||
             targetNode == 'color-row') {
                 return;
         }
