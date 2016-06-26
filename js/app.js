@@ -516,10 +516,17 @@ var Newt = (function() {
     }
     
     function handleKeyPress(ev) {
-        // console.log('keypress', ev);
+        console.log('keypress', ev);
         
         if (AppPrefs.keyboardShortcuts === 'disabled') {
             return;
+        }
+
+        let targetNode = ev.target.nodeName.toLowerCase();
+        if (targetNode == "prompt-add-card" ||
+            targetNode == 'input' ||
+            targetNode == 'color-row') {
+                return;
         }
         
         switch (ev.code) {
