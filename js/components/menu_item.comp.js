@@ -19,6 +19,8 @@
                 background-repeat: no-repeat;
                 background-size: 32px;
                 color: var(--sidebar-icon-color);
+                cursor: default;
+                font-size: 32px;
             }
             
             .menu {
@@ -31,7 +33,7 @@
         </style>
 
         <div class="container">
-            <i class="material-icons md-36 menu-item">delete</i>
+            <i class="material-icons menu-item">delete</i>
         </div>
     `;
     

@@ -5,6 +5,8 @@ var Newt = (function() {
     
     let CardMap = {};
     let CurrentlyActiveTab = null;
+    let EditingTheme = false;
+    let EditingThemeID = null;
     
     let MainContent = document.querySelector('.main-content');
     let MenuBar = document.querySelector('.menu-bar');
@@ -24,8 +26,6 @@ var Newt = (function() {
         // Theme Builder
         document.querySelector('#btnSaveTheme').addEventListener('click', saveCustomTheme);
         document.querySelector('#btnCancelTheme').addEventListener('click', cancelCustomTheme);
-
-        console.log('this', this);
 
         MainContent = document.querySelector('.main-content');
         MenuBar = document.querySelector('.menu-bar');
@@ -55,16 +55,16 @@ var Newt = (function() {
                 name: 'Dark',
                 id: 'dark',
                 styles: [
-                    {name: 'main-background-color', val: '#222'},
-                    {name: 'background-color', val: '#333'},
-                    {name: 'main-color', val: '#111'},
+                    {name: 'main-background-color', val: '#303030'},
+                    {name: 'background-color', val: '#424242'},
+                    {name: 'main-color', val: '#212121'},
                     {name: 'accent-color', val: '#fff'},
-                    {name: 'highlight-color', val: '#2a2a2a'},
-                    {name: 'text-color', val: '#ccc'},
-                    {name: 'shadow-color', val: '#111'},
-                    {name: 'divider-color', val: 'rgba(255,255,255,.1)'},
+                    {name: 'highlight-color', val: 'rgba(255,255,255,.1)'},
+                    {name: 'text-color', val: 'rgba(255,255,255,.7)'},
+                    {name: 'shadow-color', val: 'rgba(0,0,0,.5)'},
+                    {name: 'divider-color', val: 'rgba(255,255,255,.12)'},
                     {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
-                    {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .8)'},
+                    {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .87)'},
                 ]
             },
             {
@@ -81,6 +81,38 @@ var Newt = (function() {
                     {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
                     {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
                     {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .8)'},
+                ]
+            },
+            {
+                name: 'Slate',
+                id: 'slate',
+                styles: [
+                    {name: 'main-background-color', val: '#CFD8DC'},
+                    {name: 'background-color', val: '#ECEFF1'},
+                    {name: 'main-color', val: '#607D8B'},
+                    {name: 'accent-color', val: '#546E7A'},
+                    {name: 'highlight-color', val: '#CFD8DC'},
+                    {name: 'text-color', val: 'rgba(0,0,0,.87)'},
+                    {name: 'shadow-color', val: 'rgba(0,0,0,.2)'},
+                    {name: 'divider-color', val: 'rgba(0,0,0,.12)'},
+                    {name: 'sidebar-icon-color', val: '#ECEFF1'},
+                    {name: 'popup-icon-color', val: '#607D8B'},
+                ]
+            },
+            {
+                name: 'Mocha',
+                id: 'mocha',
+                styles: [
+                    {name: 'main-background-color', val: '#D7CCC8'},
+                    {name: 'background-color', val: '#EFEBE9'},
+                    {name: 'main-color', val: '#795548'},
+                    {name: 'accent-color', val: '#795548'},
+                    {name: 'highlight-color', val: '#D7CCC8'},
+                    {name: 'text-color', val: 'rgba(0,0,0,.87)'},
+                    {name: 'shadow-color', val: 'rgba(0,0,0,.2)'},
+                    {name: 'divider-color', val: 'rgba(0,0,0,.12)'},
+                    {name: 'sidebar-icon-color', val: '#EFEBE9'},
+                    {name: 'popup-icon-color', val: '#795548'},
                 ]
             }
         ];
@@ -103,7 +135,7 @@ var Newt = (function() {
     function updatePref(key, val) {
         let oldVal = AppPrefs[key];
         AppPrefs[key] = val;
-        console.log('updatePref', key, val);
+        // console.log('updatePref', key, val);
         localStorage.setItem(key, val);
         
         if (oldVal != val) {
@@ -130,6 +162,11 @@ var Newt = (function() {
         let allThemes = AppPrefs.baseThemes.concat(AppPrefs.customThemes);
         let selectedTheme = allThemes.find(theme => {return theme.id == themeID});
 
+        if (!selectedTheme) {
+            AppPrefs.theme = 'light';
+            selectedTheme = allThemes[0];
+        }
+
         selectedTheme.styles.forEach(function(style) {
             document.documentElement.style.setProperty('--' + style.name, style.val);
         });
@@ -154,10 +191,11 @@ var Newt = (function() {
                             It looks like your don't have any sites saved to Newt yet. That's alright, adding some is easy. There are two main ways of doing so.
                         </p>
                         <p>
+                        First, you're going to have to create some cards to add sites to. To do so, just click the overflow menu in the bottom left of your screen and then 'Add New Card'. Give it a name and it'll show up below. Now, to add a site, you have a couple options.
                         <h4>Method 1:</h4>
-                            Visit whichever site you want to add and right click anywhere on the page. You'll see an option to 'Add to Newt'. There's just one little problem... You need to create some cards first or you'll have nothing to add sites to! That conveniently brings us to...
+                            Visit whichever site you want to add and right click anywhere on the page. You'll see an option to 'Add to Newt'. Choose a card, confirm the title you want, and submit.
                         <h4>Method 2:</h4>
-                            Open up Chrome's Bookmarks Manager and look for the folder named 'NewtData'. That's where everything is stored. Each top level folder you make in here will display on this page as a card. Any bookmarks in these folders will display in their respective cards.
+                            Open up Chrome's Bookmarks Manager and look for the folder named 'NewtData' in Other Bookmarks. That's where everything is stored. Each top level folder you make in here will display on this page as a card. Any bookmarks in these folders will display in their respective cards.
                         </p>
                         <p>
                             After you've added some things, give this page a quick refresh.
@@ -166,7 +204,14 @@ var Newt = (function() {
                 `;
             }
             
-            for (var card of cards) {                
+            for (var card of cards) { 
+                // console.log('Card', card);
+
+                if (!card.children) {
+                    console.warn('Found malformed card: ', card);
+                    continue;
+                }
+
                 let ele = document.createElement('small-card');
                 ele.className = 'card-container';
                 ele.data = {
@@ -177,11 +222,15 @@ var Newt = (function() {
                 };
                 
                 for (var site of card.children) {
-                    let row = document.createElement('card-row');
-                    row.id = site.parentId + "_" + site.id;
-                    row.data = site;
+                    // Check to make this isn't a folder. They don't have the url property.
+                    if (site.url) {
+                        let row = document.createElement('card-row');
+                        row.id = site.parentId + "_" + site.id;
+                        row.data = site;
+                        
+                        ele.appendChild(row);
+                    }
                     
-                    ele.appendChild(row);
                 }
                 
                 MainContent.appendChild(ele);
@@ -390,13 +439,30 @@ var Newt = (function() {
         CardMap.tabChanged = true;
     }
     
-    function openThemeBuilder() {
+    function openThemeBuilder(editing, themeID) {
         document.querySelector('.theme-builder').style.display = 'flex';
-        changeTheme('light');
+
+        let styles = [];
+
+        if (editing && typeof editing == 'boolean') {
+            EditingTheme = true;
+            EditingThemeID = themeID;
+
+            let theme = AppPrefs.customThemes.find(function(x) { return x.id == themeID});
+
+            styles = theme.styles;
+            document.querySelector('#inpThemeName').value = theme.name;
+            changeTheme(themeID);
+        } else {
+            styles = AppPrefs.baseThemes[0].styles;
+            changeTheme('light');
+        }
+        
 
         let ThemeSettings = document.querySelector('.theme-settings');
-        removeAllChildNodes(ThemeSettings)
-        AppPrefs.baseThemes[0].styles.forEach(function(style) {
+        removeAllChildNodes(ThemeSettings);
+
+        styles.forEach(function(style) {
             let row = document.createElement('color-row');
             row.colorID = style.name;
             row.color = style.val;
@@ -410,7 +476,7 @@ var Newt = (function() {
     }
 
     function saveCustomTheme() {
-        console.log('AppPrefs', AppPrefs);
+        // console.log('AppPrefs', AppPrefs);
 
         let abortSave = false;
 
@@ -443,19 +509,29 @@ var Newt = (function() {
         }
         
         if (!abortSave) {
-            AppPrefs.customThemes.push({
-                name: themeName,
-                id: themeID,
-                styles: styles
-            });
+            if (EditingTheme) {
+                let index = AppPrefs.customThemes.findIndex(function(x){return x.id == EditingThemeID});
+
+                AppPrefs.customThemes[index].name = themeName;
+                AppPrefs.customThemes[index].styles = styles;
+            } else {
+                AppPrefs.customThemes.push({
+                    name: themeName,
+                    id: themeID,
+                    styles: styles
+                });
+                AppPrefs.theme = themeID;
+            }
+            
 
             localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
-            console.log('AppPrefs.customThemes', AppPrefs.customThemes);
+            // console.log('AppPrefs.customThemes', AppPrefs.customThemes);
 
-            AppPrefs.theme = themeID;
             changeTheme();
 
             document.querySelector('#inpThemeName').value = '';
+            EditingTheme = false;
+            EditingThemeID = null;
 
             if (document.querySelector('settings-card') != null) {
                 document.querySelector('settings-card').refreshThemes();
@@ -469,6 +545,9 @@ var Newt = (function() {
 
     function cancelCustomTheme() {
         document.querySelector('#inpThemeName').value = '';
+        EditingTheme = false;
+        EditingThemeID = null;
+
         changeTheme();
         closeThemeBuilder();
     }
@@ -520,6 +599,14 @@ var Newt = (function() {
         
         if (AppPrefs.keyboardShortcuts === 'disabled') {
             return;
+        }
+
+        let targetNode = ev.target.nodeName.toLowerCase();
+        if (targetNode == "prompt-add-card" ||
+            targetNode == 'input' ||
+            targetNode == 'settings-card' ||
+            targetNode == 'color-row') {
+                return;
         }
         
         switch (ev.code) {

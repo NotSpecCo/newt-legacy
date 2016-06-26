@@ -42,11 +42,13 @@
             .settings-row .label {
                 flex: 1;
                 font-size: 16px;
+                line-height: 32px;
             }
             
             .settings-row i {
-                margin-left: 10px;
+                margin-right: 10px;
                 cursor: pointer;
+                line-height: 32px;
             }
 
             .settings-row i:hover {
@@ -76,12 +78,14 @@
             <div class='card-title'>Settings</div>
             <div class='settings-row'>
                 <div class='main'>
-                    <div class='label'>Theme</div>
+                    <span class='label'>Theme</span>
+                    <i id="iconDeleteTheme" class="material-icons md-24" title="Delete the currently selected theme">delete</i>
+                    <i id="iconEditTheme" class="material-icons md-24" title="Edit the currently selected theme">edit</i>
+                    <i id="iconAddTheme" class="material-icons md-24" title="Build a new theme">add</i>
                     <select id='prefTheme' name='theme'>
                         
                     </select>
-                    <i id="iconAddTheme" class="material-icons md-24" title="Build a new theme">add</i>
-                    <i id="deleteTheme" class="material-icons md-24" title="Delete currently selected theme">delete</i>
+                    
                 </div>
                 <div class='description' id='descTheme'>
                     
@@ -89,7 +93,7 @@
             </div>
             <div class='settings-row'>
                 <div class='main'>
-                    <div class='label'>Keyboard Shortcuts</div>
+                    <span class='label'>Keyboard Shortcuts</span>
                     <select id='prefKeyboardShortcuts' name='keyboardShortcuts'>
                         <option value='disabled' selected>Disabled</option>
                         <option value='enabled'>Enabled</option>
@@ -110,16 +114,21 @@
             this.$prefTheme = this.shadowRoot.querySelector('#prefTheme');
             this.$prefKeyboardShortcuts = this.shadowRoot.querySelector('#prefKeyboardShortcuts');
             this.$iconAddTheme = this.shadowRoot.querySelector('#iconAddTheme');
-            this.$deleteTheme = this.shadowRoot.querySelector('#deleteTheme');
+            this.$iconDeleteTheme = this.shadowRoot.querySelector('#iconDeleteTheme');
+            this.$iconEditTheme = this.shadowRoot.querySelector('#iconEditTheme');
             
             // Event listeners
             this.$prefTheme.addEventListener('change', this.prefChanged.bind(this));
             this.$iconAddTheme.addEventListener('click', Newt.openThemeBuilder);
-            this.$deleteTheme.addEventListener('click', () => {
+            this.$iconDeleteTheme.addEventListener('click', () => {
                 if (this.$prefTheme.value.indexOf('customtheme') > -1) {
                     Newt.showConfirmPrompt('Are you sure you want to delete this theme?', 'deleteTheme', this.$prefTheme.value);
                 }
             });
+            this.$iconEditTheme.addEventListener('click', () => {
+                Newt.openThemeBuilder(true, this.$prefTheme.value);
+            })
+
             this.$prefKeyboardShortcuts.addEventListener('change', this.prefChanged.bind(this));
             
             let self = this;
@@ -135,12 +144,26 @@
 
             this.$prefTheme.value = AppPrefs.theme;
             this.$prefKeyboardShortcuts.value = AppPrefs.keyboardShortcuts;
+
+            this.updateIcons();
         }
         
         prefChanged(ev) {
             let element = ev.target;
-            // console.log()
+            
             Newt.updatePref(element.name, element.value);
+
+            this.updateIcons();
+        }
+
+        updateIcons() {
+            if (this.$prefTheme.value.includes('customtheme')) {
+                this.$iconDeleteTheme.style.display = 'block';
+                this.$iconEditTheme.style.display = 'block';
+            } else {
+                this.$iconDeleteTheme.style.display = 'none';
+                this.$iconEditTheme.style.display = 'none';
+            }
         }
 
         refreshThemes() {
@@ -159,6 +182,7 @@
             });
 
             this.$prefTheme.value = AppPrefs.theme;
+            this.updateIcons();
 
             Newt.updatePref('theme', AppPrefs.theme);
         }

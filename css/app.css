@@ -78,7 +78,7 @@ body {
 	padding: 5px 10px;
 	display: inline-flex;
 	width: 220px;
-	cursor: context-menu;
+	cursor: default;
 }
 .menu > .popup-menu-item:hover {
 	background-color: var(--highlight-color);
@@ -97,7 +97,7 @@ body {
 .welcome-card {
 	max-width: 500px;
 	margin: auto;
-	font-size: 15px;
+	font-size: 16px;
 	font-weight: 300;
 	/*color: #444;*/
 }
