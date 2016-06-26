@@ -47,3 +47,17 @@
 
 .material-icons.md-light { color: rgba(255, 255, 255, 1); }
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+
+select {
+  background-color: var(--background-color);
+  border: 0px;
+  border-bottom: 1px solid var(--divider-color);
+  padding: 7px 0px;
+  min-width: 90px;
+  color: var(--text-color);
+}
+
+select:focus {
+  outline: none;
+  border-bottom-color: var(--accent-color);
+}

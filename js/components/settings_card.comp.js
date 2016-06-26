@@ -42,11 +42,13 @@
             .settings-row .label {
                 flex: 1;
                 font-size: 16px;
+                line-height: 32px;
             }
             
             .settings-row i {
                 margin-right: 10px;
                 cursor: pointer;
+                line-height: 32px;
             }
 
             .settings-row i:hover {
@@ -76,7 +78,7 @@
             <div class='card-title'>Settings</div>
             <div class='settings-row'>
                 <div class='main'>
-                    <div class='label'>Theme</div>
+                    <span class='label'>Theme</span>
                     <i id="iconDeleteTheme" class="material-icons md-24" title="Delete the currently selected theme">delete</i>
                     <i id="iconEditTheme" class="material-icons md-24" title="Edit the currently selected theme">edit</i>
                     <i id="iconAddTheme" class="material-icons md-24" title="Build a new theme">add</i>
@@ -91,7 +93,7 @@
             </div>
             <div class='settings-row'>
                 <div class='main'>
-                    <div class='label'>Keyboard Shortcuts</div>
+                    <span class='label'>Keyboard Shortcuts</span>
                     <select id='prefKeyboardShortcuts' name='keyboardShortcuts'>
                         <option value='disabled' selected>Disabled</option>
                         <option value='enabled'>Enabled</option>
