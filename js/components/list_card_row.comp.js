@@ -11,11 +11,11 @@
                 padding: 7px 10px;
             }
             .row:hover {
-                background-color: #eaeaea;
+                background-color: var(--highlight-color);
             }
             
             .highlight {
-                background-color: #E3F2FD;
+                background-color: var(--highlight-color);
             }
             
             .icon {

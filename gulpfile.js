@@ -43,12 +43,14 @@ gulp.task('images', function() {
 gulp.task('copy', function() {
     gulp.src('assets/**')
         .pipe(gulp.dest('deploy/assets'));
-    gulp.src('css/theme-*.css')
+    gulp.src('css/shared.css')
         .pipe(gulp.dest('deploy/css'));
     gulp.src('manifest.json')
         .pipe(gulp.dest('deploy'));
     gulp.src('node_modules/chrome-promise/chrome-promise.js')
-        .pipe(gulp.dest('deploy/node_modules/chrome-promise'))
+        .pipe(gulp.dest('deploy/node_modules/chrome-promise'));
+	gulp.src('options_page/**')
+        .pipe(gulp.dest('deploy/options_page'));
 });
 
 gulp.task('clean:deploy', function() {

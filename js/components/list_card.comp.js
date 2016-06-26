@@ -9,10 +9,10 @@
             .card {
                 display: flex;
                 flex-direction: column;
-                background-color: #fff;
+                background-color: var(--background-color);
                 margin: 10px auto;
                 vertical-align: top;
-                box-shadow: 0px 2px 3px #aaa;
+                box-shadow: 0px 2px 3px var(--shadow-color);
                 border-radius: 5px;
                 overflow: hidden;
                 min-height: 375px;
@@ -23,13 +23,11 @@
             .card-title {
                 font-size: 22px;
                 font-weight: 400;
-                color: #03A9F4;
+                color: var(--accent-color);
                 padding: 10px 10px 5px 10px;
                 overflow: ellipses;
                 text-overflow: ellipses;
-                /*text-align: center;*/
                 white-space: nowrap;
-                /*background-color: #29B6F6;*/
             }
             
             .items-container {

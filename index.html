@@ -9,17 +9,17 @@
     <!-- endbuild -->
 </head>
 <body>
-    <div class="menu-bar">
-        <menu-item action="bookmarks"></menu-item>
-        <menu-item action="apps"></menu-item>
-        <menu-item action="frequents"></menu-item>
-        <menu-item action="new"></menu-item>
-        <menu-item action="recents"></menu-item>
-        <menu-item action="devices"></menu-item>
-        <div style="flex: 1"></div>
-        <menu-item action="settings"></menu-item>
-    </div>
     <div class="main-container">
+        <div class="menu-bar">
+            <menu-item action="bookmarks"></menu-item>
+            <menu-item action="apps"></menu-item>
+            <menu-item action="frequents"></menu-item>
+            <menu-item action="new"></menu-item>
+            <menu-item action="recents"></menu-item>
+            <menu-item action="devices"></menu-item>
+            <div style="flex: 1"></div>
+            <menu-item action="menu"></menu-item>
+        </div>
         <div class="main-content">
             <small-card class="card-container"></small-card>
             <small-card class="card-container"></small-card>
@@ -28,13 +28,29 @@
             <small-card class="card-container"></small-card>
             <small-card class="card-container"></small-card>
         </div>
+        <div class="theme-builder">
+            <h2>Theme Builder</h2>
+            <input type="text" id="inpThemeName" placeholder="Theme name" />
+            <div class="theme-settings">
+
+            </div>
+            <div class="actions">
+                <div id="btnSaveTheme" class="button">Save</div>
+                <div id="btnCancelTheme" class="button">Cancel</div>
+            </div>
+        </div>
     </div>
     
-    <!--<div id="overflow_menu" class="overflow-menu">
-        <popup-menu-item>One</popup-menu-item>
-        <popup-menu-item>Two</popup-menu-item>
-        <popup-menu-item>Three</popup-menu-item>
-    </div>-->
+    <div id="scrim" class="scrim"></div>
+
+    <div id="menu" class="menu">
+        <div class="popup-menu-item" id="btnAddCard"><i class="material-icons md-24">create_new_folder</i> Add New Card</div>
+        <div class="divider"></div>
+        <!--<div class="popup-menu-item" id="btnAbout"><i class="material-icons md-24">info_outline</i>About</div>-->
+        <div class="popup-menu-item" id="btnSettings"><i class="material-icons md-24">settings</i> Settings</div>
+    </div>
+
+    
 
     <!--build:js js/app.min.js-->
     <script type="text/javascript" src="js/chrome_service.js"></script>
@@ -46,6 +62,9 @@
     <script type="text/javascript" src="js/components/list_card_row.comp.js"></script>
     <script type="text/javascript" src="js/components/app_card.comp.js"></script>
     <script type="text/javascript" src="js/components/settings_card.comp.js"></script>
+    <script type="text/javascript" src="js/components/prompt_add_card.comp.js"></script>
+    <script type="text/javascript" src="js/components/prompt_confirm.comp.js"></script>
+    <script type="text/javascript" src="js/components/color_row.comp.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
     <!--endbuild-->
 </body>

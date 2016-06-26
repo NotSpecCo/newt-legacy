@@ -10,7 +10,7 @@
                 padding: 7px 10px;
             }
             .row:hover {
-                background-color: #E3F2FD;
+                background-color: var(--highlight-color);
             }
             
             .drag {
@@ -18,12 +18,12 @@
             }
             
             .over {
-                border-bottom: 2px solid #aaa;
+                border-bottom: 2px solid var(--accent-color);
                 padding: 7px 10px 5px 10px;
             }
             
             .highlight {
-                background-color: #E3F2FD;
+                background-color: var(--highlight-color);
             }
             
             .icon {
@@ -34,12 +34,10 @@
                 width: 18px;
                 float: left;
                 margin-right: 10px;
-                // background-color: #ccc;
             }
             
             .title {
                 font-size: 16px;
-                
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;

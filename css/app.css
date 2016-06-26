@@ -1,8 +1,41 @@
+@import url('shared.css');
+
+:root {
+	--main-background-color: #efefef;
+	--background-color: #fff;
+	--main-color: #03A9F4;
+	--accent-color: #03A9F4;
+	--highlight-color: #E3F2FD;
+	--text-color: #212121;
+	--shadow-color: #aaa;
+	--divider-color: rgba(0,0,0,.1);
+	--sidebar-icon-color: rgba(255, 255, 255, 1);
+	--popup-icon-color: rgba(0, 0, 0, 0.54);
+}
+
 body {
 	font-family: 'Segoe UI', Helvetica, sans-serif;
-	background-color: #efefef;
-	color: #212121;
+	background-color: var(--main-background-color);
+	color: var(--text-color);
 	margin: 0px;
+}
+
+.scrim {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	height: 100vh;
+	width: 100vw;
+	z-index: 100;
+	background-color: rgba(0,0,0,.15);
+	display: none;
+}
+
+.main-container {
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
+	max-height: 100vh;
 }
 
 /*
@@ -12,9 +45,8 @@ body {
 .menu-bar {
 	height: 100%;
 	width: 58px;
-	position: fixed;
-	background-color: #03A9F4;
-	border-bottom: 1px solid #ccc;
+	/* position: fixed; */
+	background-color: var(--main-color);
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -28,29 +60,34 @@ body {
 	position: fixed;
 	bottom: 10px;
 	left: 68px;
-	/*width: 200px;*/
-	/*height: 200px;*/
-	background-color: #fff;
-	box-shadow: 3px 3px 10px #aaa;
+	width: 240px;
+	background-color: var(--background-color);
+	box-shadow: 3px 3px 10px var(--shadow-color);
 	z-index: 1000;
+	display: none;
 }
 
-.menu > div {
+.menu .divider {
+	border-bottom: 1px solid var(--divider-color);
+	margin: 5px 0;
+}
+
+.menu > .popup-menu-item {
 	font-size: 16px;
-	padding: 15px 10px 15px 39px;
-	/*border: 1px solid #aaa;*/
-	background-size: 24px;
-	background-position: 10px center;
-	background-repeat: no-repeat;
-	background-image: url('../assets/icons/about-dark.png');
+	line-height: 36px;
+	padding: 5px 10px;
+	display: inline-flex;
+	width: 220px;
+	cursor: context-menu;
+}
+.menu > .popup-menu-item:hover {
+	background-color: var(--highlight-color);
 }
 
-.menu > div .icon {
-	width: 24px;
-	height: inherit;
-	background-size: 24px;
-	background-position: left center;
-	background-image: url('../assets/icons/about-dark.png');
+.menu > .popup-menu-item i {
+	line-height: 36px;
+	margin-right: 10px;
+	color: var(--popup-icon-color);
 }
 
 /*
@@ -75,11 +112,61 @@ body {
 }
 
 .main-content {
-	margin-left: 58px;
 	padding: 7px;
-    height: 100vh;
+	height: 100vh;
+	overflow: scroll;
+	flex: 1;
+}
+
+/*
+	Theme Builder
+*/
+
+.theme-builder {
+	width: 250px;
+	background-color: var(--main-background-color);
+	z-index: 2000;
+	display: none;
+	flex-direction: column;
+	padding: 10px;
+}
+
+.theme-builder input {
+	border: none;
+	border-bottom: 1px solid var(--divider-color);
+	background-color: rgba(0,0,0,0);
+	color: inherit;
+	margin: 0px 0 20px 0;
+	padding: 7px 0;
+	width: 100%;
+}
+
+.theme-builder input:focus {
+	outline: none;
+	border-bottom-color: var(--accent-color);
+}
+
+.theme-settings {
+	flex: 1;
 	overflow: scroll;
 }
+
+.theme-builder .actions > div {
+	display: block;
+	width: 100%;
+	color: var(--accent-color);
+	padding: 8px 15px;
+	font-size: 15px;
+	cursor: pointer;
+	text-align: center;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.actions > div:hover {
+	background-color: var(--highlight-color);
+}
+
 
 @media (max-width: 500px) {
 	.card-container {

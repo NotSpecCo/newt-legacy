@@ -4,6 +4,7 @@ var Newt = (function() {
     'use strict';
     
     let CardMap = {};
+    let CurrentlyActiveTab = null;
     
     let MainContent = document.querySelector('.main-content');
     let MenuBar = document.querySelector('.menu-bar');
@@ -13,7 +14,19 @@ var Newt = (function() {
         
         window.addEventListener('storage', AppPrefsChanged);
         window.addEventListener('keydown', handleKeyPress, false);
-        
+        document.querySelector('#scrim').addEventListener('click', () => closeAllPopups() );
+
+        // Popup Menu
+        document.querySelector('#btnAddCard').addEventListener('click',() => { hideMenu(); showAddCardPrompt(); });
+        // document.querySelector('#btnAbout').addEventListener('click', () => { hideMenu(); changeTab('about')(); });
+        document.querySelector('#btnSettings').addEventListener('click', () => { hideMenu(); changeTab('settings'); });
+
+        // Theme Builder
+        document.querySelector('#btnSaveTheme').addEventListener('click', saveCustomTheme);
+        document.querySelector('#btnCancelTheme').addEventListener('click', cancelCustomTheme);
+
+        console.log('this', this);
+
         MainContent = document.querySelector('.main-content');
         MenuBar = document.querySelector('.menu-bar');
         
@@ -21,19 +34,76 @@ var Newt = (function() {
     }
     
     function getAppPrefs() {
+        let baseThemes = [
+            {
+                name: 'Light',
+                id: 'light',
+                styles: [
+                    {name: 'main-background-color', val: '#efefef'},
+                    {name: 'background-color', val: '#fff'},
+                    {name: 'main-color', val: '#03A9F4'},
+                    {name: 'accent-color', val: '#03A9F4'},
+                    {name: 'highlight-color', val: '#E3F2FD'},
+                    {name: 'text-color', val: '#212121'},
+                    {name: 'shadow-color', val: '#aaa'},
+                    {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
+                    {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
+                    {name: 'popup-icon-color', val: 'rgba(0, 0, 0, 0.54)'},
+                ]
+            },
+            {
+                name: 'Dark',
+                id: 'dark',
+                styles: [
+                    {name: 'main-background-color', val: '#222'},
+                    {name: 'background-color', val: '#333'},
+                    {name: 'main-color', val: '#111'},
+                    {name: 'accent-color', val: '#fff'},
+                    {name: 'highlight-color', val: '#2a2a2a'},
+                    {name: 'text-color', val: '#ccc'},
+                    {name: 'shadow-color', val: '#111'},
+                    {name: 'divider-color', val: 'rgba(255,255,255,.1)'},
+                    {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
+                    {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .8)'},
+                ]
+            },
+            {
+                name: 'Espresso',
+                id: 'espresso',
+                styles: [
+                    {name: 'main-background-color', val: '#231b17'},
+                    {name: 'background-color', val: '#1d1713'},
+                    {name: 'main-color', val: '#1d1713'},
+                    {name: 'accent-color', val: '#e36026'},
+                    {name: 'highlight-color', val: '#2d241f'},
+                    {name: 'text-color', val: '#bdae9d'},
+                    {name: 'shadow-color', val: 'rgba(0,0,0,0)'},
+                    {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
+                    {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
+                    {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .8)'},
+                ]
+            }
+        ];
+
+        let customThemes = JSON.parse(localStorage.getItem('customThemes')) || [];
+        let allThemes = baseThemes.concat(customThemes);
+
+        let selectedTheme = localStorage.getItem('theme') || 'light';
+
         AppPrefs = {
-            theme: localStorage.getItem('theme') || 'light',
-            keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled'
+            theme: selectedTheme,
+            keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled',
+            baseThemes: baseThemes,
+            customThemes: customThemes
         };
-        // console.log('AppPrefs', AppPrefs);
         
-        changeTheme();
+        changeTheme(AppPrefs.theme);
     }
     
     function updatePref(key, val) {
         let oldVal = AppPrefs[key];
         AppPrefs[key] = val;
-        
+        console.log('updatePref', key, val);
         localStorage.setItem(key, val);
         
         if (oldVal != val) {
@@ -55,39 +125,14 @@ var Newt = (function() {
         }
     }
     
-    function changeTheme() {
-        let theme = 'theme-' + AppPrefs.theme;
-		let head = document.getElementsByTagName("head")[0];
-        
-        //console.log('Applying theme ' + theme);
+    function changeTheme(theme) {
+        let themeID = theme || AppPrefs.theme;
+        let allThemes = AppPrefs.baseThemes.concat(AppPrefs.customThemes);
+        let selectedTheme = allThemes.find(theme => {return theme.id == themeID});
 
-		// Remove any other theme stylesheets
-		let themeList = ["theme-light", "theme-dark", "theme-espresso", "theme-custom"];
-		let appsheets = document.getElementsByTagName("link");
-		let foundTheme;
-
-		for (let i=0; i < appsheets.length; i++) {
-			let sheet = appsheets[i];
-			for (let a=0; a < themeList.length; a++) {
-				let findTheme = sheet.href.search(themeList[a]);
-				if (findTheme > -1 && theme != themeList[a]) {
-					console.log("Removing theme: " + themeList[a]);
-					foundTheme = themeList[a];
-					head.removeChild(sheet);
-				}
-			}
-		}
-
-		if (theme != "theme-light" && theme != foundTheme) {
-			// Add the new theme stylesheet
-			// console.log("Applying new theme stylesheet: " + theme);
-			var e = document.createElement("link");
-			e.setAttribute("rel", "stylesheet");
-			e.setAttribute("type", "text/css");
-			e.setAttribute("href", "css/" + theme + ".css");
-
-			head.appendChild(e);
-		}
+        selectedTheme.styles.forEach(function(style) {
+            document.documentElement.style.setProperty('--' + style.name, style.val);
+        });
     }
     
     function createBookmarkCards(cards) {
@@ -259,7 +304,7 @@ var Newt = (function() {
         });
     }
     
-    function createSettingsMenu() {
+    function createSettingsCard() {
         // console.log('Creating settings menu...');
         
         // Clear out the main content div
@@ -268,9 +313,19 @@ var Newt = (function() {
         let card = document.createElement('settings-card');
         MainContent.appendChild(card);
     }
+
+    function createAboutCard() {
+
+    }
     
     function changeTab(tab, direction) {
+        if (tab == 'menu') {
+            toggleMenu();
+            return;
+        }
+
         // console.log('changeTab', tab);
+        CurrentlyActiveTab = tab;
 
         // Set the style for the new active tab
         let buttons = MenuBar.querySelectorAll('menu-item');
@@ -292,7 +347,7 @@ var Newt = (function() {
         }
         
         for (let i=0; i<buttons.length; i++) {
-            if (buttons[i].action != 'settings') {
+            if (buttons[i].action != 'menu') {
                 if (buttons[i].action == tab) {
                     buttons[i].selected = true;
                 } else {
@@ -321,19 +376,143 @@ var Newt = (function() {
             case 'devices':
                 createDeviceCards();
                 break;
-            case 'settings':
-                createSettingsMenu();
+            case 'menu':
+                toggleMenu();
                 break;
+            case 'settings':
+                createSettingsCard();
+                break;
+            case 'about':
+                createAboutCard();
         }
         
         CardMap.currentTab = tab;
         CardMap.tabChanged = true;
     }
     
+    function openThemeBuilder() {
+        document.querySelector('.theme-builder').style.display = 'flex';
+        changeTheme('light');
+
+        let ThemeSettings = document.querySelector('.theme-settings');
+        removeAllChildNodes(ThemeSettings)
+        AppPrefs.baseThemes[0].styles.forEach(function(style) {
+            let row = document.createElement('color-row');
+            row.colorID = style.name;
+            row.color = style.val;
+
+            ThemeSettings.appendChild(row);
+        });
+    }
+
+    function closeThemeBuilder() {
+        document.querySelector('.theme-builder').style.display = 'none';
+    }
+
+    function saveCustomTheme() {
+        console.log('AppPrefs', AppPrefs);
+
+        let abortSave = false;
+
+        var themeName = document.querySelector('#inpThemeName').value;
+        if (themeName.length == 0) {
+            abortSave = true;
+        }
+
+        var colorRows = document.querySelectorAll('color-row');
+        var styles = [];
+        for (let i=0; i<colorRows.length; i++) {
+            let item = colorRows[i];
+
+            if (item.color.length == 0) {
+                abortSave = true;
+            }
+
+            styles.push({
+                name: item.colorID,
+                val: item.color
+            });
+        }
+
+        let themeID;
+        if (AppPrefs.customThemes.length == 0) {
+            themeID = 'customtheme1';
+        } else {
+            let lastTheme = AppPrefs.customThemes[AppPrefs.customThemes.length-1].id.slice(11);
+            themeID = 'customtheme' + (parseInt(lastTheme) + 1);
+        }
+        
+        if (!abortSave) {
+            AppPrefs.customThemes.push({
+                name: themeName,
+                id: themeID,
+                styles: styles
+            });
+
+            localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
+            console.log('AppPrefs.customThemes', AppPrefs.customThemes);
+
+            AppPrefs.theme = themeID;
+            changeTheme();
+
+            document.querySelector('#inpThemeName').value = '';
+
+            if (document.querySelector('settings-card') != null) {
+                document.querySelector('settings-card').refreshThemes();
+            }
+
+            closeThemeBuilder();
+        } else {
+            console.warn('Custom theme wasn\'t saved. Missing info.', themeName, themeID, styles);
+        }
+    }
+
+    function cancelCustomTheme() {
+        document.querySelector('#inpThemeName').value = '';
+        changeTheme();
+        closeThemeBuilder();
+    }
+
+    function deleteTheme(theme) {
+        var index = AppPrefs.customThemes.map(function(x){return x.id}).indexOf(theme);
+        AppPrefs.customThemes.splice(index, 1);
+
+        localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
+
+        AppPrefs.theme = 'light';
+        changeTheme();
+
+        if (document.querySelector('settings-card') != null) {
+            document.querySelector('settings-card').refreshThemes();
+        }
+    } 
+
     function removeAllChildNodes(node) {
         while (node.lastChild) {
             node.removeChild(node.lastChild);
         }
+    }
+
+    function closeAllPopups() {
+        hideMenu();
+        hideAddCardPrompt();
+        hideConfirmPrompt();
+    }
+
+    function toggleMenu() {
+        if (document.querySelector('#menu').style.display == 'block') {
+            document.querySelector('#menu').style.display = 'none';
+            document.querySelector('#scrim').style.display = 'none';
+        } else {
+            
+            document.querySelector('#menu').style.display = 'block';
+            document.querySelector('#scrim').style.display = 'block';
+        }
+    }
+
+    function hideMenu() {
+        document.querySelector('#menu').style.display = 'none';
+        document.querySelector('#scrim').style.display = 'none';
     }
     
     function handleKeyPress(ev) {
@@ -508,11 +687,80 @@ var Newt = (function() {
         
         return map;
     }
+
+    function showAddCardPrompt() {
+        let prompt = document.createElement('prompt-add-card');
+        prompt.id = 'newCardPrompt';
+
+        document.body.appendChild(prompt);
+        document.querySelector('#scrim').style.display = 'block';
+    }
+
+    function hideAddCardPrompt() {
+        if (document.querySelector('#newCardPrompt')) {
+            document.querySelector('#newCardPrompt').remove();
+        }
+        document.querySelector('#scrim').style.display = 'none';
+    }
+
+    function createNewCard(name) {
+        hideAddCardPrompt();
+        ChromeService.createFolder(name).then(function(card) {
+
+            let ele = document.createElement('small-card');
+            ele.className = 'card-container';
+            ele.data = {
+                title: card.title,
+                id: card.id,
+                parentId: card.parentId,
+                index: card.index
+            };
+            
+            if (CurrentlyActiveTab == 'bookmarks') {
+                MainContent.appendChild(ele);
+            }
+        });
+    }
+
+    function openAbout() {
+
+    }
+
+    function openSettings() {
+        this.createSettingsCard();
+    }
+
+    function showConfirmPrompt(message, confirmAction, data) {
+        let prompt = document.createElement('prompt-confirm');
+        prompt.id = 'confirmPrompt';
+        prompt.message = message;
+        prompt.confirmAction = confirmAction;
+        prompt.data = data;
+
+        document.body.appendChild(prompt);
+        document.querySelector('#scrim').style.display = 'block';
+    }
+
+    function hideConfirmPrompt() {
+        if (document.querySelector('#confirmPrompt')) {
+            document.querySelector('#confirmPrompt').remove();
+        }
+        document.querySelector('#scrim').style.display = 'none';
+    }
     
     return({
         init: init,
         changeTab: changeTab,
-        updatePref: updatePref
+        updatePref: updatePref,
+        toggleMenu: toggleMenu,
+        hideMenu: hideMenu,
+        hideAddCardPrompt: hideAddCardPrompt,
+        showConfirmPrompt: showConfirmPrompt,
+        hideConfirmPrompt: hideConfirmPrompt,
+        closeAllPopups: closeAllPopups,
+        createNewCard: createNewCard,
+        openThemeBuilder: openThemeBuilder,
+        deleteTheme: deleteTheme
     })
 })();
 

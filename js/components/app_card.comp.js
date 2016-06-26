@@ -7,14 +7,13 @@
                 display: inline-block;
             }
             .card {
-                // width: calc(100% / 3 - 40px);
                 display: flex;
                 flex-direction: column;
-                background-color: #fff;
+                background-color: var(--background-color);
                 margin: 10px;
                 padding: 10px;
                 vertical-align: top;
-                box-shadow: 0px 2px 3px #aaa;
+                box-shadow: 0px 2px 3px var(--shadow-color);
                 border-radius: 5px;
                 overflow: hidden;
                 height: 200px;
@@ -29,7 +28,7 @@
             .app-card-title {
                 font-size: 22px;
                 font-weight: 400;
-                color: #03A9F4;
+                color: var(--accent-color);
                 padding: 5px 10px;
                 overflow: ellipses;
                 text-overflow: ellipses;
@@ -50,7 +49,6 @@
             }
 
             .disabled {
-                // color: #f00;
                 display: none;
                 font-weight: 500;
             }
@@ -69,7 +67,7 @@
 
             .actions > * {
                 display: inline-block;
-                color: #03A9F4;
+                color: var(--accent-color);
                 padding: 5px 10px;
                 /*float: right;*/
                 font-size: 15px;
@@ -78,11 +76,11 @@
             }
             
             .highlight {
-                background-color: #E3F2FD;
+                background-color: var(--highlight-color);
             }
 
             .actions > *:active {
-                background-color: #B3E5FC;
+                background-color: var(--highlight-color);
             }
         </style>
         
