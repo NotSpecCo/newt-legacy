@@ -1,3 +1,5 @@
+@import url('shared.css');
+
 :root {
 	--main-background-color: #efefef;
 	--background-color: #fff;
@@ -29,21 +31,12 @@ body {
 	display: none;
 }
 
-/*
-	Material Design icon font
-*/
-
-.material-icons.md-18 { font-size: 18px; }
-.material-icons.md-24 { font-size: 24px; }
-.material-icons.md-32 { font-size: 32px; }
-.material-icons.md-36 { font-size: 36px; }
-.material-icons.md-48 { font-size: 48px; }
-
-.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
-.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
-
-.material-icons.md-light { color: rgba(255, 255, 255, 1); }
-.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+.main-container {
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
+	max-height: 100vh;
+}
 
 /*
     Menu Bar
@@ -52,7 +45,7 @@ body {
 .menu-bar {
 	height: 100%;
 	width: 58px;
-	position: fixed;
+	/* position: fixed; */
 	background-color: var(--main-color);
 	text-align: center;
 	display: flex;
@@ -119,11 +112,61 @@ body {
 }
 
 .main-content {
-	margin-left: 58px;
 	padding: 7px;
-    height: 100vh;
+	height: 100vh;
+	overflow: scroll;
+	flex: 1;
+}
+
+/*
+	Theme Builder
+*/
+
+.theme-builder {
+	width: 250px;
+	background-color: var(--main-background-color);
+	z-index: 2000;
+	display: none;
+	flex-direction: column;
+	padding: 10px;
+}
+
+.theme-builder input {
+	border: none;
+	border-bottom: 1px solid var(--divider-color);
+	background-color: rgba(0,0,0,0);
+	color: inherit;
+	margin: 0px 0 20px 0;
+	padding: 7px 0;
+	width: 100%;
+}
+
+.theme-builder input:focus {
+	outline: none;
+	border-bottom-color: var(--accent-color);
+}
+
+.theme-settings {
+	flex: 1;
 	overflow: scroll;
 }
+
+.theme-builder .actions > div {
+	display: block;
+	width: 100%;
+	color: var(--accent-color);
+	padding: 8px 15px;
+	font-size: 15px;
+	cursor: pointer;
+	text-align: center;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.actions > div:hover {
+	background-color: var(--highlight-color);
+}
+
 
 @media (max-width: 500px) {
 	.card-container {

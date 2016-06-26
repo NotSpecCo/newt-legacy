@@ -49,11 +49,14 @@
                 border-bottom-color: var(--accent-color);
             }
 
+            .actions {
+                text-align: end;
+            }
+
             .actions > div {
                 display: inline-block;
                 color: var(--accent-color);
                 padding: 8px 15px;
-                float: right;
                 font-size: 15px;
                 cursor: pointer;
                 text-align: center;
@@ -101,5 +104,5 @@
         }
     }
     
-    document.registerElement('prompt-box', PromptBox);
+    document.registerElement('prompt-add-card', PromptBox);
 })();
