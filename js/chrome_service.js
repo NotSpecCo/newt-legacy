@@ -7,9 +7,8 @@ let ChromeService = (function() {
         // console.log("Getting bookmarks");
         
         chrome.promise = new ChromePromise();
-        var deferred = Promise.defer();
 
-        chrome.promise.bookmarks.search("NewtData").then(function(res) {
+        return chrome.promise.bookmarks.search("NewtData").then(function(res) {
             if (res.length > 0) {
                 NewtFolderID = res[0].id;
                 return chrome.promise.bookmarks.getSubTree(res[0].id);
@@ -23,24 +22,21 @@ let ChromeService = (function() {
                     // console.log(res);
                 });
 
-                deferred.resolve([]);
+                return [];
             }
         }).then(function(res) {
-            deferred.resolve(res[0].children);
+            return res[0].children;
         }).catch(function(error) {
             console.log("Error: " + error);
         });
-
-        return deferred.promise;
     }
     
     function getApps() {
         // console.log('Getting apps');
         
         chrome.promise = new ChromePromise();
-        var deferred = Promise.defer();
 
-        chrome.promise.management.getAll().then(function(res) {
+        return chrome.promise.management.getAll().then(function(res) {
             var apps = [];
 
             for (var item of res) {
@@ -58,58 +54,38 @@ let ChromeService = (function() {
             };
             apps.sort(compare);
 
-            deferred.resolve(apps);
+            return apps;
         });
-
-        return deferred.promise;
     }
     
     function getFrequents() {
         chrome.promise = new ChromePromise();
-        var deferred = Promise.defer();
 
-        chrome.promise.topSites.get().then(function(res) {
-            // console.log(res);
-
-            deferred.resolve(res);
+        return chrome.promise.topSites.get().then(function(res) {
+            return res;
         });
-
-        return deferred.promise;
     }
     
     function getRecentlyAdded() {
         chrome.promise = new ChromePromise();
-        var deferred = Promise.defer();
 
-        chrome.promise.bookmarks.getRecent(40).then(function(res) {
-            // console.log(res);
-
-            deferred.resolve(res);
+        return chrome.promise.bookmarks.getRecent(40).then(function(res) {
+            return res;
         });
-
-        return deferred.promise;
     };
 
     function getRecentlyClosed() {
         chrome.promise = new ChromePromise();
-        var deferred = Promise.defer();
 
-        chrome.promise.sessions.getRecentlyClosed().then(function(res) {
-            // console.log(res);
-
-            deferred.resolve(res);
+        return chrome.promise.sessions.getRecentlyClosed().then(function(res) {
+            return res;
         });
-
-        return deferred.promise;
     }
 
     function getDevices() {
         chrome.promise = new ChromePromise();
-        var deferred = Promise.defer();
 
-        chrome.promise.sessions.getDevices().then(function(res) {
-            // console.log(res);
-
+        return chrome.promise.sessions.getDevices().then(function(res) {
             var cards = [];
 
             for (var device of res) {
@@ -124,10 +100,8 @@ let ChromeService = (function() {
                 cards.push(card);
             }
 
-            deferred.resolve(cards);
+            return cards;
         });
-
-        return deferred.promise;
     }
     
     function moveBookmark(bookmark, folder, index) {
@@ -139,13 +113,10 @@ let ChromeService = (function() {
         console.log('Newt', NewtFolderID);
 
         chrome.promise = new ChromePromise();
-        var deferred = Promise.defer();
 
-        chrome.promise.bookmarks.create({parentId: NewtFolderID, title: name}).then(function(res) {
-            deferred.resolve(res);
+        return chrome.promise.bookmarks.create({parentId: NewtFolderID, title: name}).then(function(res) {
+            return res;
         });
-
-        return deferred.promise;
     }
     
     function updateTab(url) {
