@@ -27,9 +27,6 @@
             }
             
             .icon {
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: contain;
                 height: 18px;
                 width: 18px;
                 float: left;
@@ -45,7 +42,7 @@
         </style>
         
         <div class="row" draggable="true">
-            <div class="icon"></div>
+            <img class="icon"></img>
             <div class="title">Site Title</div>
         </div>
     `;
@@ -120,9 +117,6 @@
         attributeChanged(attrName, oldVal, newVal) {
             console.log(attrName + " changed");
             switch (attrName) {
-                case 'data':
-                    this.updateInfo();
-                    break;
                 case 'highlight':
                     this.updateHighlight();
                     break;
@@ -155,7 +149,8 @@
         set data(val) {
             this.setAttribute('data', JSON.stringify(val));
             
-            this.updateInfo();
+            this.$icon.src = 'https://plus.google.com/_/favicon?domain=' + val.url;
+            this.$title.textContent = val.title;
         }
         
         get highlight() {
@@ -168,7 +163,7 @@
         }
         
         updateInfo() {
-            this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.data.url + '")';
+            this.$icon.src = 'https://plus.google.com/_/favicon?domain=' + this.data.url;
             this.$title.textContent = this.data.title;
         }
         

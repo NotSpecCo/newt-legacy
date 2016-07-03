@@ -26,9 +26,6 @@ var Newt = (function() {
         // Theme Builder
         document.querySelector('#btnSaveTheme').addEventListener('click', saveCustomTheme);
         document.querySelector('#btnCancelTheme').addEventListener('click', cancelCustomTheme);
-
-        MainContent = document.querySelector('.main-content');
-        MenuBar = document.querySelector('.menu-bar');
         
         changeTab('bookmarks');
     }
@@ -202,40 +199,51 @@ var Newt = (function() {
                         </p>
                     </div>
                 `;
-            }
-            
-            for (var card of cards) { 
-                // console.log('Card', card);
+            } else {
+                let docFrag = document.createDocumentFragment();
 
-                if (!card.children) {
-                    console.warn('Found malformed card: ', card);
-                    continue;
-                }
+                let cardNode = document.createElement('small-card');
+                cardNode.className = 'card-container';
+                let cardRowNode = document.createElement('card-row');
 
-                let ele = document.createElement('small-card');
-                ele.className = 'card-container';
-                ele.data = {
-                    title: card.title,
-                    id: card.id,
-                    parentId: card.parentId,
-                    index: card.index
-                };
-                
-                for (var site of card.children) {
-                    // Check to make this isn't a folder. They don't have the url property.
-                    if (site.url) {
-                        let row = document.createElement('card-row');
-                        row.id = site.parentId + "_" + site.id;
-                        row.data = site;
+                for (var card of cards) {
+                    // console.log('Card', card);
+                    
+                    if (!card.children) {
+                        console.warn('Found malformed card: ', card);
+                        continue;
+                    }
+
+                    let ele = cardNode.cloneNode(true);
+                    ele.data = {
+                        title: card.title,
+                        id: card.id,
+                        parentId: card.parentId,
+                        index: card.index
+                    };
+                    
+                    for (var site of card.children) {
+                        // Check to make this isn't a folder. They don't have the url property.
+                        if (site.url) {
+                            let row = cardRowNode.cloneNode(true);
+                            row.id = site.parentId + "_" + site.id;
+                            row.data = site;
+                            
+                            ele.appendChild(row);
+                        }
                         
-                        ele.appendChild(row);
                     }
                     
+                    docFrag.appendChild(ele);
                 }
-                
-                MainContent.appendChild(ele);
+
+                MainContent.appendChild(docFrag);
             }
+
+            // console.timeEnd('Initial Load');
         });
+
+        
     }
     
     function createAppCards() {
@@ -851,4 +859,5 @@ var Newt = (function() {
     })
 })();
 
+// console.time('Initial Load');
 Newt.init();
