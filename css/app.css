@@ -38,6 +38,11 @@ body {
 	max-height: 100vh;
 }
 
+.over-card {
+	border-left: 2px solid var(--accent-color);
+	margin-left: -2px;
+}
+
 /*
     Menu Bar
 */
@@ -111,11 +116,29 @@ body {
 	font-weight: 500;
 }
 
-.main-content {
+.content-container {
 	padding: 7px;
 	height: 100vh;
 	overflow: scroll;
 	flex: 1;
+}
+
+.delete-bar {
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	padding: 10px;
+	background-color: var(--background-color);
+	box-shadow: 3px 3px 10px var(--shadow-color);
+	color: var(--popup-icon-color);
+	opacity: 0;
+	transition: 200ms;
+	border-bottom-left-radius: 5px; 
+}
+
+.delete-bar.over {
+	opacity: 1;
+	transform: scale(1.5);
 }
 
 /*

@@ -27,9 +27,6 @@
             }
             
             .icon {
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: contain;
                 height: 18px;
                 width: 18px;
                 float: left;
@@ -45,7 +42,7 @@
         </style>
         
         <div class="row" draggable="true">
-            <div class="icon"></div>
+            <img class="icon"></img>
             <div class="title">Site Title</div>
         </div>
     `;
@@ -61,55 +58,65 @@
             
             this.$row.addEventListener('dragstart', function(ev) {
                 ev.dataTransfer.effectAllowed = 'move';
-                ev.dataTransfer.setData('divid', self.id);
+                ev.dataTransfer.setData('sitedivid', self.id);
                 this.classList.add('drag');
 
                 return false;
             });
             
             this.$row.addEventListener('dragend', function(ev) {
-                this.classList.remove('drag');
+                if(ev.dataTransfer.types.includes('sitedivid')) {
+                    this.classList.remove('drag');
+                    ev.preventDefault();
 
-                return false;
+                    return false;
+                }
             });
             
             this.$row.addEventListener('dragover', function(ev) {
-                ev.dataTransfer.dropEffect = 'move';
+                if (ev.dataTransfer.types.includes('sitedivid')) {
+                    ev.dataTransfer.dropEffect = 'move';
 
-                if (ev.preventDefault) {
-                    ev.preventDefault();
+                    if (ev.preventDefault) {
+                        ev.preventDefault();
+                    }
+
+                    this.classList.add('over');
+                    
+                    return false;
                 }
-
-                this.classList.add('over');
-                
-                return false;
             });
 
             this.$row.addEventListener('dragleave', function(ev) {
-                this.classList.remove('over');
+                if (ev.dataTransfer.types.includes('sitedivid')) {
+                    ev.preventDefault();
+                    this.classList.remove('over');
+                }
             });
             
             this.$row.addEventListener('drop', function(ev) {
-                if (ev.stopPropagation) {
-                    ev.stopPropagation();
-                }
-
-                this.classList.remove('over');
-
-                let fromRow = this.ownerDocument.getElementById(ev.dataTransfer.getData('divid'));
-				let toRow = this.parentNode.host;
-                let card = this.parentNode.host.parentNode;
-                
-                let index;
-                for (let i=0; i<card.children.length; i++) {
-                    if (toRow.id == card.children[i].id) {
-                        index = i + 1;
+                if (ev.dataTransfer.types.includes('sitedivid')) {
+                    if (ev.stopPropagation) {
+                        ev.stopPropagation();
                     }
-                }
 
-                card.insertBefore(fromRow, toRow.nextSibling);
-                
-                ChromeService.moveBookmark(fromRow.data.id, card.data.id, index);
+                    this.classList.remove('over');
+
+                    let fromRow = this.ownerDocument.getElementById(ev.dataTransfer.getData('sitedivid'));
+                    let toRow = this.parentNode.host;
+                    let card = this.parentNode.host.parentNode;
+                    
+                    let index;
+                    for (let i=0; i<card.children.length; i++) {
+                        if (toRow.id == card.children[i].id) {
+                            index = i + 1;
+                        }
+                    }
+
+                    card.insertBefore(fromRow, toRow.nextSibling);
+                    
+                    ChromeService.moveBookmark(fromRow.data.id, card.data.id, index);
+                }
             });
             
             this.addEventListener('click', function() {
@@ -120,9 +127,6 @@
         attributeChanged(attrName, oldVal, newVal) {
             console.log(attrName + " changed");
             switch (attrName) {
-                case 'data':
-                    this.updateInfo();
-                    break;
                 case 'highlight':
                     this.updateHighlight();
                     break;
@@ -155,7 +159,8 @@
         set data(val) {
             this.setAttribute('data', JSON.stringify(val));
             
-            this.updateInfo();
+            this.$icon.src = 'https://plus.google.com/_/favicon?domain=' + val.url;
+            this.$title.textContent = val.title;
         }
         
         get highlight() {
@@ -168,7 +173,7 @@
         }
         
         updateInfo() {
-            this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.data.url + '")';
+            this.$icon.src = 'https://plus.google.com/_/favicon?domain=' + this.data.url;
             this.$title.textContent = this.data.title;
         }
         
