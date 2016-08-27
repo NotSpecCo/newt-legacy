@@ -8,7 +8,7 @@ var Newt = (function() {
     let EditingTheme = false;
     let EditingThemeID = null;
     
-    let MainContent = document.querySelector('.main-content');
+    let MainContent = document.querySelector('.content');
     let MenuBar = document.querySelector('.menu-bar');
     
     function init() {
@@ -17,6 +17,31 @@ var Newt = (function() {
         window.addEventListener('storage', AppPrefsChanged);
         window.addEventListener('keydown', handleKeyPress, false);
         document.querySelector('#scrim').addEventListener('click', () => closeAllPopups() );
+
+        let deleteTarget = document.querySelector('.delete-bar');
+        deleteTarget.addEventListener('dragover', function(ev) {
+            ev.preventDefault();
+            this.classList.add('over');
+        });
+
+        deleteTarget.addEventListener('dragleave', function(ev) {
+            ev.preventDefault();
+            this.classList.remove('over');
+        });
+
+        deleteTarget.addEventListener('drop', function(ev) {
+            this.classList.remove('over');
+
+            if (ev.dataTransfer.types.includes('sitedivid')) {
+                let element = this.ownerDocument.getElementById(ev.dataTransfer.getData('sitedivid'));
+                
+                ChromeService.deleteBookmark(element.data.id);
+                element.remove();
+            } else {
+                let cardID = ev.dataTransfer.getData('carddivid');
+                showConfirmPrompt('Are you sure you want to delete this card? Sites in it will also be deleted.', 'confirmDeleteCard', cardID);
+            }
+        });
 
         // Popup Menu
         document.querySelector('#btnAddCard').addEventListener('click',() => { hideMenu(); showAddCardPrompt(); });
@@ -215,12 +240,56 @@ var Newt = (function() {
                     }
 
                     let ele = cardNode.cloneNode(true);
+                    ele.id = 'card'+ card.id;
                     ele.data = {
                         title: card.title,
                         id: card.id,
                         parentId: card.parentId,
                         index: card.index
                     };
+
+                    ele.addEventListener('dragover', function(ev) {
+                        if (!ev.dataTransfer.types.includes('sitedivid')) {
+                            ev.preventDefault();
+                            this.classList.add('over-card');
+                        }
+                    });
+
+                    ele.addEventListener('dragleave', function(ev) {   
+                        if (!ev.dataTransfer.types.includes('sitedivid')) {
+                            ev.preventDefault();
+                            this.classList.remove('over-card');
+                        }
+                    });
+
+                    ele.addEventListener('dragend', function(ev) {   
+                        if (!ev.dataTransfer.types.includes('sitedivid')) {
+                            ev.preventDefault();
+                            this.classList.remove('over-card');
+                        }
+                    });
+
+                    ele.addEventListener('drop', function(ev) {   
+                        if (!ev.dataTransfer.types.includes('sitedivid')) {
+                            ev.preventDefault();
+
+                            this.classList.remove('over-card');
+
+                            let fromCard = document.getElementById('card' + ev.dataTransfer.getData('carddivid'));
+                            let toCard = this;
+                            let container = this.parentNode;
+                            
+                            let index;
+                            for (let i=0; i<container.children.length; i++) {
+                                if (('card' + toCard.data.id) == container.children[i].id) {
+                                    index = i;
+                                }
+                            }
+
+                            container.insertBefore(fromCard, toCard);
+                            ChromeService.moveFolder(fromCard.data.id, index);
+                        }
+                    });
                     
                     for (var site of card.children) {
                         // Check to make this isn't a folder. They don't have the url property.
@@ -817,6 +886,13 @@ var Newt = (function() {
         });
     }
 
+    function confirmDeleteCard(cardID) {
+        let element = document.getElementById('card' + cardID);
+
+        ChromeService.deleteBookmarkTree(element.data.id);
+        element.remove();
+    }
+
     function openAbout() {
 
     }
@@ -854,6 +930,7 @@ var Newt = (function() {
         hideConfirmPrompt: hideConfirmPrompt,
         closeAllPopups: closeAllPopups,
         createNewCard: createNewCard,
+        confirmDeleteCard: confirmDeleteCard,
         openThemeBuilder: openThemeBuilder,
         deleteTheme: deleteTheme
     })

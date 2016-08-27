@@ -27,11 +27,10 @@
                 text-overflow: ellipses;
                 white-space: nowrap;
             }
-            
+
             .over {
                 border-bottom: 2px solid var(--accent-color);
                 padding: 10px 10px 3px 10px;
-                
             }
             
             .items-container {
@@ -43,7 +42,7 @@
             }
         </style>
         
-        <div class="card">
+        <div class="card" draggable="true">
             <div class="card-title"></div>
             <div class="items-container">
                 <content></content>
@@ -55,35 +54,53 @@
         createdCallback() {
             this.createShadowRoot().innerHTML = template;
 
+            this.$card = this.shadowRoot.querySelector('.card');
             this.$title = this.shadowRoot.querySelector('.card-title');
             this.$container = this.shadowRoot.querySelector('.items-container');
             
-            this.$title.addEventListener('dragover', function(ev) {
-                if (ev.preventDefault) {
-                    ev.preventDefault();
-                }
-                
-                this.classList.add('over');
-            });
-            
-            this.$title.addEventListener('dragleave', function(ev) {
-                this.classList.remove('over');
-            });
-            
             let self = this;
-            this.$title.addEventListener('drop', function(ev) {
-                if (ev.stopPropagation) {
-                    ev.stopPropagation();
-                }
-                
-                this.classList.remove('over');
-                
-                let fromRow = this.ownerDocument.getElementById(ev.dataTransfer.getData('divid'));
-                let card = self;
 
-                card.insertBefore(fromRow, self.children[0]);
+            this.$card.addEventListener('dragstart', function(ev) {
+                ev.dataTransfer.effectAllowed = 'move';
+                ev.dataTransfer.setData('carddivid', self.data.id);
+                this.classList.add('drag');
+
+                return false;
+            });
+
+            this.$title.addEventListener('dragover', function(ev) {
+                if (ev.dataTransfer.types.includes('sitedivid')) {
+                    ev.preventDefault();
+                    this.classList.add('over');
+                }
+            });
+
+            this.$title.addEventListener('dragleave', function(ev) {
+                if (ev.dataTransfer.types.includes('sitedivid')) {
+                    ev.preventDefault();
+                    this.classList.remove('over');
+                }
+            });
+
+            this.$title.addEventListener('dragend', function(ev) {
+                if (ev.dataTransfer.types.includes('sitedivid')) {
+                    ev.preventDefault();
+                    this.classList.remove('over');
+                }
+            });
+            
+            this.$title.addEventListener('drop', function(ev) {
                 
-                ChromeService.moveBookmark(fromRow.data.id, card.data.id, 0);
+                if (ev.dataTransfer.types.includes('sitedivid')) {
+                    this.classList.remove('over');
+                    
+                    let fromRow = this.ownerDocument.getElementById(ev.dataTransfer.getData('sitedivid'));
+                    let card = self;
+
+                    card.insertBefore(fromRow, self.children[0]);
+                    
+                    ChromeService.moveBookmark(fromRow.data.id, card.data.id, 0);
+                }
             });
         }
         
