@@ -119,9 +119,21 @@
                 }
             });
             
-            this.addEventListener('click', function() {
-                ChromeService.updateTab(this.data.url);
+            this.addEventListener('click', (ev) => {
+                return ev.button === 0 ? this.handlePrimaryClick() : this.handleAuxClick(ev.altKey);
             });
+
+            this.addEventListener('auxclick', (ev) => {
+                return this.handleAuxClick(ev.altKey);
+            });
+        }
+
+        handlePrimaryClick() {
+            ChromeService.updateTab(this.data.url);
+        }
+
+        handleAuxClick(alt) {
+            ChromeService.openNewTab(this.data.url, alt);
         }
         
         attributeChanged(attrName, oldVal, newVal) {

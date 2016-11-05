@@ -135,8 +135,8 @@ let ChromeService = (function() {
         chrome.tabs.update({url: url});
     }
     
-    function openNewTab(url) {
-        chrome.tabs.create({url: url});
+    function openNewTab(url, active) {
+        chrome.tabs.create({url: url, active: active});
     }
     
     function openApp(id) {
