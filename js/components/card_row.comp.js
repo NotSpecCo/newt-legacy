@@ -5,6 +5,7 @@
         <style>
             :host {
                 display: block;
+                cursor: pointer;
             }
             .row {
                 padding: 7px 10px;
@@ -40,15 +41,22 @@
                 color: var(--text-color);
                 font-size: 16px;
                 font-family: "Segoe UI", Helvetica, sans-serif;
+                cursor: pointer;
             }
             .title:focus {
                 outline: none;
+            }
+            .title.editing {
+                cursor: text;
             }
 
             .menu .item {
                 text-align: center;
                 font-size: 16px;
                 padding: 7px 10px;
+            }
+            .menu .item:hover {
+                text-decoration: underline;
             }
         </style>
         
@@ -177,6 +185,9 @@
                     this.title = this.$title.value;
                     ChromeService.updateBookmark(this.data.id, this.data.title, this.data.url);
                     this.toggleRename();
+                } else if (ev.key === 'Escape') {
+                    this.$title.value = this.data.title;
+                    this.toggleRename();
                 }
             })
 
@@ -211,8 +222,10 @@
 
             if (this.isRenaming) {
                 this.closeMenu();
+                this.$title.classList.add('editing');
                 this.$title.focus();
             } else {
+                this.$title.classList.remove('editing');
                 this.$title.blur();
             }
         }
