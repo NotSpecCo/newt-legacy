@@ -9,6 +9,7 @@
             
             .row {
                 padding: 7px 10px;
+                cursor: pointer;
             }
             .row:hover {
                 background-color: var(--highlight-color);
