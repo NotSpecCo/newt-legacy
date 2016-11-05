@@ -5,7 +5,6 @@
         <style>
             :host {
                 display: block;
-                position: relative;
             }
             .row {
                 padding: 7px 10px;
@@ -165,6 +164,12 @@
 
             this.$menuRename.addEventListener('click', () => {
                 this.toggleRename();
+            });
+
+            this.$menuDelete.addEventListener('click', () => {
+                console.log('menuDelete click', this);
+                ChromeService.deleteBookmark(this.data.id);
+                this.remove();
             });
 
             this.$title.addEventListener('keydown', ev => {
