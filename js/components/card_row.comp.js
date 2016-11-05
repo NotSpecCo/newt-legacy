@@ -167,7 +167,9 @@
             this.addEventListener('contextmenu', ev => {
                 ev.preventDefault();
 
-                this.handleRightClick();
+                if (!this.isRenaming) {
+                    this.toggleMenu();
+                }
             });
 
             this.$menuRename.addEventListener('click', () => {
@@ -195,18 +197,18 @@
         }
 
         handlePrimaryClick() {
-            if (!this.isMenuOpen) {
+            if (!this.isMenuOpen && !this.isRenaming) {
                 ChromeService.updateTab(this.data.url);
             }
         }
 
         handleAuxClick(alt) {
-            if (!this.isMenuOpen) {
+            if (!this.isMenuOpen && !this.isRenaming) {
                 ChromeService.openNewTab(this.data.url, alt);
             }
         }
 
-        handleRightClick() {
+        toggleMenu() {
             if (this.$menu.style.display == 'none') {
                 this.$menu.style.display = 'block';
                 this.isMenuOpen = true;
