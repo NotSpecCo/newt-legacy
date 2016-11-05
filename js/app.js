@@ -16,6 +16,7 @@ var Newt = (function() {
         
         window.addEventListener('storage', AppPrefsChanged);
         window.addEventListener('keydown', handleKeyPress, false);
+        document.body.onmousedown = ev => { if (ev.button === 1) return false };
         document.querySelector('#scrim').addEventListener('click', () => closeAllPopups() );
 
         let deleteTarget = document.querySelector('.delete-bar');
