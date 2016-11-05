@@ -167,7 +167,7 @@
             this.addEventListener('contextmenu', ev => {
                 ev.preventDefault();
 
-                if (!this.isRenaming) {
+                if (this.isEditable && !this.isRenaming) {
                     this.toggleMenu();
                 }
             });
@@ -191,7 +191,7 @@
                     this.$title.value = this.data.title;
                     this.toggleRename();
                 }
-            })
+            });
 
             this.$title.readOnly = true;
         }
@@ -284,6 +284,14 @@
         set highlight(val) {
             this.setAttribute('highlight', JSON.stringify(val));
             this.updateHighlight();
+        }
+
+        get isEditable() {
+            return JSON.parse(this.getAttribute('isEditable'));
+        }
+        
+        set isEditable(val) {
+            this.setAttribute('isEditable', JSON.stringify(val));
         }
         
         updateInfo() {
