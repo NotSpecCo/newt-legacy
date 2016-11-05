@@ -5,9 +5,11 @@
         <style>
             :host {
                 display: block;
+                cursor: pointer;
             }
             .row {
                 padding: 7px 10px;
+                display: flex;
             }
             .row:hover {
                 background-color: var(--highlight-color);
@@ -32,18 +34,39 @@
                 float: left;
                 margin-right: 10px;
             }
-            
             .title {
+                flex: 1;
+                border: none;
+                background-color: transparent;
+                color: var(--text-color);
                 font-size: 16px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+                font-family: "Segoe UI", Helvetica, sans-serif;
+                cursor: pointer;
+            }
+            .title:focus {
+                outline: none;
+            }
+            .title.editing {
+                cursor: text;
+            }
+
+            .menu .item {
+                text-align: center;
+                font-size: 16px;
+                padding: 7px 10px;
+            }
+            .menu .item:hover {
+                text-decoration: underline;
             }
         </style>
         
         <div class="row" draggable="true">
             <img class="icon"></img>
-            <div class="title">Site Title</div>
+            <input class="title">
+        </div>
+        <div class="menu" style="display: none">
+            <div id="menuRename" class="item">Rename</div>
+            <div id="menuDelete" class="item">Delete</div>
         </div>
     `;
     
@@ -53,6 +76,12 @@
             this.$row = this.shadowRoot.querySelector('.row');
             this.$icon = this.shadowRoot.querySelector('.icon');
             this.$title = this.shadowRoot.querySelector('.title');
+            this.$menu = this.shadowRoot.querySelector('.menu');
+            this.$menuRename = this.shadowRoot.querySelector('#menuRename');
+            this.$menuDelete = this.shadowRoot.querySelector('#menuDelete');
+
+            this.isRenaming = false;
+            this.isMenuOpen = false;
             
             let self = this;
             
@@ -119,9 +148,93 @@
                 }
             });
             
-            this.addEventListener('click', function() {
-                ChromeService.updateTab(this.data.url);
+            this.$row.addEventListener('click', (ev) => {
+                // console.log('click', ev);
+                if (ev.button === 0) {
+                    this.handlePrimaryClick();
+                } else if (ev.button === 1) {
+                    this.handleAuxClick(ev.altKey);
+                }
             });
+
+            this.$row.addEventListener('auxclick', (ev) => {
+                // console.log('auxclick', ev);
+                if (ev.button === 1) {
+                    this.handleAuxClick(ev.altKey);
+                }
+            });
+
+            this.addEventListener('contextmenu', ev => {
+                ev.preventDefault();
+
+                if (this.isEditable && !this.isRenaming) {
+                    this.toggleMenu();
+                }
+            });
+
+            this.$menuRename.addEventListener('click', () => {
+                this.toggleRename();
+            });
+
+            this.$menuDelete.addEventListener('click', () => {
+                console.log('menuDelete click', this);
+                ChromeService.deleteBookmark(this.data.id);
+                this.remove();
+            });
+
+            this.$title.addEventListener('keydown', ev => {
+                if (ev.key === 'Enter' && this.$title.value.length > 0) {
+                    this.title = this.$title.value;
+                    ChromeService.updateBookmark(this.data.id, this.data.title, this.data.url);
+                    this.toggleRename();
+                } else if (ev.key === 'Escape') {
+                    this.$title.value = this.data.title;
+                    this.toggleRename();
+                }
+            });
+
+            this.$title.readOnly = true;
+        }
+
+        handlePrimaryClick() {
+            if (!this.isMenuOpen && !this.isRenaming) {
+                ChromeService.updateTab(this.data.url);
+            }
+        }
+
+        handleAuxClick(alt) {
+            if (!this.isMenuOpen && !this.isRenaming) {
+                ChromeService.openNewTab(this.data.url, alt);
+            }
+        }
+
+        toggleMenu() {
+            if (this.$menu.style.display == 'none') {
+                this.$menu.style.display = 'block';
+                this.isMenuOpen = true;
+            } else {
+                this.$menu.style.display = 'none';
+                this.isMenuOpen = false;
+            }
+        }
+
+        toggleRename() {
+            this.isRenaming = !this.isRenaming;
+            this.$title.readOnly = !this.isRenaming;
+
+            if (this.isRenaming) {
+                this.closeMenu();
+                this.$title.classList.add('editing');
+                this.$title.focus();
+            } else {
+                this.$title.classList.remove('editing');
+                this.$title.blur();
+            }
+        }
+
+        closeMenu() {
+            this.$menu.style.display = 'none';
+            this.isMenuOpen = false;
         }
         
         attributeChanged(attrName, oldVal, newVal) {
@@ -144,12 +257,13 @@
         }
         
         get title() {
-            let title = this.attribute('title');
-            return title;
+            return this.data.title;
         }
         
         set title(val) {
-            this.setAttribute('title', val);
+            var newData = this.data;
+            newData.title = val;
+            this.data = newData;
         }
         
         get data() {
@@ -160,7 +274,7 @@
             this.setAttribute('data', JSON.stringify(val));
             
             this.$icon.src = 'https://plus.google.com/_/favicon?domain=' + val.url;
-            this.$title.textContent = val.title;
+            this.$title.value = val.title;
         }
         
         get highlight() {
@@ -171,10 +285,18 @@
             this.setAttribute('highlight', JSON.stringify(val));
             this.updateHighlight();
         }
+
+        get isEditable() {
+            return JSON.parse(this.getAttribute('isEditable'));
+        }
+        
+        set isEditable(val) {
+            this.setAttribute('isEditable', JSON.stringify(val));
+        }
         
         updateInfo() {
             this.$icon.src = 'https://plus.google.com/_/favicon?domain=' + this.data.url;
-            this.$title.textContent = this.data.title;
+            this.$title.value = this.data.title;
         }
         
         updateHighlight() {

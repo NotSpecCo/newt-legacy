@@ -113,6 +113,10 @@ let ChromeService = (function() {
         chrome.bookmarks.move(folderID, {parentId: NewtFolderID, index: index});
     }
 
+    function updateBookmark(id, title, url) {
+        chrome.bookmarks.update(id, {title: title, url: url});
+    }
+
     function deleteBookmark(bookmarkID) {
         chrome.bookmarks.remove(bookmarkID);
     }
@@ -135,8 +139,8 @@ let ChromeService = (function() {
         chrome.tabs.update({url: url});
     }
     
-    function openNewTab(url) {
-        chrome.tabs.create({url: url});
+    function openNewTab(url, active) {
+        chrome.tabs.create({url: url, active: active});
     }
     
     function openApp(id) {
@@ -152,6 +156,7 @@ let ChromeService = (function() {
         getDevices: getDevices,
         moveBookmark: moveBookmark,
         moveFolder: moveFolder,
+        updateBookmark: updateBookmark,
         deleteBookmark: deleteBookmark,
         deleteBookmarkTree: deleteBookmarkTree,
         createFolder: createFolder,

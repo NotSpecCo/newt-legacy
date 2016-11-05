@@ -16,6 +16,7 @@ var Newt = (function() {
         
         window.addEventListener('storage', AppPrefsChanged);
         window.addEventListener('keydown', handleKeyPress, false);
+        document.body.onmousedown = ev => { if (ev.button === 1) return false };
         document.querySelector('#scrim').addEventListener('click', () => closeAllPopups() );
 
         let deleteTarget = document.querySelector('.delete-bar');
@@ -297,6 +298,7 @@ var Newt = (function() {
                             let row = cardRowNode.cloneNode(true);
                             row.id = site.parentId + "_" + site.id;
                             row.data = site;
+                            row.isEditable = true;
                             
                             ele.appendChild(row);
                         }
@@ -421,6 +423,7 @@ var Newt = (function() {
                 for (var site of device.sites) {
                     let row = document.createElement('card-row');
                     row.data = site;
+                    row.isEditable = false;
                     
                     card.appendChild(row);
                 }

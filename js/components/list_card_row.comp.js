@@ -9,6 +9,7 @@
             
             .row {
                 padding: 7px 10px;
+                cursor: pointer;
             }
             .row:hover {
                 background-color: var(--highlight-color);
@@ -49,15 +50,33 @@
             this.$row = this.shadowRoot.querySelector('.row');
             this.$icon = this.shadowRoot.querySelector('.icon');
             this.$title = this.shadowRoot.querySelector('.title');
-            
-            this.addEventListener('click', function() {
-                chrome.tabs.update({url: this.url});
+
+            this.addEventListener('click', (ev) => {
+                if (ev.button === 0) {
+                    this.handlePrimaryClick();
+                } else if (ev.button === 1) {
+                    this.handleAuxClick(ev.altKey);
+                }
+            });
+
+            this.addEventListener('auxclick', (ev) => {
+                if (ev.button === 1) {
+                    this.handleAuxClick(ev.altKey);
+                }
             });
         }
         
         attachedCallback() {
             this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.url + '")';
             this.$title.textContent = this.title;
+        }
+
+        handlePrimaryClick() {
+            ChromeService.updateTab(this.url);
+        }
+
+        handleAuxClick(alt) {
+            ChromeService.openNewTab(this.url, alt);
         }
         
         attributeChanged(attrName, oldVal, newVal) {
