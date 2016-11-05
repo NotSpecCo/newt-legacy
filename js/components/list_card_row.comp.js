@@ -51,11 +51,17 @@
             this.$title = this.shadowRoot.querySelector('.title');
 
             this.addEventListener('click', (ev) => {
-                return ev.button === 0 ? this.handlePrimaryClick() : this.handleAuxClick(ev.altKey);
+                if (ev.button === 0) {
+                    this.handlePrimaryClick();
+                } else if (ev.button === 1) {
+                    this.handleAuxClick(ev.altKey);
+                }
             });
 
             this.addEventListener('auxclick', (ev) => {
-                return this.handleAuxClick(ev.altKey);
+                if (ev.button === 1) {
+                    this.handleAuxClick(ev.altKey);
+                }
             });
         }
         
