@@ -21,11 +21,13 @@
             .card-title {
                 font-size: 22px;
                 font-weight: 400;
-                color: var(--accent-color);
-                padding: 10px 10px 5px 10px;
+                background-color: var(--card-header-color1);
+                color: var(--card-header-text-color1);
+                padding: 7px 10px;
                 overflow: ellipses;
                 text-overflow: ellipses;
                 white-space: nowrap;
+                margin-bottom: 5px;
             }
 
             .over {
@@ -102,6 +104,7 @@
                     ChromeService.moveBookmark(fromRow.data.id, card.data.id, 0);
                 }
             });
+          
         }
         
         set title(val) {
@@ -116,6 +119,17 @@
         
         get data() {
             return JSON.parse(this.getAttribute('data'));
+        }
+
+        set config(val) {
+            // console.log('config', val);
+            if (val.categoryColor > 0) {
+                this.$title.style.backgroundColor = 'var(--card-header-color' + val.categoryColor + ')';
+                this.$title.style.color = 'var(--card-header-text-color' + val.categoryColor + ')';
+            } else {
+                this.$title.style.backgroundColor = 'transparent';
+                this.$title.style.color = 'var(--accent-color)';
+            }
         }
     }
     

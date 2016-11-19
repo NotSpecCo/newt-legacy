@@ -11,6 +11,16 @@
 	--divider-color: rgba(0,0,0,.1);
 	--sidebar-icon-color: rgba(255, 255, 255, 1);
 	--popup-icon-color: rgba(0, 0, 0, 0.54);
+	--card-header-color1: #FFCDD2;
+	--card-header-text-color1: black;
+	--card-header-color2: #BBDEFB;
+	--card-header-text-color2: black;
+	--card-header-color3: #C8E6C9;
+	--card-header-text-color3: black;
+	--card-header-color4: #E1BEE7;
+	--card-header-text-color4: black;
+	--card-header-color5: #CFD8DC;
+	--card-header-text-color5: black;
 }
 
 body {
