@@ -11,6 +11,16 @@
 	--divider-color: rgba(0,0,0,.1);
 	--sidebar-icon-color: rgba(255, 255, 255, 1);
 	--popup-icon-color: rgba(0, 0, 0, 0.54);
+	--card-header-color1: #FFCDD2;
+	--card-header-text-color1: black;
+	--card-header-color2: #BBDEFB;
+	--card-header-text-color2: black;
+	--card-header-color3: #C8E6C9;
+	--card-header-text-color3: black;
+	--card-header-color4: #E1BEE7;
+	--card-header-text-color4: black;
+	--card-header-color5: #CFD8DC;
+	--card-header-text-color5: black;
 }
 
 body {
@@ -151,7 +161,7 @@ body {
 	z-index: 2000;
 	display: none;
 	flex-direction: column;
-	padding: 10px;
+	padding: 2px;
 }
 
 .theme-builder input {
@@ -171,7 +181,24 @@ body {
 
 .theme-settings {
 	flex: 1;
-	overflow: scroll;
+	overflow-y: scroll;
+}
+.theme-settings::-webkit-scrollbar {
+    width: 3px;
+}
+.theme-settings::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1); 
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+.theme-settings::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 4px;
+    border-radius:4px;
+    background: rgba(255,255,255,.5); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+.theme-settings::-webkit-scrollbar-thumb:window-inactive {
+	/*background: rgba(255,0,0,0.4); */
 }
 
 .theme-builder .actions > div {
@@ -184,6 +211,10 @@ body {
 	text-align: center;
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
+}
+
+.theme-builder color-row {
+	padding-right: 5px;
 }
 
 .actions > div:hover {

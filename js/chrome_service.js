@@ -114,7 +114,11 @@ let ChromeService = (function() {
     }
 
     function updateBookmark(id, title, url) {
-        chrome.bookmarks.update(id, {title: title, url: url});
+        chrome.promise = new ChromePromise();
+
+        return chrome.promise.bookmarks.update(id, {title: title, url: url}).then(function(res) {
+            return res;
+        });
     }
 
     function deleteBookmark(bookmarkID) {

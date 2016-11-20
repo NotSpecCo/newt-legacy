@@ -59,6 +59,32 @@ var Newt = (function() {
     function getAppPrefs() {
         let baseThemes = [
             {
+                name: 'Basic',
+                id: 'basic',
+                styles: [
+                    {name: 'main-background-color', val: '#efefef'},
+                    {name: 'background-color', val: '#fff'},
+                    {name: 'main-color', val: '#333'},
+                    {name: 'accent-color', val: '#333'},
+                    {name: 'highlight-color', val: '#eee'},
+                    {name: 'text-color', val: '#212121'},
+                    {name: 'shadow-color', val: '#aaa'},
+                    {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
+                    {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
+                    {name: 'popup-icon-color', val: 'rgba(0, 0, 0, 0.54)'},
+                    {name: 'card-header-color1', val: '#FFEBEE'},
+                    {name: 'card-header-text-color1', val: '#212121'},
+                    {name: 'card-header-color2', val: '#E8F5E9'},
+                    {name: 'card-header-text-color2', val: '#212121'},
+                    {name: 'card-header-color3', val: '#E3F2FD'},
+                    {name: 'card-header-text-color3', val: '#212121'},
+                    {name: 'card-header-color4', val: '#F3E5F5'},
+                    {name: 'card-header-text-color4', val: '#212121'},
+                    {name: 'card-header-color5', val: '#FFF3E0'},
+                    {name: 'card-header-text-color5', val: '#212121'}
+                ]
+            },
+            {
                 name: 'Light',
                 id: 'light',
                 styles: [
@@ -72,6 +98,16 @@ var Newt = (function() {
                     {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
                     {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
                     {name: 'popup-icon-color', val: 'rgba(0, 0, 0, 0.54)'},
+                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.3)'},
+                    {name: 'card-header-text-color1', val: '#212121'},
+                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.3)'},
+                    {name: 'card-header-text-color2', val: '#212121'},
+                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.3)'},
+                    {name: 'card-header-text-color3', val: '#212121'},
+                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.3)'},
+                    {name: 'card-header-text-color4', val: '#212121'},
+                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.3)'},
+                    {name: 'card-header-text-color5', val: '#212121'}
                 ]
             },
             {
@@ -88,6 +124,16 @@ var Newt = (function() {
                     {name: 'divider-color', val: 'rgba(255,255,255,.12)'},
                     {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
                     {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .87)'},
+                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)'},
+                    {name: 'card-header-text-color1', val: '#fff'},
+                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)'},
+                    {name: 'card-header-text-color2', val: '#fff'},
+                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)'},
+                    {name: 'card-header-text-color3', val: '#fff'},
+                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)'},
+                    {name: 'card-header-text-color4', val: '#fff'},
+                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)'},
+                    {name: 'card-header-text-color5', val: '#fff'}
                 ]
             },
             {
@@ -104,6 +150,16 @@ var Newt = (function() {
                     {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
                     {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
                     {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .8)'},
+                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)'},
+                    {name: 'card-header-text-color1', val: '#bdae9d'},
+                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)'},
+                    {name: 'card-header-text-color2', val: '#bdae9d'},
+                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)'},
+                    {name: 'card-header-text-color3', val: '#bdae9d'},
+                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)'},
+                    {name: 'card-header-text-color4', val: '#bdae9d'},
+                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)'},
+                    {name: 'card-header-text-color5', val: '#bdae9d'}
                 ]
             },
             {
@@ -120,6 +176,16 @@ var Newt = (function() {
                     {name: 'divider-color', val: 'rgba(0,0,0,.12)'},
                     {name: 'sidebar-icon-color', val: '#ECEFF1'},
                     {name: 'popup-icon-color', val: '#607D8B'},
+                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)'},
+                    {name: 'card-header-text-color1', val: '#546E7A'},
+                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)'},
+                    {name: 'card-header-text-color2', val: '#546E7A'},
+                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)'},
+                    {name: 'card-header-text-color3', val: '#546E7A'},
+                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)'},
+                    {name: 'card-header-text-color4', val: '#546E7A'},
+                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)'},
+                    {name: 'card-header-text-color5', val: '#546E7A'}
                 ]
             },
             {
@@ -136,20 +202,57 @@ var Newt = (function() {
                     {name: 'divider-color', val: 'rgba(0,0,0,.12)'},
                     {name: 'sidebar-icon-color', val: '#EFEBE9'},
                     {name: 'popup-icon-color', val: '#795548'},
+                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)'},
+                    {name: 'card-header-text-color1', val: '#795548'},
+                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)'},
+                    {name: 'card-header-text-color2', val: '#795548'},
+                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)'},
+                    {name: 'card-header-text-color3', val: '#795548'},
+                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)'},
+                    {name: 'card-header-text-color4', val: '#795548'},
+                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)'},
+                    {name: 'card-header-text-color5', val: '#795548'}
                 ]
             }
         ];
 
         let customThemes = JSON.parse(localStorage.getItem('customThemes')) || [];
+        // Old themes may not have the styles for card headers, so add them
+        customThemes.forEach(theme => {
+            if (theme.styles.length == 10) {
+                let headerStyles = [
+                    {name: 'card-header-color1', val: '#FFEBEE'},
+                    {name: 'card-header-text-color1', val: '#212121'},
+                    {name: 'card-header-color2', val: '#E8F5E9'},
+                    {name: 'card-header-text-color2', val: '#212121'},
+                    {name: 'card-header-color3', val: '#E3F2FD'},
+                    {name: 'card-header-text-color3', val: '#212121'},
+                    {name: 'card-header-color4', val: '#F3E5F5'},
+                    {name: 'card-header-text-color4', val: '#212121'},
+                    {name: 'card-header-color5', val: '#FFF3E0'},
+                    {name: 'card-header-text-color5', val: '#212121'}
+                ];
+                theme.styles = theme.styles.concat(headerStyles);
+            }
+        });
         let allThemes = baseThemes.concat(customThemes);
 
-        let selectedTheme = localStorage.getItem('theme') || 'light';
+        let selectedTheme = localStorage.getItem('theme') || 'basic';
+
+        let categoryColors = localStorage.getItem('categoryColors');
+        if (categoryColors == null) {
+            categoryColors = {};
+            localStorage.setItem('categoryColors', JSON.stringify(categoryColors));
+        } else {
+            categoryColors = JSON.parse(categoryColors);
+        }
 
         AppPrefs = {
             theme: selectedTheme,
             keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled',
             baseThemes: baseThemes,
-            customThemes: customThemes
+            customThemes: customThemes,
+            categoryColors: categoryColors
         };
         
         changeTheme(AppPrefs.theme);
@@ -159,9 +262,10 @@ var Newt = (function() {
         let oldVal = AppPrefs[key];
         AppPrefs[key] = val;
         // console.log('updatePref', key, val);
-        localStorage.setItem(key, val);
+        let newVal = typeof val == 'object' ? JSON.stringify(val) : val;
+        localStorage.setItem(key, newVal);
         
-        if (oldVal != val) {
+        if (oldVal != newVal) {
             switch (key) {
                 case 'theme':
                     changeTheme();
@@ -186,7 +290,7 @@ var Newt = (function() {
         let selectedTheme = allThemes.find(theme => {return theme.id == themeID});
 
         if (!selectedTheme) {
-            AppPrefs.theme = 'light';
+            AppPrefs.theme = 'basic';
             selectedTheme = allThemes[0];
         }
 
@@ -248,6 +352,14 @@ var Newt = (function() {
                         parentId: card.parentId,
                         index: card.index
                     };
+                    ele.config = {
+                        categoryColor: AppPrefs.categoryColors[card.id] || 0
+                    }
+
+                    ele.addEventListener('showcardmenu', function(ev, data) {
+                        // console.log('showcardmenu', ev);
+                        Newt.showCardMenu(ev.target);
+                    });
 
                     ele.addEventListener('dragover', function(ev) {
                         if (!ev.dataTransfer.types.includes('sitedivid')) {
@@ -256,7 +368,7 @@ var Newt = (function() {
                         }
                     });
 
-                    ele.addEventListener('dragleave', function(ev) {   
+                    ele.addEventListener('dragleave', function(ev) {
                         if (!ev.dataTransfer.types.includes('sitedivid')) {
                             ev.preventDefault();
                             this.classList.remove('over-card');
@@ -522,32 +634,25 @@ var Newt = (function() {
     function openThemeBuilder(editing, themeID) {
         document.querySelector('.theme-builder').style.display = 'flex';
 
-        let styles = [];
+        let allThemes = AppPrefs.baseThemes.concat(AppPrefs.customThemes);
+        let theme = allThemes.find(x => x.id == themeID);
+        let styles = theme.styles;
+        EditingTheme = editing;
+        EditingThemeID = themeID;
 
-        if (editing && typeof editing == 'boolean') {
-            EditingTheme = true;
-            EditingThemeID = themeID;
+        changeTheme(themeID);
+        let themeName = EditingTheme === true ? theme.name : theme.name + ' - copy';
+        document.querySelector('#inpThemeName').value = themeName;
 
-            let theme = AppPrefs.customThemes.find(function(x) { return x.id == themeID});
-
-            styles = theme.styles;
-            document.querySelector('#inpThemeName').value = theme.name;
-            changeTheme(themeID);
-        } else {
-            styles = AppPrefs.baseThemes[0].styles;
-            changeTheme('light');
-        }
-        
-
-        let ThemeSettings = document.querySelector('.theme-settings');
-        removeAllChildNodes(ThemeSettings);
+        let themeSettings = document.querySelector('.theme-settings');
+        removeAllChildNodes(themeSettings);
 
         styles.forEach(function(style) {
             let row = document.createElement('color-row');
             row.colorID = style.name;
             row.color = style.val;
 
-            ThemeSettings.appendChild(row);
+            themeSettings.appendChild(row);
         });
     }
 
@@ -638,13 +743,19 @@ var Newt = (function() {
 
         localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
 
-        AppPrefs.theme = 'light';
+        AppPrefs.theme = 'basic';
         changeTheme();
 
         if (document.querySelector('settings-card') != null) {
             document.querySelector('settings-card').refreshThemes();
         }
-    } 
+    }
+
+    function saveCategoryColors() {
+        if (AppPrefs.categoryColors != null) {
+            localStorage.setItem('categoryColors', JSON.stringify(AppPrefs.categoryColors));
+        }
+    }
 
     function removeAllChildNodes(node) {
         while (node.lastChild) {
@@ -656,6 +767,7 @@ var Newt = (function() {
         hideMenu();
         hideAddCardPrompt();
         hideConfirmPrompt();
+        hideCardMenu();
     }
 
     function toggleMenu() {
@@ -855,6 +967,47 @@ var Newt = (function() {
         return map;
     }
 
+    function showCardMenu(card) {
+        let dialog = document.createElement('dialog-card-menu');
+        dialog.id = 'cardMenuDialog';
+        dialog.data = {
+            cardID: card.data.id,
+            title: card.data.title,
+            color: card.config.categoryColor
+        }
+
+        document.body.appendChild(dialog);
+        document.querySelector('#scrim').style.display = 'block';
+    }
+
+    function hideCardMenu() {
+        if (document.querySelector('#cardMenuDialog')) {
+            document.querySelector('#cardMenuDialog').remove();
+        }
+        document.querySelector('#scrim').style.display = 'none';
+    }
+
+    function saveEditedCard(data) {
+        let card = document.querySelector('#card'+data.cardID);
+
+        let cardConfig = card.config;
+        cardConfig.categoryColor = data.color;
+        card.config = cardConfig;
+
+        AppPrefs.categoryColors[data.cardID] = data.color;
+        this.updatePref('categoryColors', AppPrefs.categoryColors);
+
+        if (data.title) {
+            ChromeService.updateBookmark(data.cardID, data.title).then(function(res) {
+                let cardData = card.data;
+                cardData.title = data.title;
+                card.data = cardData;
+            });
+        }
+
+        this.hideCardMenu();
+    }
+
     function showAddCardPrompt() {
         let prompt = document.createElement('prompt-add-card');
         prompt.id = 'newCardPrompt';
@@ -935,7 +1088,10 @@ var Newt = (function() {
         createNewCard: createNewCard,
         confirmDeleteCard: confirmDeleteCard,
         openThemeBuilder: openThemeBuilder,
-        deleteTheme: deleteTheme
+        deleteTheme: deleteTheme,
+        showCardMenu: showCardMenu,
+        hideCardMenu: hideCardMenu,
+        saveEditedCard: saveEditedCard
     })
 })();
 

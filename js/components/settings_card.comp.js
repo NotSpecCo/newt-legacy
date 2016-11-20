@@ -119,7 +119,9 @@
             
             // Event listeners
             this.$prefTheme.addEventListener('change', this.prefChanged.bind(this));
-            this.$iconAddTheme.addEventListener('click', Newt.openThemeBuilder);
+            this.$iconAddTheme.addEventListener('click', () => {
+                Newt.openThemeBuilder(false, this.$prefTheme.value);
+            });
             this.$iconDeleteTheme.addEventListener('click', () => {
                 if (this.$prefTheme.value.indexOf('customtheme') > -1) {
                     Newt.showConfirmPrompt('Are you sure you want to delete this theme?', 'deleteTheme', this.$prefTheme.value);
