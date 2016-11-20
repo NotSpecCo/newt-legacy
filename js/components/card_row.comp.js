@@ -10,6 +10,7 @@
             .row {
                 padding: 7px 10px;
                 display: flex;
+                align-items: center;
             }
             .row:hover {
                 background-color: var(--highlight-color);
