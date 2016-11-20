@@ -73,15 +73,15 @@ var Newt = (function() {
                     {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
                     {name: 'popup-icon-color', val: 'rgba(0, 0, 0, 0.54)'},
                     {name: 'card-header-color1', val: '#FFEBEE'},
-                    {name: 'card-header-text-color1', val: '#000'},
+                    {name: 'card-header-text-color1', val: '#212121'},
                     {name: 'card-header-color2', val: '#E8F5E9'},
-                    {name: 'card-header-text-color2', val: '#000'},
+                    {name: 'card-header-text-color2', val: '#212121'},
                     {name: 'card-header-color3', val: '#E3F2FD'},
-                    {name: 'card-header-text-color3', val: '#000'},
+                    {name: 'card-header-text-color3', val: '#212121'},
                     {name: 'card-header-color4', val: '#F3E5F5'},
-                    {name: 'card-header-text-color4', val: '#000'},
+                    {name: 'card-header-text-color4', val: '#212121'},
                     {name: 'card-header-color5', val: '#FFF3E0'},
-                    {name: 'card-header-text-color5', val: '#000'}
+                    {name: 'card-header-text-color5', val: '#212121'}
                 ]
             },
             {
@@ -616,32 +616,25 @@ var Newt = (function() {
     function openThemeBuilder(editing, themeID) {
         document.querySelector('.theme-builder').style.display = 'flex';
 
-        let styles = [];
+        let allThemes = AppPrefs.baseThemes.concat(AppPrefs.customThemes);
+        let theme = allThemes.find(x => x.id == themeID);
+        let styles = theme.styles;
+        EditingTheme = editing;
+        EditingThemeID = themeID;
 
-        if (editing && typeof editing == 'boolean') {
-            EditingTheme = true;
-            EditingThemeID = themeID;
+        changeTheme(themeID);
+        let themeName = EditingTheme === true ? theme.name : theme.name + ' - copy';
+        document.querySelector('#inpThemeName').value = themeName;
 
-            let theme = AppPrefs.customThemes.find(function(x) { return x.id == themeID});
-
-            styles = theme.styles;
-            document.querySelector('#inpThemeName').value = theme.name;
-            changeTheme(themeID);
-        } else {
-            styles = AppPrefs.baseThemes[0].styles;
-            changeTheme('basic');
-        }
-        
-
-        let ThemeSettings = document.querySelector('.theme-settings');
-        removeAllChildNodes(ThemeSettings);
+        let themeSettings = document.querySelector('.theme-settings');
+        removeAllChildNodes(themeSettings);
 
         styles.forEach(function(style) {
             let row = document.createElement('color-row');
             row.colorID = style.name;
             row.color = style.val;
 
-            ThemeSettings.appendChild(row);
+            themeSettings.appendChild(row);
         });
     }
 
