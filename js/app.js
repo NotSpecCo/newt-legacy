@@ -217,6 +217,24 @@ var Newt = (function() {
         ];
 
         let customThemes = JSON.parse(localStorage.getItem('customThemes')) || [];
+        // Old themes may not have the styles for card headers, so add them
+        customThemes.forEach(theme => {
+            if (theme.styles.length == 10) {
+                let headerStyles = [
+                    {name: 'card-header-color1', val: '#FFEBEE'},
+                    {name: 'card-header-text-color1', val: '#212121'},
+                    {name: 'card-header-color2', val: '#E8F5E9'},
+                    {name: 'card-header-text-color2', val: '#212121'},
+                    {name: 'card-header-color3', val: '#E3F2FD'},
+                    {name: 'card-header-text-color3', val: '#212121'},
+                    {name: 'card-header-color4', val: '#F3E5F5'},
+                    {name: 'card-header-text-color4', val: '#212121'},
+                    {name: 'card-header-color5', val: '#FFF3E0'},
+                    {name: 'card-header-text-color5', val: '#212121'}
+                ];
+                theme.styles = theme.styles.concat(headerStyles);
+            }
+        });
         let allThemes = baseThemes.concat(customThemes);
 
         let selectedTheme = localStorage.getItem('theme') || 'basic';
