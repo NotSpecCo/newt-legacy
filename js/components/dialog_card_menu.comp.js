@@ -38,7 +38,7 @@
 
             .content .label {
                 font-weight:bold;
-                margin: 10px 0;
+                margin-top: 10px;
             }
 
             .content .input {
@@ -132,13 +132,9 @@
 
                 this.$content.appendChild(ele);
             }
-
-
-            console.dir(this);
             
             this.$cardMenuform.addEventListener('submit', (ev) => {
                 ev.preventDefault();
-                // console.log('submit', ev);
 
                 var data = {
                     cardID: this.data.cardID,
@@ -146,7 +142,6 @@
                     color: this.$cardMenuform.elements['cardColor'].value
                 }
 
-                // console.log('form data', data);
                 Newt.saveEditedCard(data);
             });
 
