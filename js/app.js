@@ -272,7 +272,7 @@ var Newt = (function() {
         let selectedTheme = allThemes.find(theme => {return theme.id == themeID});
 
         if (!selectedTheme) {
-            AppPrefs.theme = 'light';
+            AppPrefs.theme = 'basic';
             selectedTheme = allThemes[0];
         }
 
@@ -629,7 +629,7 @@ var Newt = (function() {
             changeTheme(themeID);
         } else {
             styles = AppPrefs.baseThemes[0].styles;
-            changeTheme('light');
+            changeTheme('basic');
         }
         
 
@@ -732,7 +732,7 @@ var Newt = (function() {
 
         localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
 
-        AppPrefs.theme = 'light';
+        AppPrefs.theme = 'basic';
         changeTheme();
 
         if (document.querySelector('settings-card') != null) {
