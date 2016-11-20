@@ -104,7 +104,19 @@
                     ChromeService.moveBookmark(fromRow.data.id, card.data.id, 0);
                 }
             });
-          
+
+            this.$title.addEventListener('contextmenu', ev => {
+                ev.preventDefault();
+
+                var event = new CustomEvent('showcardmenu', {
+                    detail: {
+                        card: self,
+                        cardID: this.data.id
+                    }
+                });
+
+                self.dispatchEvent(event);
+            });            
         }
         
         set title(val) {
@@ -122,7 +134,7 @@
         }
 
         set config(val) {
-            // console.log('config', val);
+            this.setAttribute('config', JSON.stringify(val));
             if (val.categoryColor > 0) {
                 this.$title.style.backgroundColor = 'var(--card-header-color' + val.categoryColor + ')';
                 this.$title.style.color = 'var(--card-header-text-color' + val.categoryColor + ')';
@@ -130,6 +142,10 @@
                 this.$title.style.backgroundColor = 'transparent';
                 this.$title.style.color = 'var(--accent-color)';
             }
+        }
+
+        get config() {
+            return JSON.parse(this.getAttribute('config'));
         }
     }
     

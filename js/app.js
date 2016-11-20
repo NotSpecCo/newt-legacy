@@ -72,15 +72,15 @@ var Newt = (function() {
                     {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
                     {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
                     {name: 'popup-icon-color', val: 'rgba(0, 0, 0, 0.54)'},
-                    {name: 'card-header-color1', val: '#EF9A9A'},
+                    {name: 'card-header-color1', val: '#FFEBEE'},
                     {name: 'card-header-text-color1', val: '#000'},
-                    {name: 'card-header-color2', val: '#A5D6A7'},
+                    {name: 'card-header-color2', val: '#E8F5E9'},
                     {name: 'card-header-text-color2', val: '#000'},
-                    {name: 'card-header-color3', val: '#90CAF9'},
+                    {name: 'card-header-color3', val: '#E3F2FD'},
                     {name: 'card-header-text-color3', val: '#000'},
-                    {name: 'card-header-color4', val: '#CE93D8'},
+                    {name: 'card-header-color4', val: '#F3E5F5'},
                     {name: 'card-header-text-color4', val: '#000'},
-                    {name: 'card-header-color5', val: '#CFD8DC'},
+                    {name: 'card-header-color5', val: '#FFF3E0'},
                     {name: 'card-header-text-color5', val: '#000'}
                 ]
             },
@@ -244,9 +244,10 @@ var Newt = (function() {
         let oldVal = AppPrefs[key];
         AppPrefs[key] = val;
         // console.log('updatePref', key, val);
-        localStorage.setItem(key, val);
+        let newVal = typeof val == 'object' ? JSON.stringify(val) : val;
+        localStorage.setItem(key, newVal);
         
-        if (oldVal != val) {
+        if (oldVal != newVal) {
             switch (key) {
                 case 'theme':
                     changeTheme();
@@ -336,9 +337,11 @@ var Newt = (function() {
                     ele.config = {
                         categoryColor: AppPrefs.categoryColors[card.id] || 0
                     }
-                    // ele.config = {
-                    //     categoryColor: Math.floor(Math.random() * (6 - 1) + 1)
-                    // }
+
+                    ele.addEventListener('showcardmenu', function(ev, data) {
+                        // console.log('showcardmenu', ev);
+                        Newt.showCardMenu(ev.target);
+                    });
 
                     ele.addEventListener('dragover', function(ev) {
                         if (!ev.dataTransfer.types.includes('sitedivid')) {
@@ -347,7 +350,7 @@ var Newt = (function() {
                         }
                     });
 
-                    ele.addEventListener('dragleave', function(ev) {   
+                    ele.addEventListener('dragleave', function(ev) {
                         if (!ev.dataTransfer.types.includes('sitedivid')) {
                             ev.preventDefault();
                             this.classList.remove('over-card');
@@ -753,6 +756,7 @@ var Newt = (function() {
         hideMenu();
         hideAddCardPrompt();
         hideConfirmPrompt();
+        hideCardMenu();
     }
 
     function toggleMenu() {
@@ -952,6 +956,47 @@ var Newt = (function() {
         return map;
     }
 
+    function showCardMenu(card) {
+        let dialog = document.createElement('dialog-card-menu');
+        dialog.id = 'cardMenuDialog';
+        dialog.data = {
+            cardID: card.data.id,
+            title: card.data.title,
+            color: card.config.categoryColor
+        }
+
+        document.body.appendChild(dialog);
+        document.querySelector('#scrim').style.display = 'block';
+    }
+
+    function hideCardMenu() {
+        if (document.querySelector('#cardMenuDialog')) {
+            document.querySelector('#cardMenuDialog').remove();
+        }
+        document.querySelector('#scrim').style.display = 'none';
+    }
+
+    function saveEditedCard(data) {
+        let card = document.querySelector('#card'+data.cardID);
+
+        let cardConfig = card.config;
+        cardConfig.categoryColor = data.color;
+        card.config = cardConfig;
+
+        AppPrefs.categoryColors[data.cardID] = data.color;
+        this.updatePref('categoryColors', AppPrefs.categoryColors);
+
+        if (data.title) {
+            ChromeService.updateBookmark(data.cardID, data.title).then(function(res) {
+                let cardData = card.data;
+                cardData.title = data.title;
+                card.data = cardData;
+            });
+        }
+
+        this.hideCardMenu();
+    }
+
     function showAddCardPrompt() {
         let prompt = document.createElement('prompt-add-card');
         prompt.id = 'newCardPrompt';
@@ -1032,7 +1077,10 @@ var Newt = (function() {
         createNewCard: createNewCard,
         confirmDeleteCard: confirmDeleteCard,
         openThemeBuilder: openThemeBuilder,
-        deleteTheme: deleteTheme
+        deleteTheme: deleteTheme,
+        showCardMenu: showCardMenu,
+        hideCardMenu: hideCardMenu,
+        saveEditedCard: saveEditedCard
     })
 })();
 
