@@ -13,5 +13,3 @@ Simple! All you need to have is Node.js and Gulp installed, then run the below c
 
     gulp build
 
-#### Why did you make this?
-Newt has gone through many revisions over the years. It's become the project I go to when I want to learn a new way of building things. There's been an EnyoJS, AngularJS, and a couple vanilla JS versions. This time around, I wanted to dig into some of the new ES2015 features. I also wanted to finally learn how to set up my own build system. Better late then never, eh?
