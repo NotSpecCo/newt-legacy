@@ -27,7 +27,7 @@
                 overflow: ellipses;
                 text-overflow: ellipses;
                 white-space: nowrap;
-                margin-bottom: 5px;
+                margin-bottom: 0px;
             }
 
             .over {

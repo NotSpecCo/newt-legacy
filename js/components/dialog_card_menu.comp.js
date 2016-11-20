@@ -74,10 +74,12 @@
 
             .actions {
                 text-align: end;
+                margin-top: 10px;
             }
 
-            .actions > div {
-                display: inline-block;
+            .actions > button {
+                border: none;
+                background-color: transparent;
                 color: var(--accent-color);
                 padding: 8px 15px;
                 font-size: 15px;
@@ -85,14 +87,14 @@
                 text-align: center;
             }
 
-            .actions > div:hover {
+            .actions > button:hover {
                 background-color: var(--highlight-color);
             }
 
         </style>
         
         <div class="prompt">
-            <form action="" id="cardMenuForm" name="cardMenuForm" novalidate>
+            <form action="" id="cardMenuForm" name="cardMenuForm" novalidate style="margin-bottom: 0px">
             <span class="header">Modify Card</span>
             <div class="content">
                 <div class="label">Title:</div>
