@@ -21,8 +21,8 @@
             .card-title {
                 font-size: 22px;
                 font-weight: 400;
-                background-color: var(--card-header-color1);
-                color: var(--card-header-text-color1);
+                background-color: transparent;
+                color: var(--accent-color);
                 padding: 7px 10px;
                 overflow: ellipses;
                 text-overflow: ellipses;
