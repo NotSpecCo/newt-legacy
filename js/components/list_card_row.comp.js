@@ -67,7 +67,8 @@
         }
         
         attachedCallback() {
-            this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.url + '")';
+            this.$icon.style.backgroundImage = 'url("' + new URL(this.url).origin + '/favicon.ico")';
+            // this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.url + '")';
             this.$title.textContent = this.title;
         }
 
@@ -86,7 +87,8 @@
                     this.$title.textContent = this.title;
                     break;
                 case 'url':
-                    this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.url + '")';
+                    this.$icon.style.backgroundImage = 'url("' + new URL(this.url).origin + '/favicon.ico")';
+                    // this.$icon.src = new URL(val.url).origin + '/favicon.ico';
                     break;
                 case 'highlight':
                     this.updateHighlight();
