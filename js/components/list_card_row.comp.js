@@ -67,7 +67,7 @@
         }
         
         attachedCallback() {
-            this.$icon.style.backgroundImage = 'url("' + new URL(this.url).origin + '/favicon.ico")';
+            this.$icon.style.backgroundImage = 'url("https://www.google.com/s2/favicons?domain=' + new URL(this.url).origin + '")';
             // this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.url + '")';
             this.$title.textContent = this.title;
         }

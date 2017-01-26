@@ -275,7 +275,8 @@
             this.setAttribute('data', JSON.stringify(val));
             
             // this.$icon.src = 'https://plus.google.com/_/favicon?domain=' + val.url;
-            this.$icon.src = new URL(val.url).origin + '/favicon.ico';
+            // this.$icon.src = new URL(val.url).origin + '/favicon.ico';
+            this.$icon.src = 'https://www.google.com/s2/favicons?domain=' + new URL(val.url).origin;
             this.$title.value = val.title;
         }
         
