@@ -29,6 +29,7 @@
 		"topSites",
 		"sessions",
 		"tabs",
-		"contextMenus"
+		"contextMenus",
+		"storage"
 	]
 }

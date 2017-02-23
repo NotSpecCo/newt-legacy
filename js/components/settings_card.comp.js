@@ -82,7 +82,7 @@
                     <i id="iconDeleteTheme" class="material-icons md-24" title="Delete the currently selected theme">delete</i>
                     <i id="iconEditTheme" class="material-icons md-24" title="Edit the currently selected theme">edit</i>
                     <i id="iconAddTheme" class="material-icons md-24" title="Build a new theme">add</i>
-                    <select id='prefTheme' name='theme'>
+                    <select id='prefTheme' name='selectedTheme'>
                         
                     </select>
                     
@@ -144,7 +144,7 @@
                 self.$prefTheme.appendChild(option);
             });
 
-            this.$prefTheme.value = AppPrefs.theme;
+            this.$prefTheme.value = AppPrefs.selectedTheme;
             this.$prefKeyboardShortcuts.value = AppPrefs.keyboardShortcuts;
 
             this.updateIcons();
@@ -183,10 +183,10 @@
                 self.$prefTheme.appendChild(option);
             });
 
-            this.$prefTheme.value = AppPrefs.theme;
+            this.$prefTheme.value = AppPrefs.selectedTheme;
             this.updateIcons();
 
-            Newt.updatePref('theme', AppPrefs.theme);
+            Newt.updatePref('theme', AppPrefs.selectedTheme);
         }
 
     }

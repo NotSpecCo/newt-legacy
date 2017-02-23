@@ -14,7 +14,7 @@ var Newt = (function() {
     function init() {
         getAppPrefs();
         
-        window.addEventListener('storage', AppPrefsChanged);
+        // window.addEventListener('storage', AppPrefsChanged);
         window.addEventListener('keydown', handleKeyPress, false);
         document.body.onmousedown = ev => { if (ev.button === 1) return false };
         document.querySelector('#scrim').addEventListener('click', () => closeAllPopups() );
@@ -216,81 +216,118 @@ var Newt = (function() {
             }
         ];
 
-        let customThemes = JSON.parse(localStorage.getItem('customThemes')) || [];
-        // Old themes may not have the styles for card headers, so add them
-        customThemes.forEach(theme => {
-            if (theme.styles.length == 10) {
-                let headerStyles = [
-                    {name: 'card-header-color1', val: '#FFEBEE'},
-                    {name: 'card-header-text-color1', val: '#212121'},
-                    {name: 'card-header-color2', val: '#E8F5E9'},
-                    {name: 'card-header-text-color2', val: '#212121'},
-                    {name: 'card-header-color3', val: '#E3F2FD'},
-                    {name: 'card-header-text-color3', val: '#212121'},
-                    {name: 'card-header-color4', val: '#F3E5F5'},
-                    {name: 'card-header-text-color4', val: '#212121'},
-                    {name: 'card-header-color5', val: '#FFF3E0'},
-                    {name: 'card-header-text-color5', val: '#212121'}
-                ];
-                theme.styles = theme.styles.concat(headerStyles);
-            }
-        });
-        let allThemes = baseThemes.concat(customThemes);
+        let settings = SettingsService.getSettings('all').then((res) => {
+            console.log('settings', res);
 
-        let selectedTheme = localStorage.getItem('theme') || 'basic';
+            AppPrefs = {
+                selectedTheme: res.prefs.selectedTheme,
+                keyboardShortcuts: res.prefs.keyboardShortcuts,
+                baseThemes: baseThemes,
+                customThemes: res.customThemes,
+                categoryColors: res.categoryColors
+            };
 
-        let categoryColors = localStorage.getItem('categoryColors');
-        if (categoryColors == null) {
-            categoryColors = {};
-            localStorage.setItem('categoryColors', JSON.stringify(categoryColors));
-        } else {
-            categoryColors = JSON.parse(categoryColors);
-        }
+            changeTheme(AppPrefs.selectedTheme);
+        })
+        // let customThemes = JSON.parse(localStorage.getItem('customThemes')) || [];
+        // // Old themes may not have the styles for card headers, so add them
+        // customThemes.forEach(theme => {
+        //     if (theme.styles.length == 10) {
+        //         let headerStyles = [
+        //             {name: 'card-header-color1', val: '#FFEBEE'},
+        //             {name: 'card-header-text-color1', val: '#212121'},
+        //             {name: 'card-header-color2', val: '#E8F5E9'},
+        //             {name: 'card-header-text-color2', val: '#212121'},
+        //             {name: 'card-header-color3', val: '#E3F2FD'},
+        //             {name: 'card-header-text-color3', val: '#212121'},
+        //             {name: 'card-header-color4', val: '#F3E5F5'},
+        //             {name: 'card-header-text-color4', val: '#212121'},
+        //             {name: 'card-header-color5', val: '#FFF3E0'},
+        //             {name: 'card-header-text-color5', val: '#212121'}
+        //         ];
+        //         theme.styles = theme.styles.concat(headerStyles);
+        //     }
+        // });
+        // let allThemes = baseThemes.concat(customThemes);
 
-        AppPrefs = {
-            theme: selectedTheme,
-            keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled',
-            baseThemes: baseThemes,
-            customThemes: customThemes,
-            categoryColors: categoryColors
-        };
+        // let selectedTheme = localStorage.getItem('theme') || 'basic';
+
+        // let categoryColors = localStorage.getItem('categoryColors');
+        // if (categoryColors == null) {
+        //     categoryColors = {};
+        //     localStorage.setItem('categoryColors', JSON.stringify(categoryColors));
+        // } else {
+        //     categoryColors = JSON.parse(categoryColors);
+        // }
+
+        // AppPrefs = {
+        //     theme: selectedTheme,
+        //     keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled',
+        //     baseThemes: baseThemes,
+        //     customThemes: customThemes,
+        //     categoryColors: categoryColors
+        // };
         
-        changeTheme(AppPrefs.theme);
+        // changeTheme(AppPrefs.selectedTheme);
     }
     
     function updatePref(key, val) {
-        let oldVal = AppPrefs[key];
-        AppPrefs[key] = val;
         // console.log('updatePref', key, val);
-        let newVal = typeof val == 'object' ? JSON.stringify(val) : val;
-        localStorage.setItem(key, newVal);
-        
-        if (oldVal != newVal) {
-            switch (key) {
-                case 'theme':
-                    changeTheme();
-                    break;
+
+        if (key === 'keyboardShortcuts') {
+            let prefObj = {
+                selectedTheme: AppPrefs.selectedTheme,
+                keyboardShortcuts: val
             }
+
+            SettingsService.setSettings('prefs', prefObj).then(() => {
+                AppPrefs.keyboardShortcuts = val;
+            });
+        } else if (key === 'selectedTheme') {
+            let prefObj = {
+                selectedTheme: val,
+                keyboardShortcuts: AppPrefs.keyboardShortcuts
+            }
+
+            SettingsService.setSettings('prefs', prefObj).then(() => {
+                let oldVal = AppPrefs.selectedTheme;
+                AppPrefs.selectedTheme = val;
+
+                if (oldVal !== val) {
+                    changeTheme();
+                }
+            });
+        } else {
+            SettingsService.setSettings(key, val).then(() => {
+                AppPrefs[key] = val;
+            });
         }
+        
+        
+        // console.log('updatePref', key, val);
+        // let newVal = typeof val == 'object' ? JSON.stringify(val) : val;
+        // localStorage.setItem(key, newVal);
+        
     }
     
     function AppPrefsChanged(e) {
         // console.log('AppPrefsChanged', e);
         
-        AppPrefs[e.key] = e.newValue;
+        // AppPrefs[e.key] = e.newValue;
         
-        if (e.key == 'theme' && e.oldValue != e.newValue) {
-            changeTheme();
-        }
+        // if (e.key == 'se' && e.oldValue != e.newValue) {
+        //     changeTheme();
+        // }
     }
     
     function changeTheme(theme) {
-        let themeID = theme || AppPrefs.theme;
+        // console.log('changeTheme', theme, AppPrefs.selectedTheme);
+        let themeID = theme || AppPrefs.selectedTheme;
         let allThemes = AppPrefs.baseThemes.concat(AppPrefs.customThemes);
         let selectedTheme = allThemes.find(theme => {return theme.id == themeID});
 
         if (!selectedTheme) {
-            AppPrefs.theme = 'basic';
+            AppPrefs.selectedTheme = 'basic';
             selectedTheme = allThemes[0];
         }
 
@@ -705,11 +742,12 @@ var Newt = (function() {
                     id: themeID,
                     styles: styles
                 });
-                AppPrefs.theme = themeID;
+                AppPrefs.selectedTheme = themeID;
             }
             
 
-            localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
+            // localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
+            SettingsService.setSettings('customTheme', AppPrefs.customThemes);
             // console.log('AppPrefs.customThemes', AppPrefs.customThemes);
 
             changeTheme();
@@ -741,9 +779,10 @@ var Newt = (function() {
         var index = AppPrefs.customThemes.map(function(x){return x.id}).indexOf(theme);
         AppPrefs.customThemes.splice(index, 1);
 
-        localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
+        // localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
+        SettingsService.setSettings('customTheme', AppPrefs.customThemes);
 
-        AppPrefs.theme = 'basic';
+        AppPrefs.selectedTheme = 'basic';
         changeTheme();
 
         if (document.querySelector('settings-card') != null) {
@@ -753,7 +792,8 @@ var Newt = (function() {
 
     function saveCategoryColors() {
         if (AppPrefs.categoryColors != null) {
-            localStorage.setItem('categoryColors', JSON.stringify(AppPrefs.categoryColors));
+            // localStorage.setItem('categoryColors', JSON.stringify(AppPrefs.categoryColors));
+            SettingsService.setSettings('categoryColors', AppPrefs.categoryColors);
         }
     }
 
