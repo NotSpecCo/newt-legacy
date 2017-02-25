@@ -45,6 +45,12 @@
 
             <h3 class="subtitle">Changelog</h3>
 
+            <u>5.6.0</u>
+            <ul>
+                <li>Added: About card. You can access it from the popup menu.</li>
+                <li>Added: Settings sync! Newt now stores your preferences and custom themes using Chrome's storage sync. This means that if you change someting here, it'll be reflected on your other computers running Newt and signed into the same Google account. Please visit the Settings page for more information.</li>
+            </ul>
+
             <u>5.5.3</u>
             <ul>
                 <li>Better temporary fix for favicon issue that should work for all sites.</li>
