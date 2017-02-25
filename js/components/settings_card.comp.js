@@ -17,6 +17,7 @@
                 overflow: hidden;
                 min-height: 375px;
                 max-width: 800px;
+                font-size: 14px;
             }
 
             .card-title {
@@ -103,6 +104,11 @@
                     
                 </div>
             </div>
+
+            <p>
+                Note: All Newt settings (preferences and custom themes) are now stored using Chrome's storage sync. That means that if you change something here, it'll be reflected on your other computer. This isn't instant and can take up to a minute to sync over. Newt initially stores the settings from the first computer used after the recent update to migrate to Chrome storage. Since this may not be what you wanted, the settings in the old system were left intact. To migrate your old settings from a different PC, open up Newt on it and <a id="btnMigrate" href="#">click here</a>.
+            </p>
+            <span id="migrateSuccess" style="display:none; font-weight:bold;">Successfully migrated old settings from this PC!</span>
         </div>
     `;
     
@@ -116,6 +122,7 @@
             this.$iconAddTheme = this.shadowRoot.querySelector('#iconAddTheme');
             this.$iconDeleteTheme = this.shadowRoot.querySelector('#iconDeleteTheme');
             this.$iconEditTheme = this.shadowRoot.querySelector('#iconEditTheme');
+            this.$btnMigrate = this.shadowRoot.querySelector('#btnMigrate');
             
             // Event listeners
             this.$prefTheme.addEventListener('change', this.prefChanged.bind(this));
@@ -129,7 +136,12 @@
             });
             this.$iconEditTheme.addEventListener('click', () => {
                 Newt.openThemeBuilder(true, this.$prefTheme.value);
-            })
+            });
+            this.$btnMigrate.addEventListener('click', () => {
+                SettingsService.migrateToChromeStorage().then(() => {
+                    this.shadowRoot.querySelector('#migrateSuccess').style.display = 'block';
+                });
+            });
 
             this.$prefKeyboardShortcuts.addEventListener('change', this.prefChanged.bind(this));
             

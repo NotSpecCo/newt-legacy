@@ -12,6 +12,7 @@ var Newt = (function() {
     let MenuBar = document.querySelector('.menu-bar');
     
     function init() {
+        SettingsService.checkAndPerformInitialMigration();
         getAppPrefs();
         
         // window.addEventListener('storage', AppPrefsChanged);

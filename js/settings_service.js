@@ -70,22 +70,43 @@ let SettingsService = (function() {
 			keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled'
 		};
 
-		this.setSettings('prefs', prefs);
+		let prefsStore = this.setSettings('prefs', prefs);
 
 		// Custom themes
 		let customThemes = JSON.parse(localStorage.getItem('customThemes')) || [];
-		this.setSettings('customThemes', customThemes);
+		let customThemesStore = this.setSettings('customThemes', customThemes);
 
 		// Category colors
 		let categoryColors = JSON.parse(localStorage.getItem('categoryColors')) || {};
-		this.setSettings('categoryColors', categoryColors);
+		let categoryColorsStore = this.setSettings('categoryColors', categoryColors);
 
-		console.log('Settings migration done');
+		return Promise.all([prefsStore, customThemesStore, categoryColorsStore]).then(() => {
+			console.log('Settings migration completed');
+			return true;
+		});
+	}
+
+	function checkAndPerformInitialMigration() {
+		chrome.promise = new ChromePromise();
+
+		let prefs = chrome.promise.storage.sync.get('prefs').then(res => res['prefs']);
+		let customThemes = chrome.promise.storage.sync.get('customThemes').then(res => res['customThemes']);
+		let categoryColors = chrome.promise.storage.sync.get('categoryColors').then(res => res['categoryColors']);
+
+		Promise.all([prefs, customThemes, categoryColors]).then(values => {
+			if (values[0] == null && values[1] == null && values[2] == null) {
+				console.log('Chrome.storage not used yet. Migrating...');
+				this.migrateToChromeStorage();
+			} else {
+				// console.log('Already using chrome.storage. Do nothing.');
+			}
+		});
 	}
 
 	return ({
 		getSettings: getSettings,
 		setSettings: setSettings,
-		migrateToChromeStorage: migrateToChromeStorage
+		migrateToChromeStorage: migrateToChromeStorage,
+		checkAndPerformInitialMigration: checkAndPerformInitialMigration
 	});
 })();
