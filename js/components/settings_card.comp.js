@@ -5,6 +5,10 @@
         <style>
             @import url('css/shared.css');
 
+            a {
+                color: var(--accent-color);
+            }
+
             .card {
                 display: flex;
                 flex-direction: column;
