@@ -15,7 +15,6 @@ var Newt = (function() {
         SettingsService.checkAndPerformInitialMigration();
         getAppPrefs();
         
-        // window.addEventListener('storage', AppPrefsChanged);
         window.addEventListener('keydown', handleKeyPress, false);
         document.body.onmousedown = ev => { if (ev.button === 1) return false };
         document.querySelector('#scrim').addEventListener('click', () => closeAllPopups() );
@@ -30,6 +29,7 @@ var Newt = (function() {
             ev.preventDefault();
             this.classList.remove('over');
         });
+
 
         deleteTarget.addEventListener('drop', function(ev) {
             this.classList.remove('over');
@@ -218,7 +218,7 @@ var Newt = (function() {
         ];
 
         let settings = SettingsService.getSettings('all').then((res) => {
-            console.log('settings', res);
+            // console.log('settings', res);
 
             AppPrefs = {
                 selectedTheme: res.prefs.selectedTheme,
@@ -229,47 +229,7 @@ var Newt = (function() {
             };
 
             changeTheme(AppPrefs.selectedTheme);
-        })
-        // let customThemes = JSON.parse(localStorage.getItem('customThemes')) || [];
-        // // Old themes may not have the styles for card headers, so add them
-        // customThemes.forEach(theme => {
-        //     if (theme.styles.length == 10) {
-        //         let headerStyles = [
-        //             {name: 'card-header-color1', val: '#FFEBEE'},
-        //             {name: 'card-header-text-color1', val: '#212121'},
-        //             {name: 'card-header-color2', val: '#E8F5E9'},
-        //             {name: 'card-header-text-color2', val: '#212121'},
-        //             {name: 'card-header-color3', val: '#E3F2FD'},
-        //             {name: 'card-header-text-color3', val: '#212121'},
-        //             {name: 'card-header-color4', val: '#F3E5F5'},
-        //             {name: 'card-header-text-color4', val: '#212121'},
-        //             {name: 'card-header-color5', val: '#FFF3E0'},
-        //             {name: 'card-header-text-color5', val: '#212121'}
-        //         ];
-        //         theme.styles = theme.styles.concat(headerStyles);
-        //     }
-        // });
-        // let allThemes = baseThemes.concat(customThemes);
-
-        // let selectedTheme = localStorage.getItem('theme') || 'basic';
-
-        // let categoryColors = localStorage.getItem('categoryColors');
-        // if (categoryColors == null) {
-        //     categoryColors = {};
-        //     localStorage.setItem('categoryColors', JSON.stringify(categoryColors));
-        // } else {
-        //     categoryColors = JSON.parse(categoryColors);
-        // }
-
-        // AppPrefs = {
-        //     theme: selectedTheme,
-        //     keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled',
-        //     baseThemes: baseThemes,
-        //     customThemes: customThemes,
-        //     categoryColors: categoryColors
-        // };
-        
-        // changeTheme(AppPrefs.selectedTheme);
+        });
     }
     
     function updatePref(key, val) {
@@ -303,22 +263,6 @@ var Newt = (function() {
                 AppPrefs[key] = val;
             });
         }
-        
-        
-        // console.log('updatePref', key, val);
-        // let newVal = typeof val == 'object' ? JSON.stringify(val) : val;
-        // localStorage.setItem(key, newVal);
-        
-    }
-    
-    function AppPrefsChanged(e) {
-        // console.log('AppPrefsChanged', e);
-        
-        // AppPrefs[e.key] = e.newValue;
-        
-        // if (e.key == 'se' && e.oldValue != e.newValue) {
-        //     changeTheme();
-        // }
     }
     
     function changeTheme(theme) {
@@ -751,7 +695,6 @@ var Newt = (function() {
             }
             
 
-            // localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
             SettingsService.setSettings('customThemes', AppPrefs.customThemes);
             // console.log('AppPrefs.customThemes', AppPrefs.customThemes);
 
@@ -784,7 +727,6 @@ var Newt = (function() {
         var index = AppPrefs.customThemes.map(function(x){return x.id}).indexOf(theme);
         AppPrefs.customThemes.splice(index, 1);
 
-        // localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
         SettingsService.setSettings('customTheme', AppPrefs.customThemes);
 
         AppPrefs.selectedTheme = 'basic';
@@ -797,7 +739,6 @@ var Newt = (function() {
 
     function saveCategoryColors() {
         if (AppPrefs.categoryColors != null) {
-            // localStorage.setItem('categoryColors', JSON.stringify(AppPrefs.categoryColors));
             SettingsService.setSettings('categoryColors', AppPrefs.categoryColors);
         }
     }

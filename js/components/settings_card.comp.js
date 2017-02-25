@@ -106,8 +106,9 @@
             </div>
 
             <p>
-                Note: All Newt settings (preferences and custom themes) are now stored using Chrome's storage sync. That means that if you change something here, it'll be reflected on your other computer. This isn't instant and can take up to a minute to sync over. Newt initially stores the settings from the first computer used after the recent update to migrate to Chrome storage. Since this may not be what you wanted, the settings in the old system were left intact. To migrate your old settings from a different PC, open up Newt on it and <a id="btnMigrate" href="#">click here</a>.
+                Note: All Newt settings (preferences and custom themes) are now stored using Chrome's storage sync. That means that if you change something here, it'll be reflected on your other computer. This isn't instant and can take up to a minute to sync over. Newt initially stores the settings from the first computer used after the recent app update to migrate to Chrome storage. Since this may not be what you wanted, the settings in the old system were left intact. To migrate your old settings from a different PC, open up Newt on it and <a id="btnMigrate" href="#">click here</a>.
             </p>
+
             <span id="migrateSuccess" style="display:none; font-weight:bold;">Successfully migrated old settings from this PC!</span>
         </div>
     `;

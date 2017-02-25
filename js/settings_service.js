@@ -60,7 +60,9 @@ let SettingsService = (function() {
 
 		const data = {};
 		data[key] = val;
-		return chrome.promise.storage.sync.set(data).then(() => console.log('Saved settings', key, val));
+		return chrome.promise.storage.sync.set(data).then(() => {
+			// console.log('Saved settings', key, val);
+		});
 	}
 
 	function migrateToChromeStorage() {
