@@ -186,7 +186,7 @@
             this.$prefTheme.value = AppPrefs.selectedTheme;
             this.updateIcons();
 
-            Newt.updatePref('theme', AppPrefs.selectedTheme);
+            Newt.updatePref('selectedTheme', AppPrefs.selectedTheme);
         }
 
     }

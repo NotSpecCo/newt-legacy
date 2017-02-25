@@ -747,7 +747,7 @@ var Newt = (function() {
             
 
             // localStorage.setItem('customThemes', JSON.stringify(AppPrefs.customThemes));
-            SettingsService.setSettings('customTheme', AppPrefs.customThemes);
+            SettingsService.setSettings('customThemes', AppPrefs.customThemes);
             // console.log('AppPrefs.customThemes', AppPrefs.customThemes);
 
             changeTheme();
