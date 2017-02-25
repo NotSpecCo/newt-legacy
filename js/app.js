@@ -46,7 +46,7 @@ var Newt = (function() {
 
         // Popup Menu
         document.querySelector('#btnAddCard').addEventListener('click',() => { hideMenu(); showAddCardPrompt(); });
-        // document.querySelector('#btnAbout').addEventListener('click', () => { hideMenu(); changeTab('about')(); });
+        document.querySelector('#btnAbout').addEventListener('click', () => { hideMenu(); changeTab('about'); });
         document.querySelector('#btnSettings').addEventListener('click', () => { hideMenu(); changeTab('settings'); });
 
         // Theme Builder
@@ -593,7 +593,11 @@ var Newt = (function() {
     }
 
     function createAboutCard() {
-
+        // Clear out the main content div
+        removeAllChildNodes(MainContent);
+        
+        let card = document.createElement('about-card');
+        MainContent.appendChild(card);
     }
     
     function changeTab(tab, direction) {
