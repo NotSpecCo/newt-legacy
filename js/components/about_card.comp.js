@@ -49,6 +49,11 @@
 
             <h3 class="subtitle">Changelog</h3>
 
+            <u>5.6.2</u>
+            <ul>
+                <li>Bug fixes</li>
+            </ul>
+
             <u>5.6.0</u>
             <ul>
                 <li>Added: About card. You can access it from the popup menu.</li>
