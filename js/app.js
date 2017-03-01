@@ -221,11 +221,11 @@ var Newt = (function() {
             // console.log('settings', res);
 
             AppPrefs = {
-                selectedTheme: res.prefs.selectedTheme,
-                keyboardShortcuts: res.prefs.keyboardShortcuts,
+                selectedTheme: res.prefs.selectedTheme || 'basic',
+                keyboardShortcuts: res.prefs.keyboardShortcuts || 'disabled',
                 baseThemes: baseThemes,
-                customThemes: res.customThemes,
-                categoryColors: res.categoryColors
+                customThemes: res.customThemes || [],
+                categoryColors: res.categoryColors || {}
             };
 
             changeTheme(AppPrefs.selectedTheme);

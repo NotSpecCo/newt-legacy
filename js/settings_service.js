@@ -40,9 +40,9 @@ let SettingsService = (function() {
 					}
 				});
 
-				if (values[2] == null) {
+				// if (values[2] == null) {
 					values[2] = JSON.parse(localStorage.getItem('categoryColors')) || {};
-				}
+				// }
 
 				return {
 					prefs: values[0],
@@ -51,18 +51,34 @@ let SettingsService = (function() {
 				}
 			});
 		} else {
-			return chrome.promise.storage.sync.get(key).then(res => res[key]);
+			if (key === 'categoryColors') {
+				return new Promise((resolve, reject) => {
+					let res = JSON.parse(localStorage.getItem('categoryColors')) || {};
+					resolve(res);
+				})
+			} else {
+				return chrome.promise.storage.sync.get(key).then(res => res[key]);
+			}
+			
 		}
 	}
 
 	function setSettings(key, val) {
-		chrome.promise = new ChromePromise();
+		if (key === 'categoryColors') {
+			return new Promise((resolve, reject) => {
+				let processed = typeof val === 'string' ? val : JSON.stringify(val);
+				localStorage.setItem('categoryColors', processed);
+				resolve(true);
+			})
+		} else {
+			chrome.promise = new ChromePromise();
 
-		const data = {};
-		data[key] = val;
-		return chrome.promise.storage.sync.set(data).then(() => {
-			// console.log('Saved settings', key, val);
-		});
+			const data = {};
+			data[key] = val;
+			return chrome.promise.storage.sync.set(data).then(() => {
+				// console.log('Saved settings', key, val);
+			});
+		}
 	}
 
 	function migrateToChromeStorage() {
