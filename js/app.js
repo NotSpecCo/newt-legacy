@@ -1,4 +1,10 @@
-let AppPrefs = {};
+let AppPrefs = {
+    selectedTheme: 'basic',
+    keyboardShortcuts: 'disabled',
+    baseThemes: [],
+    customThemes: [],
+    categoryColors: {}
+};
 
 var Newt = (function () {
     'use strict';
@@ -334,8 +340,15 @@ var Newt = (function () {
                         parentId: card.parentId,
                         index: card.index
                     };
-                    ele.config = {
-                        categoryColor: AppPrefs.categoryColors[card.id] || 0
+
+                    if (AppPrefs.categoryColors) {
+                        ele.config = {
+                            categoryColor: AppPrefs.categoryColors[card.id] || 0
+                        }
+                    } else {
+                        ele.config = {
+                            categoryColor: 0
+                        }
                     }
 
                     ele.addEventListener('showcardmenu', function (ev, data) {
