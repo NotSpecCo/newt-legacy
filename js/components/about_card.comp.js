@@ -49,6 +49,11 @@
 
             <h3 class="subtitle">Changelog</h3>
 
+            <u>5.6.3</u>
+            <ul>
+                <li>Bug fixes</li>
+            </ul>
+
             <u>5.6.2</u>
             <ul>
                 <li>Bug fixes</li>
