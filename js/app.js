@@ -1,42 +1,42 @@
 let AppPrefs = {};
 
-var Newt = (function() {
+var Newt = (function () {
     'use strict';
-    
+
     let CardMap = {};
     let CurrentlyActiveTab = null;
     let EditingTheme = false;
     let EditingThemeID = null;
-    
+
     let MainContent = document.querySelector('.content');
     let MenuBar = document.querySelector('.menu-bar');
-    
+
     function init() {
         SettingsService.checkAndPerformInitialMigration();
         getAppPrefs();
-        
+
         window.addEventListener('keydown', handleKeyPress, false);
         document.body.onmousedown = ev => { if (ev.button === 1) return false };
-        document.querySelector('#scrim').addEventListener('click', () => closeAllPopups() );
+        document.querySelector('#scrim').addEventListener('click', () => closeAllPopups());
 
         let deleteTarget = document.querySelector('.delete-bar');
-        deleteTarget.addEventListener('dragover', function(ev) {
+        deleteTarget.addEventListener('dragover', function (ev) {
             ev.preventDefault();
             this.classList.add('over');
         });
 
-        deleteTarget.addEventListener('dragleave', function(ev) {
+        deleteTarget.addEventListener('dragleave', function (ev) {
             ev.preventDefault();
             this.classList.remove('over');
         });
 
 
-        deleteTarget.addEventListener('drop', function(ev) {
+        deleteTarget.addEventListener('drop', function (ev) {
             this.classList.remove('over');
 
             if (ev.dataTransfer.types.includes('sitedivid')) {
                 let element = this.ownerDocument.getElementById(ev.dataTransfer.getData('sitedivid'));
-                
+
                 ChromeService.deleteBookmark(element.data.id);
                 element.remove();
             } else {
@@ -46,173 +46,173 @@ var Newt = (function() {
         });
 
         // Popup Menu
-        document.querySelector('#btnAddCard').addEventListener('click',() => { hideMenu(); showAddCardPrompt(); });
+        document.querySelector('#btnAddCard').addEventListener('click', () => { hideMenu(); showAddCardPrompt(); });
         document.querySelector('#btnAbout').addEventListener('click', () => { hideMenu(); changeTab('about'); });
         document.querySelector('#btnSettings').addEventListener('click', () => { hideMenu(); changeTab('settings'); });
 
         // Theme Builder
         document.querySelector('#btnSaveTheme').addEventListener('click', saveCustomTheme);
         document.querySelector('#btnCancelTheme').addEventListener('click', cancelCustomTheme);
-        
+
         changeTab('bookmarks');
     }
-    
+
     function getAppPrefs() {
         let baseThemes = [
             {
                 name: 'Basic',
                 id: 'basic',
                 styles: [
-                    {name: 'main-background-color', val: '#efefef'},
-                    {name: 'background-color', val: '#fff'},
-                    {name: 'main-color', val: '#333'},
-                    {name: 'accent-color', val: '#333'},
-                    {name: 'highlight-color', val: '#eee'},
-                    {name: 'text-color', val: '#212121'},
-                    {name: 'shadow-color', val: '#aaa'},
-                    {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
-                    {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
-                    {name: 'popup-icon-color', val: 'rgba(0, 0, 0, 0.54)'},
-                    {name: 'card-header-color1', val: '#FFEBEE'},
-                    {name: 'card-header-text-color1', val: '#212121'},
-                    {name: 'card-header-color2', val: '#E8F5E9'},
-                    {name: 'card-header-text-color2', val: '#212121'},
-                    {name: 'card-header-color3', val: '#E3F2FD'},
-                    {name: 'card-header-text-color3', val: '#212121'},
-                    {name: 'card-header-color4', val: '#F3E5F5'},
-                    {name: 'card-header-text-color4', val: '#212121'},
-                    {name: 'card-header-color5', val: '#FFF3E0'},
-                    {name: 'card-header-text-color5', val: '#212121'}
+                    { name: 'main-background-color', val: '#efefef' },
+                    { name: 'background-color', val: '#fff' },
+                    { name: 'main-color', val: '#333' },
+                    { name: 'accent-color', val: '#333' },
+                    { name: 'highlight-color', val: '#eee' },
+                    { name: 'text-color', val: '#212121' },
+                    { name: 'shadow-color', val: '#aaa' },
+                    { name: 'divider-color', val: 'rgba(0,0,0,.1)' },
+                    { name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)' },
+                    { name: 'popup-icon-color', val: 'rgba(0, 0, 0, 0.54)' },
+                    { name: 'card-header-color1', val: '#FFEBEE' },
+                    { name: 'card-header-text-color1', val: '#212121' },
+                    { name: 'card-header-color2', val: '#E8F5E9' },
+                    { name: 'card-header-text-color2', val: '#212121' },
+                    { name: 'card-header-color3', val: '#E3F2FD' },
+                    { name: 'card-header-text-color3', val: '#212121' },
+                    { name: 'card-header-color4', val: '#F3E5F5' },
+                    { name: 'card-header-text-color4', val: '#212121' },
+                    { name: 'card-header-color5', val: '#FFF3E0' },
+                    { name: 'card-header-text-color5', val: '#212121' }
                 ]
             },
             {
                 name: 'Light',
                 id: 'light',
                 styles: [
-                    {name: 'main-background-color', val: '#efefef'},
-                    {name: 'background-color', val: '#fff'},
-                    {name: 'main-color', val: '#03A9F4'},
-                    {name: 'accent-color', val: '#03A9F4'},
-                    {name: 'highlight-color', val: '#E3F2FD'},
-                    {name: 'text-color', val: '#212121'},
-                    {name: 'shadow-color', val: '#aaa'},
-                    {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
-                    {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
-                    {name: 'popup-icon-color', val: 'rgba(0, 0, 0, 0.54)'},
-                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.3)'},
-                    {name: 'card-header-text-color1', val: '#212121'},
-                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.3)'},
-                    {name: 'card-header-text-color2', val: '#212121'},
-                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.3)'},
-                    {name: 'card-header-text-color3', val: '#212121'},
-                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.3)'},
-                    {name: 'card-header-text-color4', val: '#212121'},
-                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.3)'},
-                    {name: 'card-header-text-color5', val: '#212121'}
+                    { name: 'main-background-color', val: '#efefef' },
+                    { name: 'background-color', val: '#fff' },
+                    { name: 'main-color', val: '#03A9F4' },
+                    { name: 'accent-color', val: '#03A9F4' },
+                    { name: 'highlight-color', val: '#E3F2FD' },
+                    { name: 'text-color', val: '#212121' },
+                    { name: 'shadow-color', val: '#aaa' },
+                    { name: 'divider-color', val: 'rgba(0,0,0,.1)' },
+                    { name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)' },
+                    { name: 'popup-icon-color', val: 'rgba(0, 0, 0, 0.54)' },
+                    { name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.3)' },
+                    { name: 'card-header-text-color1', val: '#212121' },
+                    { name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.3)' },
+                    { name: 'card-header-text-color2', val: '#212121' },
+                    { name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.3)' },
+                    { name: 'card-header-text-color3', val: '#212121' },
+                    { name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.3)' },
+                    { name: 'card-header-text-color4', val: '#212121' },
+                    { name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.3)' },
+                    { name: 'card-header-text-color5', val: '#212121' }
                 ]
             },
             {
                 name: 'Dark',
                 id: 'dark',
                 styles: [
-                    {name: 'main-background-color', val: '#303030'},
-                    {name: 'background-color', val: '#424242'},
-                    {name: 'main-color', val: '#212121'},
-                    {name: 'accent-color', val: '#fff'},
-                    {name: 'highlight-color', val: 'rgba(255,255,255,.1)'},
-                    {name: 'text-color', val: 'rgba(255,255,255,.7)'},
-                    {name: 'shadow-color', val: 'rgba(0,0,0,.5)'},
-                    {name: 'divider-color', val: 'rgba(255,255,255,.12)'},
-                    {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
-                    {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .87)'},
-                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)'},
-                    {name: 'card-header-text-color1', val: '#fff'},
-                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)'},
-                    {name: 'card-header-text-color2', val: '#fff'},
-                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)'},
-                    {name: 'card-header-text-color3', val: '#fff'},
-                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)'},
-                    {name: 'card-header-text-color4', val: '#fff'},
-                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)'},
-                    {name: 'card-header-text-color5', val: '#fff'}
+                    { name: 'main-background-color', val: '#303030' },
+                    { name: 'background-color', val: '#424242' },
+                    { name: 'main-color', val: '#212121' },
+                    { name: 'accent-color', val: '#fff' },
+                    { name: 'highlight-color', val: 'rgba(255,255,255,.1)' },
+                    { name: 'text-color', val: 'rgba(255,255,255,.7)' },
+                    { name: 'shadow-color', val: 'rgba(0,0,0,.5)' },
+                    { name: 'divider-color', val: 'rgba(255,255,255,.12)' },
+                    { name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)' },
+                    { name: 'popup-icon-color', val: 'rgba(255, 255, 255, .87)' },
+                    { name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)' },
+                    { name: 'card-header-text-color1', val: '#fff' },
+                    { name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)' },
+                    { name: 'card-header-text-color2', val: '#fff' },
+                    { name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)' },
+                    { name: 'card-header-text-color3', val: '#fff' },
+                    { name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)' },
+                    { name: 'card-header-text-color4', val: '#fff' },
+                    { name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)' },
+                    { name: 'card-header-text-color5', val: '#fff' }
                 ]
             },
             {
                 name: 'Espresso',
                 id: 'espresso',
                 styles: [
-                    {name: 'main-background-color', val: '#231b17'},
-                    {name: 'background-color', val: '#1d1713'},
-                    {name: 'main-color', val: '#1d1713'},
-                    {name: 'accent-color', val: '#e36026'},
-                    {name: 'highlight-color', val: '#2d241f'},
-                    {name: 'text-color', val: '#bdae9d'},
-                    {name: 'shadow-color', val: 'rgba(0,0,0,0)'},
-                    {name: 'divider-color', val: 'rgba(0,0,0,.1)'},
-                    {name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)'},
-                    {name: 'popup-icon-color', val: 'rgba(255, 255, 255, .8)'},
-                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)'},
-                    {name: 'card-header-text-color1', val: '#bdae9d'},
-                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)'},
-                    {name: 'card-header-text-color2', val: '#bdae9d'},
-                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)'},
-                    {name: 'card-header-text-color3', val: '#bdae9d'},
-                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)'},
-                    {name: 'card-header-text-color4', val: '#bdae9d'},
-                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)'},
-                    {name: 'card-header-text-color5', val: '#bdae9d'}
+                    { name: 'main-background-color', val: '#231b17' },
+                    { name: 'background-color', val: '#1d1713' },
+                    { name: 'main-color', val: '#1d1713' },
+                    { name: 'accent-color', val: '#e36026' },
+                    { name: 'highlight-color', val: '#2d241f' },
+                    { name: 'text-color', val: '#bdae9d' },
+                    { name: 'shadow-color', val: 'rgba(0,0,0,0)' },
+                    { name: 'divider-color', val: 'rgba(0,0,0,.1)' },
+                    { name: 'sidebar-icon-color', val: 'rgba(255, 255, 255, 1)' },
+                    { name: 'popup-icon-color', val: 'rgba(255, 255, 255, .8)' },
+                    { name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)' },
+                    { name: 'card-header-text-color1', val: '#bdae9d' },
+                    { name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)' },
+                    { name: 'card-header-text-color2', val: '#bdae9d' },
+                    { name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)' },
+                    { name: 'card-header-text-color3', val: '#bdae9d' },
+                    { name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)' },
+                    { name: 'card-header-text-color4', val: '#bdae9d' },
+                    { name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)' },
+                    { name: 'card-header-text-color5', val: '#bdae9d' }
                 ]
             },
             {
                 name: 'Slate',
                 id: 'slate',
                 styles: [
-                    {name: 'main-background-color', val: '#CFD8DC'},
-                    {name: 'background-color', val: '#ECEFF1'},
-                    {name: 'main-color', val: '#607D8B'},
-                    {name: 'accent-color', val: '#546E7A'},
-                    {name: 'highlight-color', val: '#CFD8DC'},
-                    {name: 'text-color', val: 'rgba(0,0,0,.87)'},
-                    {name: 'shadow-color', val: 'rgba(0,0,0,.2)'},
-                    {name: 'divider-color', val: 'rgba(0,0,0,.12)'},
-                    {name: 'sidebar-icon-color', val: '#ECEFF1'},
-                    {name: 'popup-icon-color', val: '#607D8B'},
-                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)'},
-                    {name: 'card-header-text-color1', val: '#546E7A'},
-                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)'},
-                    {name: 'card-header-text-color2', val: '#546E7A'},
-                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)'},
-                    {name: 'card-header-text-color3', val: '#546E7A'},
-                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)'},
-                    {name: 'card-header-text-color4', val: '#546E7A'},
-                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)'},
-                    {name: 'card-header-text-color5', val: '#546E7A'}
+                    { name: 'main-background-color', val: '#CFD8DC' },
+                    { name: 'background-color', val: '#ECEFF1' },
+                    { name: 'main-color', val: '#607D8B' },
+                    { name: 'accent-color', val: '#546E7A' },
+                    { name: 'highlight-color', val: '#CFD8DC' },
+                    { name: 'text-color', val: 'rgba(0,0,0,.87)' },
+                    { name: 'shadow-color', val: 'rgba(0,0,0,.2)' },
+                    { name: 'divider-color', val: 'rgba(0,0,0,.12)' },
+                    { name: 'sidebar-icon-color', val: '#ECEFF1' },
+                    { name: 'popup-icon-color', val: '#607D8B' },
+                    { name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)' },
+                    { name: 'card-header-text-color1', val: '#546E7A' },
+                    { name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)' },
+                    { name: 'card-header-text-color2', val: '#546E7A' },
+                    { name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)' },
+                    { name: 'card-header-text-color3', val: '#546E7A' },
+                    { name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)' },
+                    { name: 'card-header-text-color4', val: '#546E7A' },
+                    { name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)' },
+                    { name: 'card-header-text-color5', val: '#546E7A' }
                 ]
             },
             {
                 name: 'Mocha',
                 id: 'mocha',
                 styles: [
-                    {name: 'main-background-color', val: '#D7CCC8'},
-                    {name: 'background-color', val: '#EFEBE9'},
-                    {name: 'main-color', val: '#795548'},
-                    {name: 'accent-color', val: '#795548'},
-                    {name: 'highlight-color', val: '#D7CCC8'},
-                    {name: 'text-color', val: 'rgba(0,0,0,.87)'},
-                    {name: 'shadow-color', val: 'rgba(0,0,0,.2)'},
-                    {name: 'divider-color', val: 'rgba(0,0,0,.12)'},
-                    {name: 'sidebar-icon-color', val: '#EFEBE9'},
-                    {name: 'popup-icon-color', val: '#795548'},
-                    {name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)'},
-                    {name: 'card-header-text-color1', val: '#795548'},
-                    {name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)'},
-                    {name: 'card-header-text-color2', val: '#795548'},
-                    {name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)'},
-                    {name: 'card-header-text-color3', val: '#795548'},
-                    {name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)'},
-                    {name: 'card-header-text-color4', val: '#795548'},
-                    {name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)'},
-                    {name: 'card-header-text-color5', val: '#795548'}
+                    { name: 'main-background-color', val: '#D7CCC8' },
+                    { name: 'background-color', val: '#EFEBE9' },
+                    { name: 'main-color', val: '#795548' },
+                    { name: 'accent-color', val: '#795548' },
+                    { name: 'highlight-color', val: '#D7CCC8' },
+                    { name: 'text-color', val: 'rgba(0,0,0,.87)' },
+                    { name: 'shadow-color', val: 'rgba(0,0,0,.2)' },
+                    { name: 'divider-color', val: 'rgba(0,0,0,.12)' },
+                    { name: 'sidebar-icon-color', val: '#EFEBE9' },
+                    { name: 'popup-icon-color', val: '#795548' },
+                    { name: 'card-header-color1', val: 'rgba(244, 67, 54, 0.1)' },
+                    { name: 'card-header-text-color1', val: '#795548' },
+                    { name: 'card-header-color2', val: 'rgba(76, 175, 80, 0.1)' },
+                    { name: 'card-header-text-color2', val: '#795548' },
+                    { name: 'card-header-color3', val: 'rgba(33, 150, 243, 0.1)' },
+                    { name: 'card-header-text-color3', val: '#795548' },
+                    { name: 'card-header-color4', val: 'rgba(156, 39, 176, 0.1)' },
+                    { name: 'card-header-text-color4', val: '#795548' },
+                    { name: 'card-header-color5', val: 'rgba(121, 85, 72, 0.1)' },
+                    { name: 'card-header-text-color5', val: '#795548' }
                 ]
             }
         ];
@@ -231,7 +231,7 @@ var Newt = (function() {
             changeTheme(AppPrefs.selectedTheme);
         });
     }
-    
+
     function updatePref(key, val) {
         // console.log('updatePref', key, val);
 
@@ -264,33 +264,33 @@ var Newt = (function() {
             });
         }
     }
-    
+
     function changeTheme(theme) {
         // console.log('changeTheme', theme, AppPrefs.selectedTheme);
         let themeID = theme || AppPrefs.selectedTheme;
         let allThemes = AppPrefs.baseThemes.concat(AppPrefs.customThemes);
-        let selectedTheme = allThemes.find(theme => {return theme.id == themeID});
+        let selectedTheme = allThemes.find(theme => { return theme.id == themeID });
 
         if (!selectedTheme) {
             AppPrefs.selectedTheme = 'basic';
             selectedTheme = allThemes[0];
         }
 
-        selectedTheme.styles.forEach(function(style) {
+        selectedTheme.styles.forEach(function (style) {
             document.documentElement.style.setProperty('--' + style.name, style.val);
         });
     }
-    
+
     function createBookmarkCards(cards) {
         // console.log('Creating bookmark cards...');
-        
+
         let self = this;
-        ChromeService.getBookmarks().then(function(cards) {
+        ChromeService.getBookmarks().then(function (cards) {
             // console.log(cards);
 
             // Clear out the main content div
             removeAllChildNodes(MainContent);
-        
+
             if (cards.length == 0) {
                 // The user doesn't have any cards set up yet, so display a welcome message
                 MainContent.innerHTML = `
@@ -320,14 +320,14 @@ var Newt = (function() {
 
                 for (var card of cards) {
                     // console.log('Card', card);
-                    
+
                     if (!card.children) {
                         console.warn('Found malformed card: ', card);
                         continue;
                     }
 
                     let ele = cardNode.cloneNode(true);
-                    ele.id = 'card'+ card.id;
+                    ele.id = 'card' + card.id;
                     ele.data = {
                         title: card.title,
                         id: card.id,
@@ -338,33 +338,33 @@ var Newt = (function() {
                         categoryColor: AppPrefs.categoryColors[card.id] || 0
                     }
 
-                    ele.addEventListener('showcardmenu', function(ev, data) {
+                    ele.addEventListener('showcardmenu', function (ev, data) {
                         // console.log('showcardmenu', ev);
                         Newt.showCardMenu(ev.target);
                     });
 
-                    ele.addEventListener('dragover', function(ev) {
+                    ele.addEventListener('dragover', function (ev) {
                         if (!ev.dataTransfer.types.includes('sitedivid')) {
                             ev.preventDefault();
                             this.classList.add('over-card');
                         }
                     });
 
-                    ele.addEventListener('dragleave', function(ev) {
+                    ele.addEventListener('dragleave', function (ev) {
                         if (!ev.dataTransfer.types.includes('sitedivid')) {
                             ev.preventDefault();
                             this.classList.remove('over-card');
                         }
                     });
 
-                    ele.addEventListener('dragend', function(ev) {   
+                    ele.addEventListener('dragend', function (ev) {
                         if (!ev.dataTransfer.types.includes('sitedivid')) {
                             ev.preventDefault();
                             this.classList.remove('over-card');
                         }
                     });
 
-                    ele.addEventListener('drop', function(ev) {   
+                    ele.addEventListener('drop', function (ev) {
                         if (!ev.dataTransfer.types.includes('sitedivid')) {
                             ev.preventDefault();
 
@@ -373,9 +373,9 @@ var Newt = (function() {
                             let fromCard = document.getElementById('card' + ev.dataTransfer.getData('carddivid'));
                             let toCard = this;
                             let container = this.parentNode;
-                            
+
                             let index;
-                            for (let i=0; i<container.children.length; i++) {
+                            for (let i = 0; i < container.children.length; i++) {
                                 if (('card' + toCard.data.id) == container.children[i].id) {
                                     index = i;
                                 }
@@ -385,7 +385,7 @@ var Newt = (function() {
                             ChromeService.moveFolder(fromCard.data.id, index);
                         }
                     });
-                    
+
                     for (var site of card.children) {
                         // Check to make this isn't a folder. They don't have the url property.
                         if (site.url) {
@@ -393,12 +393,12 @@ var Newt = (function() {
                             row.id = site.parentId + "_" + site.id;
                             row.data = site;
                             row.isEditable = true;
-                            
+
                             ele.appendChild(row);
                         }
-                        
+
                     }
-                    
+
                     docFrag.appendChild(ele);
                 }
 
@@ -408,16 +408,16 @@ var Newt = (function() {
             // console.timeEnd('Initial Load');
         });
 
-        
+
     }
-    
+
     function createAppCards() {
-        ChromeService.getApps().then(function(apps) {
-            
+        ChromeService.getApps().then(function (apps) {
+
             // TODO: More efficient way of sorting this
             let enabled = [];
             let disabled = [];
-            
+
             for (var app of apps) {
                 if (app.enabled) {
                     enabled.push(app);
@@ -425,68 +425,68 @@ var Newt = (function() {
                     disabled.push(app);
                 }
             }
-            
+
             apps = enabled.concat(disabled);
-            
+
             // Clear out the main content div
             removeAllChildNodes(MainContent);
-            
-            for (var app of apps) {                
+
+            for (var app of apps) {
                 let ele = document.createElement('app-card');
                 ele.className = 'card-container';
                 ele.data = app;
-                
+
                 MainContent.appendChild(ele);
             }
         });
     }
-    
+
     function createFrequentsCard() {
-        ChromeService.getFrequents().then(function(sites) {
+        ChromeService.getFrequents().then(function (sites) {
             let ele = document.createElement('list-card');
             ele.title = 'Frequents';
-            
-            for (var i=0; i<sites.length; i++) {
+
+            for (var i = 0; i < sites.length; i++) {
                 let row = document.createElement('list-card-row');
                 row.title = sites[i].title;
                 row.url = sites[i].url;
 
                 ele.appendChild(row);
             }
-            
+
             // Clear out the main content div
             removeAllChildNodes(MainContent);
-            
+
             MainContent.appendChild(ele);
         });
     }
-    
+
     function createRecentlyAddedCard() {
-        ChromeService.getRecentlyAdded().then(function(sites) {
+        ChromeService.getRecentlyAdded().then(function (sites) {
             let ele = document.createElement('list-card');
             ele.title = 'Recently Added';
-            
-            for (var i=0; i<sites.length; i++) {
+
+            for (var i = 0; i < sites.length; i++) {
                 let row = document.createElement('list-card-row');
                 row.title = sites[i].title;
                 row.url = sites[i].url;
 
                 ele.appendChild(row);
             }
-            
+
             // Clear out the main content div
             removeAllChildNodes(MainContent);
-            
+
             MainContent.appendChild(ele);
         });
     }
-    
+
     function createRecentlyClosedCard() {
-        ChromeService.getRecentlyClosed().then(function(sites) {
+        ChromeService.getRecentlyClosed().then(function (sites) {
             let ele = document.createElement('list-card');
             ele.title = 'Recently Closed';
-            
-            for (var i=0; i<sites.length; i++) {
+
+            for (var i = 0; i < sites.length; i++) {
                 if (sites[i].tab) {
                     let row = document.createElement('list-card-row');
                     row.title = sites[i].tab.title;
@@ -495,44 +495,44 @@ var Newt = (function() {
                     ele.appendChild(row);
                 }
             }
-            
+
             // Clear out the main content div
             removeAllChildNodes(MainContent);
-            
+
             MainContent.appendChild(ele);
         });
     }
-    
+
     function createDeviceCards() {
-        ChromeService.getDevices().then(function(devices) {
-            
+        ChromeService.getDevices().then(function (devices) {
+
             // Clear out the main content div
             removeAllChildNodes(MainContent);
-            
-            for (var device of devices) {                
+
+            for (var device of devices) {
                 let card = document.createElement('small-card');
                 card.className = 'card-container';
                 card.title = device.title;
-                
+
                 for (var site of device.sites) {
                     let row = document.createElement('card-row');
                     row.data = site;
                     row.isEditable = false;
-                    
+
                     card.appendChild(row);
                 }
-                
+
                 MainContent.appendChild(card);
             }
         });
     }
-    
+
     function createSettingsCard() {
         // console.log('Creating settings menu...');
-        
+
         // Clear out the main content div
         removeAllChildNodes(MainContent);
-        
+
         let card = document.createElement('settings-card');
         MainContent.appendChild(card);
     }
@@ -540,11 +540,11 @@ var Newt = (function() {
     function createAboutCard() {
         // Clear out the main content div
         removeAllChildNodes(MainContent);
-        
+
         let card = document.createElement('about-card');
         MainContent.appendChild(card);
     }
-    
+
     function changeTab(tab, direction) {
         if (tab == 'menu') {
             toggleMenu();
@@ -556,10 +556,10 @@ var Newt = (function() {
 
         // Set the style for the new active tab
         let buttons = MenuBar.querySelectorAll('menu-item');
-        
+
         if (direction) {
             let currentIndex;
-            for (let i=0; i<buttons.length; i++) {
+            for (let i = 0; i < buttons.length; i++) {
                 if (buttons[i].selected) {
                     currentIndex = i;
                     break;
@@ -572,8 +572,8 @@ var Newt = (function() {
                 tab = currentIndex - 1 < 0 ? buttons[buttons.length - 2].action : buttons[currentIndex - 1].action;
             }
         }
-        
-        for (let i=0; i<buttons.length; i++) {
+
+        for (let i = 0; i < buttons.length; i++) {
             if (buttons[i].action != 'menu') {
                 if (buttons[i].action == tab) {
                     buttons[i].selected = true;
@@ -582,41 +582,49 @@ var Newt = (function() {
                 }
             }
         }
-        
+
         // Load the tab's content into the main view
         switch (tab) {
             case 'bookmarks':
                 createBookmarkCards();
+                ga('send', 'screenview', { screenName: 'Bookmarks' });
                 break;
             case 'apps':
                 createAppCards();
+                ga('send', 'screenview', { screenName: 'Apps' });
                 break;
             case 'frequents':
                 createFrequentsCard();
+                ga('send', 'screenview', { screenName: 'Frequents' });
                 break;
             case 'new':
                 createRecentlyAddedCard();
+                ga('send', 'screenview', { screenName: 'New Bookmarks' });
                 break;
             case 'recents':
                 createRecentlyClosedCard();
+                ga('send', 'screenview', { screenName: 'Recent Tabs' });
                 break;
             case 'devices':
                 createDeviceCards();
+                ga('send', 'screenview', { screenName: 'Devices' });
                 break;
             case 'menu':
                 toggleMenu();
                 break;
             case 'settings':
                 createSettingsCard();
+                ga('send', 'screenview', { screenName: 'Settings' });
                 break;
             case 'about':
                 createAboutCard();
+                ga('send', 'screenview', { screenName: 'About' });
         }
-        
+
         CardMap.currentTab = tab;
         CardMap.tabChanged = true;
     }
-    
+
     function openThemeBuilder(editing, themeID) {
         document.querySelector('.theme-builder').style.display = 'flex';
 
@@ -633,13 +641,15 @@ var Newt = (function() {
         let themeSettings = document.querySelector('.theme-settings');
         removeAllChildNodes(themeSettings);
 
-        styles.forEach(function(style) {
+        styles.forEach(function (style) {
             let row = document.createElement('color-row');
             row.colorID = style.name;
             row.color = style.val;
 
             themeSettings.appendChild(row);
         });
+
+        ga('send', 'screenview', { screenName: 'Theme Builder' });
     }
 
     function closeThemeBuilder() {
@@ -658,7 +668,7 @@ var Newt = (function() {
 
         var colorRows = document.querySelectorAll('color-row');
         var styles = [];
-        for (let i=0; i<colorRows.length; i++) {
+        for (let i = 0; i < colorRows.length; i++) {
             let item = colorRows[i];
 
             if (item.color.length == 0) {
@@ -675,13 +685,13 @@ var Newt = (function() {
         if (AppPrefs.customThemes.length == 0) {
             themeID = 'customtheme1';
         } else {
-            let lastTheme = AppPrefs.customThemes[AppPrefs.customThemes.length-1].id.slice(11);
+            let lastTheme = AppPrefs.customThemes[AppPrefs.customThemes.length - 1].id.slice(11);
             themeID = 'customtheme' + (parseInt(lastTheme) + 1);
         }
-        
+
         if (!abortSave) {
             if (EditingTheme) {
-                let index = AppPrefs.customThemes.findIndex(function(x){return x.id == EditingThemeID});
+                let index = AppPrefs.customThemes.findIndex(function (x) { return x.id == EditingThemeID });
 
                 AppPrefs.customThemes[index].name = themeName;
                 AppPrefs.customThemes[index].styles = styles;
@@ -693,7 +703,7 @@ var Newt = (function() {
                 });
                 AppPrefs.selectedTheme = themeID;
             }
-            
+
 
             SettingsService.setSettings('customThemes', AppPrefs.customThemes);
             // console.log('AppPrefs.customThemes', AppPrefs.customThemes);
@@ -724,7 +734,7 @@ var Newt = (function() {
     }
 
     function deleteTheme(theme) {
-        var index = AppPrefs.customThemes.map(function(x){return x.id}).indexOf(theme);
+        var index = AppPrefs.customThemes.map(function (x) { return x.id }).indexOf(theme);
         AppPrefs.customThemes.splice(index, 1);
 
         SettingsService.setSettings('customTheme', AppPrefs.customThemes);
@@ -761,7 +771,7 @@ var Newt = (function() {
             document.querySelector('#menu').style.display = 'none';
             document.querySelector('#scrim').style.display = 'none';
         } else {
-            
+
             document.querySelector('#menu').style.display = 'block';
             document.querySelector('#scrim').style.display = 'block';
         }
@@ -771,10 +781,10 @@ var Newt = (function() {
         document.querySelector('#menu').style.display = 'none';
         document.querySelector('#scrim').style.display = 'none';
     }
-    
+
     function handleKeyPress(ev) {
         // console.log('keypress', ev);
-        
+
         if (AppPrefs.keyboardShortcuts === 'disabled') {
             return;
         }
@@ -784,9 +794,9 @@ var Newt = (function() {
             targetNode == 'input' ||
             targetNode == 'settings-card' ||
             targetNode == 'color-row') {
-                return;
+            return;
         }
-        
+
         switch (ev.code) {
             case 'ArrowUp':
             case 'ArrowDown':
@@ -798,7 +808,7 @@ var Newt = (function() {
             case 'Enter':
                 if (CardMap.currentActive) {
                     let item = CardMap.currentActive;
-                    
+
                     if (CardMap.currentTab === 'apps') {
                         if (item.row.data.appLaunchUrl) {
                             ChromeService.updateTab(item.row.data.appLaunchUrl);
@@ -818,7 +828,7 @@ var Newt = (function() {
                 }
         }
     }
-    
+
     function navigateCardMap(key) {
         if (CardMap.tabChanged) {
             let cardType;
@@ -841,7 +851,7 @@ var Newt = (function() {
             CardMap.currentTab = tab;
             // console.log('Generated CardMap:', CardMap);
         }
-        
+
         if (CardMap.currentActive === null) {
             switch (key) {
                 case 'ArrowUp':
@@ -858,14 +868,14 @@ var Newt = (function() {
                     }
                     CardMap.currentActive.row.highlight = true;
             }
-            
-           
+
+
         } else {
             CardMap.currentActive.row.highlight = false;
-            
+
             let a = CardMap.currentActive;
             let data = CardMap.data;
-            
+
             switch (key) {
                 case 'ArrowUp':
                     a.indexY = a.indexY === 0 ? data[a.indexX].length - 1 : (a.indexY - 1);
@@ -877,10 +887,10 @@ var Newt = (function() {
                     if (a.indexX === 0) {
                         a = null;
                         CardMap.currentActive = null;
-                        
+
                     } else {
                         a.indexX--;
-                        
+
                         let highestIndex = data[a.indexX].length - 1;
                         a.indexY = a.indexY <= highestIndex ? a.indexY : highestIndex;
                     }
@@ -889,7 +899,7 @@ var Newt = (function() {
                     let lastX = data.length - 1;
                     if (a.indexX < lastX) {
                         a.indexX++;
-                        
+
                         let highestIndex = data[a.indexX].length - 1;
                         a.indexY = a.indexY <= highestIndex ? a.indexY : highestIndex;
                     }
@@ -907,16 +917,16 @@ var Newt = (function() {
             if (CardMap.currentTab === 'apps') {
                 let main = CardMap.currentActive.row.parentNode;
                 let card = CardMap.currentActive.row;
-                
+
                 main.scrollTop = card.offsetTop + card.clientHeight - main.clientHeight;
             } else if (CardMap.currentTab === 'bookmarks' || CardMap.currentTab === 'devices') {
                 let main = CardMap.currentActive.row.parentNode.parentNode;
                 let card = CardMap.currentActive.row.parentNode;
                 let container = CardMap.currentActive.row.parentNode.$container;
                 let row = CardMap.currentActive.row;
-                
+
                 main.scrollTop = card.offsetTop + card.clientHeight - main.clientHeight;
-                
+
                 if (row.offsetTop > container.clientHeight) {
                     container.scrollTop = row.offsetTop - card.offsetTop - container.clientHeight;
                 } else {
@@ -925,7 +935,7 @@ var Newt = (function() {
             } else {
                 let container = CardMap.currentActive.row.parentNode.$container;
                 let row = CardMap.currentActive.row;
-                
+
                 if (row.offsetTop > container.clientHeight) {
                     container.scrollTop = row.offsetTop - container.clientHeight;
                 } else {
@@ -934,7 +944,7 @@ var Newt = (function() {
             }
         }
     }
-    
+
     function generateCardMap(cardType) {
         let map = {
             data: [],
@@ -942,14 +952,14 @@ var Newt = (function() {
             currentTab: null,
             tabChanged: false
         };
-        
+
         let cards = document.querySelectorAll(cardType);
-         
-        for (let i=0; i<cards.length; i++) {
+
+        for (let i = 0; i < cards.length; i++) {
             let data = cardType === 'app-card' ? [cards[i]] : cards[i].children;
             map.data.push(data);
         }
-        
+
         return map;
     }
 
@@ -974,7 +984,7 @@ var Newt = (function() {
     }
 
     function saveEditedCard(data) {
-        let card = document.querySelector('#card'+data.cardID);
+        let card = document.querySelector('#card' + data.cardID);
 
         let cardConfig = card.config;
         cardConfig.categoryColor = data.color;
@@ -984,7 +994,7 @@ var Newt = (function() {
         this.updatePref('categoryColors', AppPrefs.categoryColors);
 
         if (data.title) {
-            ChromeService.updateBookmark(data.cardID, data.title).then(function(res) {
+            ChromeService.updateBookmark(data.cardID, data.title).then(function (res) {
                 let cardData = card.data;
                 cardData.title = data.title;
                 card.data = cardData;
@@ -1011,7 +1021,7 @@ var Newt = (function() {
 
     function createNewCard(name) {
         hideAddCardPrompt();
-        ChromeService.createFolder(name).then(function(card) {
+        ChromeService.createFolder(name).then(function (card) {
 
             let ele = document.createElement('small-card');
             ele.className = 'card-container';
@@ -1021,7 +1031,7 @@ var Newt = (function() {
                 parentId: card.parentId,
                 index: card.index
             };
-            
+
             if (CurrentlyActiveTab == 'bookmarks') {
                 MainContent.appendChild(ele);
             }
@@ -1060,8 +1070,8 @@ var Newt = (function() {
         }
         document.querySelector('#scrim').style.display = 'none';
     }
-    
-    return({
+
+    return ({
         init: init,
         changeTab: changeTab,
         updatePref: updatePref,
