@@ -44,8 +44,10 @@
     `;
     
     class CardRow extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             
             this.$row = this.shadowRoot.querySelector('.row');
             this.$icon = this.shadowRoot.querySelector('.icon');
@@ -66,7 +68,7 @@
             });
         }
         
-        attachedCallback() {
+        connectedCallback() {
             this.$icon.style.backgroundImage = 'url("https://www.google.com/s2/favicons?domain=' + new URL(this.url).origin + '")';
             // this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.url + '")';
             this.$title.textContent = this.title;
@@ -132,5 +134,5 @@
         
     }
     
-    document.registerElement('list-card-row', CardRow);
+    customElements.define('list-card-row', CardRow);
 })();

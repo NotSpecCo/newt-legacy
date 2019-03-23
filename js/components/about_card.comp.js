@@ -157,10 +157,12 @@
     `;
 
     class SettingsCard extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
         }
     }
 
-    document.registerElement('about-card', SettingsCard);
+    customElements.define('about-card', SettingsCard);
 })();

@@ -47,14 +47,16 @@
         <div class="card" draggable="true">
             <div class="card-title"></div>
             <div class="items-container">
-                <content></content>
+                <slot></slot>
             </div>
         </div>
     `;
     
     class Card extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+
+            this.attachShadow({mode: 'open'}).innerHTML = template;
 
             this.$card = this.shadowRoot.querySelector('.card');
             this.$title = this.shadowRoot.querySelector('.card-title');
@@ -149,5 +151,5 @@
         }
     }
     
-    document.registerElement('small-card', Card);
+    customElements.define('small-card', Card);
 })();

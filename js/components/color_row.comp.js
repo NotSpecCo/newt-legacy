@@ -50,8 +50,10 @@
     `;
     
     class ColorRow extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             this.$row = this.shadowRoot.querySelector('.row');
             this.$label = this.shadowRoot.querySelector('.label');
             this.$inpColor = this.shadowRoot.querySelector('#inpColor');
@@ -100,5 +102,5 @@
         }
     }
     
-    document.registerElement('color-row', ColorRow);
+    customElements.define('color-row', ColorRow);
 })();

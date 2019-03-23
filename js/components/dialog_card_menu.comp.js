@@ -113,8 +113,10 @@
     `;
     
     class PromptBox extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             
             this.$content = this.shadowRoot.querySelector('.content');
             this.$cardMenuform = this.shadowRoot.querySelector('#cardMenuform');
@@ -151,7 +153,7 @@
             });
         }
 
-        attachedCallback() {
+        connectedCallback() {
             // this.$message.innerText = this.message;
         }
 
@@ -169,5 +171,5 @@
         }
     }
     
-    document.registerElement('dialog-card-menu', PromptBox);
+    customElements.define('dialog-card-menu', PromptBox);
 })();

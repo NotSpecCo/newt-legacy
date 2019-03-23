@@ -72,8 +72,10 @@
     `;
     
     class CardRow extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             this.$row = this.shadowRoot.querySelector('.row');
             this.$icon = this.shadowRoot.querySelector('.icon');
             this.$title = this.shadowRoot.querySelector('.title');
@@ -311,5 +313,5 @@
         }
     }
     
-    document.registerElement('card-row', CardRow);
+    customElements.define('card-row', CardRow);
 })();

@@ -7,10 +7,8 @@
     `;
     
     class PopupMenuItem extends HTMLElement {
-        createdCallback() {
-            // this.createShadowRoot().innerHTML = template;
-            
-            // this.$icon = this.shadowRoot.querySelector('#icon');
+        constructor() {
+            super();
 
             this.innerHTML = template;
             
@@ -40,5 +38,5 @@
         }
     }
 
-    document.registerElement('popup-menu-item', PopupMenuItem);
+    customElements.define('popup-menu-item', PopupMenuItem);
 })();

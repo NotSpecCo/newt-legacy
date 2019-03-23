@@ -42,14 +42,16 @@
         <div class="card">
             <div class="card-title"></div>
             <div class="items-container">
-                <content></content>
+                <slot></slot>
             </div>
         </div>
     `;
     
     class ListCard extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             
             this.$title = this.shadowRoot.querySelector('.card-title');
             this.$container = this.shadowRoot.querySelector('.items-container');
@@ -77,5 +79,5 @@
         }
     }
     
-    document.registerElement('list-card', ListCard);
+    customElements.define('list-card', ListCard);
 })();

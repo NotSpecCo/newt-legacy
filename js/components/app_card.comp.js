@@ -99,8 +99,10 @@
     `;
     
     class AppCard extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             
             this.$card = this.shadowRoot.querySelector('.card');
             this.$icon = this.shadowRoot.querySelector('.icon');
@@ -163,5 +165,5 @@
 
     }
     
-    document.registerElement('app-card', AppCard);
+    customElements.define('app-card', AppCard);
 })();

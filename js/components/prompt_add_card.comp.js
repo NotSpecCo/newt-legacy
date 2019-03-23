@@ -82,8 +82,10 @@
     `;
     
     class PromptBox extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             
             this.$inpName = this.shadowRoot.querySelector('#inpName');
             this.$btnCreate = this.shadowRoot.querySelector('#btnCreate');
@@ -99,10 +101,10 @@
             this.$btnCancel.addEventListener('click', () => Newt.hideAddCardPrompt() );
         }
 
-        attachedCallback() {
+        connectedCallback() {
             this.$inpName.focus();
         }
     }
     
-    document.registerElement('prompt-add-card', PromptBox);
+    customElements.define('prompt-add-card', PromptBox);
 })();

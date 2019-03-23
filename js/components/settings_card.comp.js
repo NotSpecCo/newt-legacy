@@ -118,8 +118,10 @@
     `;
     
     class SettingsCard extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             
             this.$card = this.shadowRoot.querySelector('.card');
             this.$prefTheme = this.shadowRoot.querySelector('#prefTheme');
@@ -208,5 +210,5 @@
 
     }
     
-    document.registerElement('settings-card', SettingsCard);
+    customElements.define('settings-card', SettingsCard);
 })();

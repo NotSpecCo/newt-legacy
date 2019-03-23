@@ -38,8 +38,10 @@
     `;
     
     class MenuItem extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             
             this.$item = this.shadowRoot.querySelector('.menu-item');
             var icon = this.getIcon(this.action);
@@ -118,5 +120,5 @@
         }
     }
     
-    document.registerElement('menu-item', MenuItem);
+    customElements.define('menu-item', MenuItem);
 })();

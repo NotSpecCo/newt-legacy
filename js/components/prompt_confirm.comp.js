@@ -65,8 +65,10 @@
     `;
     
     class PromptBox extends HTMLElement {
-        createdCallback() {
-            this.createShadowRoot().innerHTML = template;
+        constructor() {
+            super();
+            
+            this.attachShadow({mode: 'open'}).innerHTML = template;
             
             this.$message = this.shadowRoot.querySelector('.message');
             this.$btnConfirm = this.shadowRoot.querySelector('#btnConfirm');
@@ -80,7 +82,7 @@
             this.$btnCancel.addEventListener('click', Newt.closeAllPopups);
         }
 
-        attachedCallback() {
+        connectedCallback() {
             this.$message.innerText = this.message;
         }
 
@@ -115,5 +117,5 @@
         }
     }
     
-    document.registerElement('prompt-confirm', PromptBox);
+    customElements.define('prompt-confirm', PromptBox);
 })();
