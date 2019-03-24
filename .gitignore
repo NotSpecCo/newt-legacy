@@ -3,4 +3,4 @@ deploy/
 .idea/
 .vscode/
 npm-debug.log*
-js/analytics.js
+dist/

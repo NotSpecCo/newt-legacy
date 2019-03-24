@@ -49,6 +49,11 @@
 
             <h3 class="subtitle">Changelog</h3>
 
+            <u>5.6.4</u>
+            <ul>
+                <li>Fixes in response to deprecated web features.</li>
+            </ul>
+
             <u>5.6.3</u>
             <ul>
                 <li>Bug fixes</li>
