@@ -58,7 +58,7 @@ body {
 */
 
 .menu-bar {
-	height: 100%;
+	height: 100vh;
 	width: 58px;
 	/* position: fixed; */
 	background-color: var(--main-color);
