@@ -38,6 +38,10 @@
     `;
     
     class MenuItem extends HTMLElement {
+        static get observedAttributes() {
+            return ['selected'];
+        }
+
         constructor() {
             super();
             
