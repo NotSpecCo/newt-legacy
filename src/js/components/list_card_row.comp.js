@@ -1,7 +1,7 @@
-(function() {
-    'use strict';
-    
-    let template = `
+(function () {
+  'use strict';
+
+  let template = `
         <style>
             :host {
                 display: block;
@@ -42,97 +42,96 @@
             <div class="title">Site Title</div>
         </div>
     `;
-    
-    class CardRow extends HTMLElement {
-        constructor() {
-            super();
-            
-            this.attachShadow({mode: 'open'}).innerHTML = template;
-            
-            this.$row = this.shadowRoot.querySelector('.row');
-            this.$icon = this.shadowRoot.querySelector('.icon');
-            this.$title = this.shadowRoot.querySelector('.title');
 
-            this.addEventListener('click', (ev) => {
-                if (ev.button === 0) {
-                    this.handlePrimaryClick();
-                } else if (ev.button === 1) {
-                    this.handleAuxClick(ev.altKey);
-                }
-            });
+  class CardRow extends HTMLElement {
+    constructor() {
+      super();
 
-            this.addEventListener('auxclick', (ev) => {
-                if (ev.button === 1) {
-                    this.handleAuxClick(ev.altKey);
-                }
-            });
-        }
-        
-        connectedCallback() {
-            this.$icon.style.backgroundImage = 'url("https://www.google.com/s2/favicons?domain=' + new URL(this.url).origin + '")';
-            // this.$icon.style.backgroundImage = 'url("https://plus.google.com/_/favicon?domain=' + this.url + '")';
-            this.$title.textContent = this.title;
-        }
+      this.attachShadow({ mode: 'open' }).innerHTML = template;
 
-        handlePrimaryClick() {
-            ChromeService.updateTab(this.url);
-        }
+      this.$row = this.shadowRoot.querySelector('.row');
+      this.$icon = this.shadowRoot.querySelector('.icon');
+      this.$title = this.shadowRoot.querySelector('.title');
 
-        handleAuxClick(alt) {
-            ChromeService.openNewTab(this.url, alt);
+      this.addEventListener('click', (ev) => {
+        if (ev.button === 0) {
+          this.handlePrimaryClick();
+        } else if (ev.button === 1) {
+          this.handleAuxClick(ev.altKey);
         }
-        
-        attributeChanged(attrName, oldVal, newVal) {
-            console.log('list-card-row', attrName + " changed");
-            switch (attrName) {
-                case 'title':
-                    this.$title.textContent = this.title;
-                    break;
-                case 'url':
-                    this.$icon.style.backgroundImage = 'url("' + new URL(this.url).origin + '/favicon.ico")';
-                    // this.$icon.src = new URL(val.url).origin + '/favicon.ico';
-                    break;
-                case 'highlight':
-                    this.updateHighlight();
-                    break;
-            }
+      });
+
+      this.addEventListener('auxclick', (ev) => {
+        if (ev.button === 1) {
+          this.handleAuxClick(ev.altKey);
         }
-        
-        get title() {
-            let title = this.getAttribute('title');
-            return title;
-        }
-        
-        set title(val) {
-            this.setAttribute('title', val);
-        }
-        
-        get url() {
-            return this.getAttribute('url');
-        }
-        
-        set url(val) {
-            this.setAttribute('url', val);
-        }
-        
-        get highlight() {
-            return JSON.parse(this.getAttribute('highlight'));
-        }
-        
-        set highlight(val) {
-            this.setAttribute('highlight', JSON.stringify(val));
-            this.updateHighlight();
-        }
-        
-        updateHighlight() {
-            if (this.highlight === true) {
-                this.$row.classList.add('highlight');
-            } else {
-                this.$row.classList.remove('highlight');
-            }
-        }
-        
+      });
     }
-    
-    customElements.define('list-card-row', CardRow);
+
+    connectedCallback() {
+      this.$icon.style.backgroundImage =
+        'url("chrome://favicon/' + new URL(this.url).origin + '")';
+      this.$title.textContent = this.title;
+    }
+
+    handlePrimaryClick() {
+      ChromeService.updateTab(this.url);
+    }
+
+    handleAuxClick(alt) {
+      ChromeService.openNewTab(this.url, alt);
+    }
+
+    attributeChanged(attrName, oldVal, newVal) {
+      console.log('list-card-row', attrName + ' changed');
+      switch (attrName) {
+        case 'title':
+          this.$title.textContent = this.title;
+          break;
+        case 'url':
+          this.$icon.style.backgroundImage =
+            'url("' + new URL(this.url).origin + '/favicon.ico")';
+          break;
+        case 'highlight':
+          this.updateHighlight();
+          break;
+      }
+    }
+
+    get title() {
+      let title = this.getAttribute('title');
+      return title;
+    }
+
+    set title(val) {
+      this.setAttribute('title', val);
+    }
+
+    get url() {
+      return this.getAttribute('url');
+    }
+
+    set url(val) {
+      this.setAttribute('url', val);
+    }
+
+    get highlight() {
+      return JSON.parse(this.getAttribute('highlight'));
+    }
+
+    set highlight(val) {
+      this.setAttribute('highlight', JSON.stringify(val));
+      this.updateHighlight();
+    }
+
+    updateHighlight() {
+      if (this.highlight === true) {
+        this.$row.classList.add('highlight');
+      } else {
+        this.$row.classList.remove('highlight');
+      }
+    }
+  }
+
+  customElements.define('list-card-row', CardRow);
 })();
