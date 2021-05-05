@@ -1,7 +1,7 @@
 (function () {
-    'use strict';
+  'use strict';
 
-    let template = `
+  let template = `
         <style>
             @import url('css/shared.css');
 
@@ -44,10 +44,15 @@
             <div class='card-title'>About</div>
 
             <p>
-                Newt was designed to be a simple, lightweight replacement for Google Chrome's New Tab page. It gives you easy access to your favorite websites and apps without any of that other clutter or special effects. Newt is developed and maintained by Garrett Downs. Want to get in contact with me? Feel free to <a href="mailto:garrettdowns@gmail.com">drop me an email</a>, <a href="https://twitter.com/choorp" target="_blank">tweet me</a>, or leave a comment on the <a href="https://chrome.google.com/webstore/detail/newt-a-better-new-tab/foegdfijkhoodfijcpgpffodjanmdbmh/support" target="_blank">Chrome Web Store</a>. I welcome all feedback!
+                Newt was designed to be a simple, lightweight replacement for Google Chrome's New Tab page. It gives you easy access to your favorite websites and apps without any of that other clutter or special effects. Newt is developed and maintained by Garrett Downs. Want to get in contact with me? Feel free to <a href="mailto:garrettdowns@gmail.com">drop me an email</a>, <a href="https://twitter.com/garredow" target="_blank">tweet me</a>, or leave a comment on the <a href="https://chrome.google.com/webstore/detail/newt-a-better-new-tab/foegdfijkhoodfijcpgpffodjanmdbmh/support" target="_blank">Chrome Web Store</a>. I welcome all feedback!
             </p>
 
             <h3 class="subtitle">Changelog</h3>
+
+            <u>5.6.6</u>
+            <ul>
+                <li>Updated favicon service.</li>
+            </ul>
 
             <u>5.6.4</u>
             <ul>
@@ -161,13 +166,13 @@
         </div>
     `;
 
-    class SettingsCard extends HTMLElement {
-        constructor() {
-            super();
-            
-            this.attachShadow({mode: 'open'}).innerHTML = template;
-        }
-    }
+  class SettingsCard extends HTMLElement {
+    constructor() {
+      super();
 
-    customElements.define('about-card', SettingsCard);
+      this.attachShadow({ mode: 'open' }).innerHTML = template;
+    }
+  }
+
+  customElements.define('about-card', SettingsCard);
 })();
