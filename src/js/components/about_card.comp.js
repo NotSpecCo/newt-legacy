@@ -49,6 +49,11 @@
 
             <h3 class="subtitle">Changelog</h3>
 
+            <u>5.6.8</u>
+            <ul>
+                <li>More improvements to favicons in terms of accuracy and image quality.</li>
+            </ul>
+
             <u>5.6.6</u>
             <ul>
                 <li>Updated favicon service.</li>
