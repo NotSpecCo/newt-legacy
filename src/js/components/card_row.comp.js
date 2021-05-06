@@ -281,8 +281,7 @@
 
     set data(val) {
       this.setAttribute('data', JSON.stringify(val));
-
-      this.$icon.src = 'chrome://favicon/' + new URL(val.url).origin;
+      this.$icon.src = 'chrome://favicon/size/32@1x/' + val.url;
       this.$title.value = val.title;
     }
 
@@ -304,7 +303,7 @@
     }
 
     updateInfo() {
-      this.$icon.src = 'chrome://favicon/' + this.data.url;
+      this.$icon.src = 'chrome://favicon/size/32@1x/' + this.data.url;
       this.$title.value = this.data.title;
     }
 

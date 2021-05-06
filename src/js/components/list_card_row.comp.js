@@ -70,7 +70,7 @@
 
     connectedCallback() {
       this.$icon.style.backgroundImage =
-        'url("chrome://favicon/' + new URL(this.url).origin + '")';
+        'url("chrome://favicon/size/32@1x/' + this.url + '")';
       this.$title.textContent = this.title;
     }
 
