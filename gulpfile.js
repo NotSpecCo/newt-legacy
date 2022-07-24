@@ -1,62 +1,53 @@
-var gulp = require('gulp');
-var concat = require('gulp-concat');
-var useref = require('gulp-useref');
-var uglify = require('gulp-uglify');
-var cssnano = require('gulp-cssnano');
-var imagemin = require('gulp-imagemin');
-var gulpIf = require('gulp-if');
-var babel = require('gulp-babel');
-var del = require('del');
-var runSequence = require('run-sequence');
+const { series, src, dest } = require('gulp');
+const useref = require('gulp-useref');
+const cssnano = require('gulp-cssnano');
+const gulpIf = require('gulp-if');
+const babel = require('gulp-babel');
+const del = require('del');
+const terser = require('gulp-terser');
 
-gulp.task('hello', function() {
-	console.log('Hello Garrett');
-});
+function clean(cb) {
+  del.sync('deploy');
+  cb();
+}
 
-gulp.task('minimize', function() {
-	return gulp.src('index.html')
-		.pipe(useref())
-		.pipe(gulpIf('*.js', babel({
-		    presets: ['es2015']
-		})))
-		.pipe(gulpIf('*.js', uglify()))
-		.pipe(gulpIf('*.css', cssnano()))
-		.pipe(gulp.dest('deploy'))
-});
+function build() {
+  return src('src/index.html')
+    .pipe(useref())
+    .pipe(
+      gulpIf(
+        '*.js',
+        babel({
+          presets: ['@babel/env'],
+        })
+      )
+    )
+    .pipe(gulpIf('*.js', terser()))
+    .pipe(gulpIf('*.css', cssnano()))
+    .pipe(dest('deploy'));
+}
 
-gulp.task('minimizeBackground', function() {
-    return gulp.src(['js/background.js'])
-        .pipe(concat('background.js'))
-        .pipe(gulpIf('*.js', babel({
-		    presets: ['es2015']
-		})))
-        .pipe(gulpIf('*.js', uglify()))
-        .pipe(gulp.dest('deploy/js'))
-});
+function buildBackground() {
+  return src(['src/js/background.js'])
+    .pipe(
+      gulpIf(
+        '*.js',
+        babel({
+          presets: ['@babel/env'],
+        })
+      )
+    )
+    .pipe(gulpIf('*.js', terser()))
+    .pipe(dest('deploy/js'));
+}
 
-gulp.task('images', function() {
-	return gulp.src('assets/**/*.+(png|jpg|gif|svg)')
-		.pipe(imagemin({optimizationLevel: 3}))
-		.pipe(gulp.dest('deploy/assets'))
-});
+function copy(cb) {
+  src('src/assets/**/*').pipe(dest('deploy/assets'));
+  src('src/css/shared.css').pipe(dest('deploy/css'));
+  src('src/manifest.json').pipe(dest('deploy'));
+  src('node_modules/chrome-promise/chrome-promise.js').pipe(dest('deploy/js'));
+  src('src/options_page/**').pipe(dest('deploy/options_page'));
+  cb();
+}
 
-gulp.task('copy', function() {
-    gulp.src('assets/**')
-        .pipe(gulp.dest('deploy/assets'));
-    gulp.src('css/shared.css')
-        .pipe(gulp.dest('deploy/css'));
-    gulp.src('manifest.json')
-        .pipe(gulp.dest('deploy'));
-    gulp.src('node_modules/chrome-promise/chrome-promise.js')
-        .pipe(gulp.dest('deploy/node_modules/chrome-promise'));
-	gulp.src('options_page/**')
-        .pipe(gulp.dest('deploy/options_page'));
-});
-
-gulp.task('clean:deploy', function() {
-	return del.sync('deploy');
-});
-
-gulp.task('build', function(callback) {
-    runSequence('clean:deploy', ['minimize', 'minimizeBackground', 'copy'], callback);
-});
+exports.build = series(clean, build, buildBackground, copy);
