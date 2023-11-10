@@ -101,7 +101,8 @@
                     <span class='label'>Keyboard Shortcuts</span>
                     <select id='prefKeyboardShortcuts' name='keyboardShortcuts'>
                         <option value='disabled' selected>Disabled</option>
-                        <option value='enabled'>Enabled</option>
+                        <option value='default'>Default</option>
+                        <option value='vim'>Vim</option>
                     </select>
                 </div>
                 <div class='description' id='descKeyboardShortcuts'>

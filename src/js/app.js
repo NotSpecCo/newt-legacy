@@ -797,11 +797,18 @@ var Newt = (function () {
 
     function handleKeyPress(ev) {
         // console.log('keypress', ev);
+        let keyType = AppPrefs.keyboardShortcuts;
 
-        if (AppPrefs.keyboardShortcuts === 'disabled') {
+        let keyEventDictionary = {
+            "vim"     :   {"KeyH"    : 1, "KeyJ"      : 1, "KeyK"      : 1, "KeyL"       : 1, "Enter": 2, "Escape": 3 },
+            "default" :   {"ArrowUp" : 1, "ArrowDown" : 1, "ArrowLeft" : 1, "ArrowRight" : 1, "Enter": 2, "Escape": 3 },
+        }
+
+        if (keyType === 'disabled') {
             return;
         }
 
+        console.log(ev.code);
         let targetNode = ev.target.nodeName.toLowerCase();
         if (targetNode == "prompt-add-card" ||
             targetNode == 'input' ||
@@ -810,39 +817,48 @@ var Newt = (function () {
             return;
         }
 
-        switch (ev.code) {
-            case 'ArrowUp':
-            case 'ArrowDown':
-            case 'ArrowLeft':
-            case 'ArrowRight':
-                ev.preventDefault();
-                navigateCardMap(ev.code);
-                break;
-            case 'Enter':
-                if (CardMap.currentActive) {
-                    let item = CardMap.currentActive;
+        let keySet = keyEventDictionary[keyType];
 
-                    if (CardMap.currentTab === 'apps') {
-                        if (item.row.data.appLaunchUrl) {
-                            ChromeService.updateTab(item.row.data.appLaunchUrl);
+        if (ev.code in keySet) {
+            let keyCode = keySet[ev.code];
+            switch (keyCode) {
+                case 1:
+                    ev.preventDefault();
+                    navigateCardMap(ev.code, keyType);
+                    break;
+                case 2:
+                    if (CardMap.currentActive) {
+                        let item = CardMap.currentActive;
+
+                        if (CardMap.currentTab === 'apps') {
+                            if (item.row.data.appLaunchUrl) {
+                                ChromeService.updateTab(item.row.data.appLaunchUrl);
+                            } else {
+                                ChromeService.openApp(item.row.data.id);
+                            }
                         } else {
-                            ChromeService.openApp(item.row.data.id);
+                            let url = item.row.url || item.row.data.url;
+                            ChromeService.updateTab(url);
                         }
-                    } else {
-                        let url = item.row.url || item.row.data.url;
-                        ChromeService.updateTab(url);
                     }
-                }
-                break;
-            case 'Escape':
-                if (CardMap.currentActive) {
-                    CardMap.currentActive.row.highlight = false;
-                    CardMap.currentActive = null;
-                }
+                    break;
+                case 3:
+                    if (CardMap.currentActive) {
+                        CardMap.currentActive.row.highlight = false;
+                        CardMap.currentActive = null;
+                    }
+            }
         }
     }
 
-    function navigateCardMap(key) {
+    function navigateCardMap(key, keySet) {
+        let keyMap = {
+            "vim" : {"KeyH": "ArrowLeft", "KeyJ" : "ArrowDown", "KeyK": "ArrowUp", "KeyL": "ArrowRight"}
+        }
+
+        if (keySet != "default") {
+            key = keyMap[keySet][key];
+        }
         if (CardMap.tabChanged) {
             let cardType;
             let tab = CardMap.currentTab;
