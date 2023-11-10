@@ -797,18 +797,19 @@ var Newt = (function () {
 
     function handleKeyPress(ev) {
         // console.log('keypress', ev);
+        let evCodeT = ev.code;
         let keyType = AppPrefs.keyboardShortcuts;
 
         let keyEventDictionary = {
-            "vim"     :   {"KeyH"    : 1, "KeyJ"      : 1, "KeyK"      : 1, "KeyL"       : 1, "Enter": 2, "Escape": 3 },
-            "default" :   {"ArrowUp" : 1, "ArrowDown" : 1, "ArrowLeft" : 1, "ArrowRight" : 1, "Enter": 2, "Escape": 3 },
+            "vim"     :   {"h"       : 1, "j"         : 1, "k"         : 1, "l"          : 1, "Enter" : 2, "Escape": 3 },
+            "default" :   {"ArrowUp" : 1, "ArrowDown" : 1, "ArrowLeft" : 1, "ArrowRight" : 1, "Enter" : 2, "Escape": 3 },
         }
 
         if (keyType === 'disabled') {
             return;
         }
-
-        console.log(ev.code);
+        console.log(ev.code, ev.shiftKey);
+        console.log("-----------------------------");
         let targetNode = ev.target.nodeName.toLowerCase();
         if (targetNode == "prompt-add-card" ||
             targetNode == 'input' ||
@@ -817,14 +818,21 @@ var Newt = (function () {
             return;
         }
 
+        if (ev.code.slice(0, 3) === "Key") {
+
+            evCodeT = ev.shiftKey ? ev.code.slice(3).toUpperCase() : ev.code.slice(3).toLowerCase();
+            console.log(evCodeT);
+        }
+
+
         let keySet = keyEventDictionary[keyType];
 
-        if (ev.code in keySet) {
-            let keyCode = keySet[ev.code];
+        if (evCodeT in keySet) {
+            let keyCode = keySet[evCodeT];
             switch (keyCode) {
                 case 1:
                     ev.preventDefault();
-                    navigateCardMap(ev.code, keyType);
+                    navigateCardMap(evCodeT, keyType);
                     break;
                 case 2:
                     if (CardMap.currentActive) {
@@ -853,7 +861,7 @@ var Newt = (function () {
 
     function navigateCardMap(key, keySet) {
         let keyMap = {
-            "vim" : {"KeyH": "ArrowLeft", "KeyJ" : "ArrowDown", "KeyK": "ArrowUp", "KeyL": "ArrowRight"}
+            "vim" : {"h": "ArrowLeft", "j" : "ArrowDown", "k": "ArrowUp", "l": "ArrowRight"}
         }
 
         if (keySet != "default") {
