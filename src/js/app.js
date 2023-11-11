@@ -801,15 +801,22 @@ var Newt = (function () {
         let keyType = AppPrefs.keyboardShortcuts;
 
         let keyEventDictionary = {
-            "vim"     :   {"h"       : 1, "j"         : 1, "k"         : 1, "l"          : 1, "Enter" : 2, "Escape": 3 },
-            "default" :   {"ArrowUp" : 1, "ArrowDown" : 1, "ArrowLeft" : 1, "ArrowRight" : 1, "Enter" : 2, "Escape": 3 },
+            "vim" : {
+                "h"      : 1, "j" : 1, "k" : 1, "l" : 1,
+                "Enter"  : 2,
+                "Escape" : 3,
+                "1"      : 1, "2": 1, "3": 1, "4": 1, "5": 1, "6": 1, "7": 1, "8": 1, "9": 1
+            },
+            "default" : {
+                "ArrowUp" : 1, "ArrowDown" : 1, "ArrowLeft" : 1, "ArrowRight" : 1,
+                "Enter"   : 2,
+                "Escape"  : 3
+            },
         }
 
         if (keyType === 'disabled') {
             return;
         }
-        console.log(ev.code, ev.shiftKey);
-        console.log("-----------------------------");
         let targetNode = ev.target.nodeName.toLowerCase();
         if (targetNode == "prompt-add-card" ||
             targetNode == 'input' ||
@@ -819,9 +826,9 @@ var Newt = (function () {
         }
 
         if (ev.code.slice(0, 3) === "Key") {
-
             evCodeT = ev.shiftKey ? ev.code.slice(3).toUpperCase() : ev.code.slice(3).toLowerCase();
-            console.log(evCodeT);
+        } else if (ev.code.slice(0, 5) == "Digit") {
+            evCodeT = ev.code.slice(5);
         }
 
 
@@ -861,7 +868,8 @@ var Newt = (function () {
 
     function navigateCardMap(key, keySet) {
         let keyMap = {
-            "vim" : {"h": "ArrowLeft", "j" : "ArrowDown", "k": "ArrowUp", "l": "ArrowRight"}
+            "vim" : {"h": "ArrowLeft", "j" : "ArrowDown", "k": "ArrowUp", "l": "ArrowRight",
+                     "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 5, "7": 6, "8": 7, "9": 8}
         }
 
         if (keySet != "default") {
@@ -886,10 +894,30 @@ var Newt = (function () {
             }
             CardMap = generateCardMap(cardType);
             CardMap.currentTab = tab;
-            // console.log('Generated CardMap:', CardMap);
         }
 
-        if (CardMap.currentActive === null) {
+        if (typeof key === "number") {
+            
+            if (CardMap.currentActive === null) {
+                CardMap.currentActive = {
+                    row: CardMap.data[0][0],
+                    indexX: 0,
+                    indexY: 0
+                }
+            }
+            CardMap.currentActive.row.highlight = false;
+
+            let a = CardMap.currentActive;
+            let data = CardMap.data;
+            if (key == 8) {
+                a.indexX = data.length - 1;
+            } else {
+                a.indexX = key < (data.length - 1) ? key : a.indexX
+            }
+
+            a.row = data[a.indexX][a.indexY];
+            a.row.highlight = true;
+        } else if (CardMap.currentActive === null) {
             switch (key) {
                 case 'ArrowUp':
                     changeTab(null, 'previous');
