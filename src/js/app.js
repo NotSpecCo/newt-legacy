@@ -915,6 +915,7 @@ var Newt = (function () {
                 a.indexX = key < (data.length - 1) ? key : a.indexX
             }
 
+            a.indexY = Math.min(data[a.indexX].length - 1, a.indexY)
             a.row = data[a.indexX][a.indexY];
             a.row.highlight = true;
         } else if (CardMap.currentActive === null) {
