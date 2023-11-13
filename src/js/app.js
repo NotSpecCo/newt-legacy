@@ -797,11 +797,26 @@ var Newt = (function () {
 
     function handleKeyPress(ev) {
         // console.log('keypress', ev);
+        let evCodeT = ev.code;
+        let keyType = AppPrefs.keyboardShortcuts;
 
-        if (AppPrefs.keyboardShortcuts === 'disabled') {
-            return;
+        let keyEventDictionary = {
+            "vim" : {
+                "h"      : 1, "j" : 1, "k" : 1, "l" : 1,
+                "Enter"  : 2,
+                "Escape" : 3,
+                "1"      : 1, "2": 1, "3": 1, "4": 1, "5": 1, "6": 1, "7": 1, "8": 1, "9": 1
+            },
+            "default" : {
+                "ArrowUp" : 1, "ArrowDown" : 1, "ArrowLeft" : 1, "ArrowRight" : 1,
+                "Enter"   : 2,
+                "Escape"  : 3
+            },
         }
 
+        if (keyType === 'disabled') {
+            return;
+        }
         let targetNode = ev.target.nodeName.toLowerCase();
         if (targetNode == "prompt-add-card" ||
             targetNode == 'input' ||
@@ -810,39 +825,60 @@ var Newt = (function () {
             return;
         }
 
-        switch (ev.code) {
-            case 'ArrowUp':
-            case 'ArrowDown':
-            case 'ArrowLeft':
-            case 'ArrowRight':
-                ev.preventDefault();
-                navigateCardMap(ev.code);
-                break;
-            case 'Enter':
-                if (CardMap.currentActive) {
-                    let item = CardMap.currentActive;
+        if (keyType === 'vim') {
+            if (ev.ctrlKey) {
+                return;
+            } else if (ev.code.slice(0, 3) === "Key") {
+                evCodeT = ev.shiftKey ? ev.code.slice(3).toUpperCase() : ev.code.slice(3).toLowerCase();
+            } else if (ev.code.slice(0, 5) == "Digit") {
+                evCodeT = ev.code.slice(5);
+            }
+        }
 
-                    if (CardMap.currentTab === 'apps') {
-                        if (item.row.data.appLaunchUrl) {
-                            ChromeService.updateTab(item.row.data.appLaunchUrl);
+
+        let keySet = keyEventDictionary[keyType];
+
+        if (evCodeT in keySet) {
+            let keyCode = keySet[evCodeT];
+            switch (keyCode) {
+                case 1:
+                    ev.preventDefault();
+                    navigateCardMap(evCodeT, keyType);
+                    break;
+                case 2:
+                    if (CardMap.currentActive) {
+                        let item = CardMap.currentActive;
+
+                        if (CardMap.currentTab === 'apps') {
+                            if (item.row.data.appLaunchUrl) {
+                                ChromeService.updateTab(item.row.data.appLaunchUrl);
+                            } else {
+                                ChromeService.openApp(item.row.data.id);
+                            }
                         } else {
-                            ChromeService.openApp(item.row.data.id);
+                            let url = item.row.url || item.row.data.url;
+                            ChromeService.updateTab(url);
                         }
-                    } else {
-                        let url = item.row.url || item.row.data.url;
-                        ChromeService.updateTab(url);
                     }
-                }
-                break;
-            case 'Escape':
-                if (CardMap.currentActive) {
-                    CardMap.currentActive.row.highlight = false;
-                    CardMap.currentActive = null;
-                }
+                    break;
+                case 3:
+                    if (CardMap.currentActive) {
+                        CardMap.currentActive.row.highlight = false;
+                        CardMap.currentActive = null;
+                    }
+            }
         }
     }
 
-    function navigateCardMap(key) {
+    function navigateCardMap(key, keySet) {
+        let keyMap = {
+            "vim" : {"h": "ArrowLeft", "j" : "ArrowDown", "k": "ArrowUp", "l": "ArrowRight",
+                     "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 5, "7": 6, "8": 7, "9": 8}
+        }
+
+        if (keySet != "default") {
+            key = keyMap[keySet][key];
+        }
         if (CardMap.tabChanged) {
             let cardType;
             let tab = CardMap.currentTab;
@@ -862,10 +898,31 @@ var Newt = (function () {
             }
             CardMap = generateCardMap(cardType);
             CardMap.currentTab = tab;
-            // console.log('Generated CardMap:', CardMap);
         }
 
-        if (CardMap.currentActive === null) {
+        if (typeof key === "number") {
+            
+            if (CardMap.currentActive === null) {
+                CardMap.currentActive = {
+                    row: CardMap.data[0][0],
+                    indexX: 0,
+                    indexY: 0
+                }
+            }
+            CardMap.currentActive.row.highlight = false;
+
+            let a = CardMap.currentActive;
+            let data = CardMap.data;
+            if (key == 8) {
+                a.indexX = data.length - 1;
+            } else {
+                a.indexX = key < (data.length - 1) ? key : a.indexX
+            }
+
+            a.indexY = Math.min(data[a.indexX].length - 1, a.indexY)
+            a.row = data[a.indexX][a.indexY];
+            a.row.highlight = true;
+        } else if (CardMap.currentActive === null) {
             switch (key) {
                 case 'ArrowUp':
                     changeTab(null, 'previous');
