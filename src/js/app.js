@@ -825,10 +825,14 @@ var Newt = (function () {
             return;
         }
 
-        if (ev.code.slice(0, 3) === "Key") {
-            evCodeT = ev.shiftKey ? ev.code.slice(3).toUpperCase() : ev.code.slice(3).toLowerCase();
-        } else if (ev.code.slice(0, 5) == "Digit") {
-            evCodeT = ev.code.slice(5);
+        if (keyType === 'vim') {
+            if (ev.ctrlKey) {
+                return;
+            } else if (ev.code.slice(0, 3) === "Key") {
+                evCodeT = ev.shiftKey ? ev.code.slice(3).toUpperCase() : ev.code.slice(3).toLowerCase();
+            } else if (ev.code.slice(0, 5) == "Digit") {
+                evCodeT = ev.code.slice(5);
+            }
         }
 
 
