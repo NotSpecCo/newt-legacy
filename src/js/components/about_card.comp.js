@@ -49,13 +49,14 @@
 
             <h3 class="subtitle">Changelog</h3>
 
-            <u>5.7.0</u>
+            <u>5.7.1</u>
             <ul>
                 <li>Added: You can now delete cards by right clicking in their title bar.</li>
                 <li>Fixed: Sites in the Other Devices tab are now displayed properly.</li>
                 <li>Modified: Improved the favicon service.</li>
                 <li>Modified: Upgraded to manifest v3 to ensure extension continues to work in future versions of Chrome.</li>
                 <li>Recent Tabs and Other Devices tabs now require the 'tabs' permission, but it's optional.</li>
+                <li>Transferred ownership to my company, Nothing Special. Don't worry, it's still just me!</li>
             </ul>
 
             <u>5.6.8</u>
