@@ -1,7 +1,7 @@
 (function () {
-  'use strict';
+	'use strict';
 
-  let template = `
+	let template = `
         <style>
             :host {
                 display: block;
@@ -43,95 +43,95 @@
         </div>
     `;
 
-  class CardRow extends HTMLElement {
-    constructor() {
-      super();
+	class CardRow extends HTMLElement {
+		constructor() {
+			super();
 
-      this.attachShadow({ mode: 'open' }).innerHTML = template;
+			this.attachShadow({ mode: 'open' }).innerHTML = template;
 
-      this.$row = this.shadowRoot.querySelector('.row');
-      this.$icon = this.shadowRoot.querySelector('.icon');
-      this.$title = this.shadowRoot.querySelector('.title');
+			this.$row = this.shadowRoot.querySelector('.row');
+			this.$icon = this.shadowRoot.querySelector('.icon');
+			this.$title = this.shadowRoot.querySelector('.title');
 
-      this.addEventListener('click', (ev) => {
-        if (ev.button === 0) {
-          this.handlePrimaryClick();
-        } else if (ev.button === 1) {
-          this.handleAuxClick(ev.altKey);
-        }
-      });
+			this.addEventListener('click', (ev) => {
+				if (ev.button === 0) {
+					this.handlePrimaryClick();
+				} else if (ev.button === 1) {
+					this.handleAuxClick(ev.altKey);
+				}
+			});
 
-      this.addEventListener('auxclick', (ev) => {
-        if (ev.button === 1) {
-          this.handleAuxClick(ev.altKey);
-        }
-      });
-    }
+			this.addEventListener('auxclick', (ev) => {
+				if (ev.button === 1) {
+					this.handleAuxClick(ev.altKey);
+				}
+			});
+		}
 
-    connectedCallback() {
-      this.$icon.style.backgroundImage =
-        'url("chrome://favicon/size/32@1x/' + this.url + '")';
-      this.$title.textContent = this.title;
-    }
+		connectedCallback() {
+			this.$icon.style.backgroundImage =
+				'url("' + ChromeService.getFaviconUrl(this.url) + '")';
+			this.$title.textContent = this.title;
+		}
 
-    handlePrimaryClick() {
-      ChromeService.updateTab(this.url);
-    }
+		handlePrimaryClick() {
+			ChromeService.updateTab(this.url);
+		}
 
-    handleAuxClick(alt) {
-      ChromeService.openNewTab(this.url, alt);
-    }
+		handleAuxClick(alt) {
+			ChromeService.openNewTab(this.url, alt);
+		}
 
-    attributeChanged(attrName, oldVal, newVal) {
-      console.log('list-card-row', attrName + ' changed');
-      switch (attrName) {
-        case 'title':
-          this.$title.textContent = this.title;
-          break;
-        case 'url':
-          this.$icon.style.backgroundImage =
-            'url("' + new URL(this.url).origin + '/favicon.ico")';
-          break;
-        case 'highlight':
-          this.updateHighlight();
-          break;
-      }
-    }
+		attributeChanged(attrName, oldVal, newVal) {
+			console.log('list-card-row', attrName + ' changed');
+			switch (attrName) {
+				case 'title':
+					this.$title.textContent = this.title;
+					break;
+				case 'url':
+					this.$icon.style.backgroundImage =
+						'url("' + new URL(this.url).origin + '/favicon.ico")';
+					break;
+				case 'highlight':
+					this.updateHighlight();
+					break;
+			}
+		}
 
-    get title() {
-      let title = this.getAttribute('title');
-      return title;
-    }
+		get title() {
+			let title = this.getAttribute('title');
+			return title;
+		}
 
-    set title(val) {
-      this.setAttribute('title', val);
-    }
+		set title(val) {
+			this.setAttribute('title', val);
+		}
 
-    get url() {
-      return this.getAttribute('url');
-    }
+		get url() {
+			return this.getAttribute('url');
+		}
 
-    set url(val) {
-      this.setAttribute('url', val);
-    }
+		set url(val) {
+			this.setAttribute('url', val);
+		}
 
-    get highlight() {
-      return JSON.parse(this.getAttribute('highlight'));
-    }
+		get highlight() {
+			return JSON.parse(this.getAttribute('highlight'));
+		}
 
-    set highlight(val) {
-      this.setAttribute('highlight', JSON.stringify(val));
-      this.updateHighlight();
-    }
+		set highlight(val) {
+			this.setAttribute('highlight', JSON.stringify(val));
+			this.updateHighlight();
+		}
 
-    updateHighlight() {
-      if (this.highlight === true) {
-        this.$row.classList.add('highlight');
-      } else {
-        this.$row.classList.remove('highlight');
-      }
-    }
-  }
+		updateHighlight() {
+			if (this.highlight === true) {
+				this.$row.classList.add('highlight');
+			} else {
+				this.$row.classList.remove('highlight');
+			}
+		}
+	}
 
-  customElements.define('list-card-row', CardRow);
+	customElements.define('list-card-row', CardRow);
 })();

@@ -1,7 +1,7 @@
 (function () {
-  'use strict';
+	'use strict';
 
-  let template = `
+	let template = `
         <style>
             @import url('css/shared.css');
 
@@ -48,6 +48,15 @@
             </p>
 
             <h3 class="subtitle">Changelog</h3>
+
+            <u>5.7.0</u>
+            <ul>
+                <li>Added: You can now delete cards by right clicking in their title bar.</li>
+                <li>Fixed: Sites in the Other Devices tab are now displayed properly.</li>
+                <li>Modified: Improved the favicon service.</li>
+                <li>Modified: Upgraded to manifest v3 to ensure extension continues to work in future versions of Chrome.</li>
+                <li>Recent Tabs and Other Devices tabs now require the 'tabs' permission, but it's optional.</li>
+            </ul>
 
             <u>5.6.8</u>
             <ul>
@@ -171,13 +180,13 @@
         </div>
     `;
 
-  class SettingsCard extends HTMLElement {
-    constructor() {
-      super();
+	class SettingsCard extends HTMLElement {
+		constructor() {
+			super();
 
-      this.attachShadow({ mode: 'open' }).innerHTML = template;
-    }
-  }
+			this.attachShadow({ mode: 'open' }).innerHTML = template;
+		}
+	}
 
-  customElements.define('about-card', SettingsCard);
+	customElements.define('about-card', SettingsCard);
 })();

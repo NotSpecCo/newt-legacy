@@ -1,22 +1,24 @@
-let SettingsService = (function() {
+let SettingsService = (function () {
 	function getSettings(key) {
-		chrome.promise = new ChromePromise();
-
 		if (key === 'all') {
-			let prefs = chrome.promise.storage.sync.get('prefs').then(res => res['prefs']);
-			let customThemes = chrome.promise.storage.sync.get('customThemes').then(res => res['customThemes']);
-			let categoryColors = chrome.promise.storage.sync.get('categoryColors').then(res => res['categoryColors']);
+			let prefs = chrome.storage.sync.get('prefs').then((res) => res['prefs']);
+			let customThemes = chrome.storage.sync
+				.get('customThemes')
+				.then((res) => res['customThemes']);
+			let categoryColors = chrome.storage.sync
+				.get('categoryColors')
+				.then((res) => res['categoryColors']);
 
-			return Promise.all([prefs, customThemes, categoryColors]).then(values => {
+			return Promise.all([prefs, customThemes, categoryColors]).then((values) => {
 				// Since the user may have not migrated settings yet, check localStorage if something is null and use that
 
 				if (values[0] == null) {
 					values[0] = {
 						selectedTheme: localStorage.getItem('theme') || 'basic',
 						keyboardShortcuts: localStorage.getItem('keyboardShortcuts') || 'disabled'
-					}
+					};
 				}
-				
+
 				if (values[1] == null) {
 					values[1] = JSON.parse(localStorage.getItem('customThemes')) || [];
 				}
@@ -25,41 +27,40 @@ let SettingsService = (function() {
 				values[1].forEach((theme) => {
 					if (theme.styles.length == 10) {
 						let headerStyles = [
-							{name: 'card-header-color1', val: '#FFEBEE'},
-							{name: 'card-header-text-color1', val: '#212121'},
-							{name: 'card-header-color2', val: '#E8F5E9'},
-							{name: 'card-header-text-color2', val: '#212121'},
-							{name: 'card-header-color3', val: '#E3F2FD'},
-							{name: 'card-header-text-color3', val: '#212121'},
-							{name: 'card-header-color4', val: '#F3E5F5'},
-							{name: 'card-header-text-color4', val: '#212121'},
-							{name: 'card-header-color5', val: '#FFF3E0'},
-							{name: 'card-header-text-color5', val: '#212121'}
+							{ name: 'card-header-color1', val: '#FFEBEE' },
+							{ name: 'card-header-text-color1', val: '#212121' },
+							{ name: 'card-header-color2', val: '#E8F5E9' },
+							{ name: 'card-header-text-color2', val: '#212121' },
+							{ name: 'card-header-color3', val: '#E3F2FD' },
+							{ name: 'card-header-text-color3', val: '#212121' },
+							{ name: 'card-header-color4', val: '#F3E5F5' },
+							{ name: 'card-header-text-color4', val: '#212121' },
+							{ name: 'card-header-color5', val: '#FFF3E0' },
+							{ name: 'card-header-text-color5', val: '#212121' }
 						];
 						theme.styles = theme.styles.concat(headerStyles);
 					}
 				});
 
 				// if (values[2] == null) {
-					values[2] = JSON.parse(localStorage.getItem('categoryColors')) || {};
+				values[2] = JSON.parse(localStorage.getItem('categoryColors')) || {};
 				// }
 
 				return {
 					prefs: values[0],
 					customThemes: values[1],
 					categoryColors: values[2]
-				}
+				};
 			});
 		} else {
 			if (key === 'categoryColors') {
 				return new Promise((resolve, reject) => {
 					let res = JSON.parse(localStorage.getItem('categoryColors')) || {};
 					resolve(res);
-				})
+				});
 			} else {
-				return chrome.promise.storage.sync.get(key).then(res => res[key]);
+				return chrome.storage.sync.get(key).then((res) => res[key]);
 			}
-			
 		}
 	}
 
@@ -69,13 +70,11 @@ let SettingsService = (function() {
 				let processed = typeof val === 'string' ? val : JSON.stringify(val);
 				localStorage.setItem('categoryColors', processed);
 				resolve(true);
-			})
+			});
 		} else {
-			chrome.promise = new ChromePromise();
-
 			const data = {};
 			data[key] = val;
-			return chrome.promise.storage.sync.set(data).then(() => {
+			return chrome.storage.sync.set(data).then(() => {
 				// console.log('Saved settings', key, val);
 			});
 		}
@@ -105,13 +104,15 @@ let SettingsService = (function() {
 	}
 
 	function checkAndPerformInitialMigration() {
-		chrome.promise = new ChromePromise();
+		let prefs = chrome.storage.sync.get('prefs').then((res) => res['prefs']);
+		let customThemes = chrome.storage.sync
+			.get('customThemes')
+			.then((res) => res['customThemes']);
+		let categoryColors = chrome.storage.sync
+			.get('categoryColors')
+			.then((res) => res['categoryColors']);
 
-		let prefs = chrome.promise.storage.sync.get('prefs').then(res => res['prefs']);
-		let customThemes = chrome.promise.storage.sync.get('customThemes').then(res => res['customThemes']);
-		let categoryColors = chrome.promise.storage.sync.get('categoryColors').then(res => res['categoryColors']);
-
-		Promise.all([prefs, customThemes, categoryColors]).then(values => {
+		Promise.all([prefs, customThemes, categoryColors]).then((values) => {
 			if (values[0] == null && values[1] == null && values[2] == null) {
 				console.log('Chrome.storage not used yet. Migrating...');
 				this.migrateToChromeStorage();
@@ -121,10 +122,10 @@ let SettingsService = (function() {
 		});
 	}
 
-	return ({
+	return {
 		getSettings: getSettings,
 		setSettings: setSettings,
 		migrateToChromeStorage: migrateToChromeStorage,
 		checkAndPerformInitialMigration: checkAndPerformInitialMigration
-	});
+	};
 })();

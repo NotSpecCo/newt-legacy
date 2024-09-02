@@ -1,7 +1,7 @@
-(function() {
-    'use strict';
-    
-    let template = `
+(function () {
+	'use strict';
+
+	let template = `
         <style>
             :host {
                 display: block;
@@ -73,7 +73,7 @@
             }
 
             .actions {
-                text-align: end;
+                display: flex;
                 margin-top: 10px;
             }
 
@@ -91,6 +91,14 @@
                 background-color: var(--highlight-color);
             }
 
+            #btnDelete {
+                color: var(--accent-color);
+            }
+
+            .spacer {
+                flex: 1;
+            }
+
         </style>
         
         <div class="prompt">
@@ -106,70 +114,83 @@
                 </div>
             </div>
             <div class="actions">
+                <button type="button" id="btnDelete">Delete</button>
+                <div class="spacer"></div>
                 <button type="submit" id="btnSave">Save</button>
                 <button type="button" id="btnCancel">Cancel</button>
             </div>
         </div>
     `;
-    
-    class PromptBox extends HTMLElement {
-        constructor() {
-            super();
-            
-            this.attachShadow({mode: 'open'}).innerHTML = template;
-            
-            this.$content = this.shadowRoot.querySelector('.content');
-            this.$cardMenuform = this.shadowRoot.querySelector('#cardMenuform');
-            this.$btnCancel = this.shadowRoot.querySelector('#btnCancel');
 
-            var colorRow = document.createElement('div');
-            colorRow.className = 'color-row';
+	class PromptBox extends HTMLElement {
+		constructor() {
+			super();
 
-            for (let i=1; i<6; i++) {
-                let ele = colorRow.cloneNode(true);
-                ele.innerHTML = `
+			this.attachShadow({ mode: 'open' }).innerHTML = template;
+
+			this.$content = this.shadowRoot.querySelector('.content');
+			this.$cardMenuform = this.shadowRoot.querySelector('#cardMenuform');
+			this.$btnCancel = this.shadowRoot.querySelector('#btnCancel');
+			this.$btnDelete = this.shadowRoot.querySelector('#btnDelete');
+
+			var colorRow = document.createElement('div');
+			colorRow.className = 'color-row';
+
+			for (let i = 1; i < 6; i++) {
+				let ele = colorRow.cloneNode(true);
+				ele.innerHTML = `
                     <input type="radio" name="cardColor" value="${i}">
                     <div class="example" style="background-color: var(--card-header-color${i}); color: var(--card-header-text-color${i});">Card Title</div>
                 `;
 
-                this.$content.appendChild(ele);
-            }
-            
-            this.$cardMenuform.addEventListener('submit', (ev) => {
-                ev.preventDefault();
+				this.$content.appendChild(ele);
+			}
 
-                var data = {
-                    cardID: this.data.cardID,
-                    title: this.$cardMenuform.elements['cardTitle'].value,
-                    color: this.$cardMenuform.elements['cardColor'].value
-                }
+			this.$cardMenuform.addEventListener('submit', (ev) => {
+				ev.preventDefault();
 
-                Newt.saveEditedCard(data);
-            });
+				var data = {
+					cardID: this.data.cardID,
+					title: this.$cardMenuform.elements['cardTitle'].value,
+					color: this.$cardMenuform.elements['cardColor'].value
+				};
 
-            this.$btnCancel.addEventListener('click', () => {
-                this.data = {};
-                Newt.closeAllPopups();
-            });
-        }
+				Newt.saveEditedCard(data);
+			});
 
-        connectedCallback() {
-            // this.$message.innerText = this.message;
-        }
+			this.$btnCancel.addEventListener('click', () => {
+				this.data = {};
+				Newt.closeAllPopups();
+			});
 
-        get data() {
-            let item = this.getAttribute('data');
-            item = JSON.parse(item);
-            return item;
-        }
-        
-        set data(val) {
-            this.setAttribute('data', JSON.stringify(val));
+			this.$btnDelete.addEventListener('click', () => {
+				const confirmDelete = confirm('Are you sure you want to delete this card?');
+				if (!confirmDelete) return;
 
-            this.$cardMenuform.elements['cardTitle'].value = val.title;
-            this.$cardMenuform.elements['cardColor'].value = val.color;
-        }
-    }
-    
-    customElements.define('dialog-card-menu', PromptBox);
+				ChromeService.deleteBookmarkTree(this.data.cardID);
+				this.data = {};
+				Newt.closeAllPopups();
+				Newt.changeTab('bookmarks');
+			});
+		}
+
+		connectedCallback() {
+			// this.$message.innerText = this.message;
+		}
+
+		get data() {
+			let item = this.getAttribute('data');
+			item = JSON.parse(item);
+			return item;
+		}
+
+		set data(val) {
+			this.setAttribute('data', JSON.stringify(val));
+
+			this.$cardMenuform.elements['cardTitle'].value = val.title;
+			this.$cardMenuform.elements['cardColor'].value = val.color;
+		}
+	}
+
+	customElements.define('dialog-card-menu', PromptBox);
 })();
